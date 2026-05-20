@@ -1,0 +1,76 @@
+# =========================
+# 1. AI, ML, and Vector Databases (CRITICAL)
+# =========================
+# Do not push vector indexes or database files
+chroma_db/
+chromadb/
+*.faiss
+*.pkl
+
+# Ignore downloaded local models (if you store them inside the project)
+models/
+*.bin
+*.gguf
+*.pt
+*.safetensors
+
+# Evaluation databases (SQLite metrics)
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# 2. Python & Backend (FastAPI / LangGraph)
+# =========================
+# Virtual Environments
+venv/
+.venv/
+env/
+.env_python
+
+# Cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+
+# =========================
+# 3. Frontend (React / Node.js)
+# =========================
+# Node modules (Massive, never commit this)
+frontend/node_modules/
+node_modules/
+
+# Build directories
+frontend/build/
+frontend/dist/
+build/
+dist/
+
+# npm and yarn debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# 4. Environment Variables & Secrets
+# =========================
+# NEVER commit your actual .env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =========================
+# 5. OS & Editor Configs
+# =========================
+# Mac/Windows system files
+.DS_Store
+Thumbs.db
+
+# IDE Folders (VS Code, PyCharm, etc.)
+.vscode/
+.idea/
+*.swp
