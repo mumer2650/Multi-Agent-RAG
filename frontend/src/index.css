@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 
+ * Custom Scrollbar Styling
+ * Overrides the ugly default OS scrollbars to maintain immersion and 
+ * match the application's sleek dark/light themes (mimicking ChatGPT).
+ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* Tailwind slate-300 */
+  border-radius: 4px;
+}
+
+/* 
+ * The .dark selector targets the thumb when the app is in dark mode, 
+ * as our Tailwind setup applies the 'dark' class to the html document element.
+ */
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #475569; /* Tailwind slate-600 */
+}
+
+/* Optional: slightly darker thumb on hover for interactivity */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8; /* Tailwind slate-400 */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #334155; /* Tailwind slate-700 */
+}
