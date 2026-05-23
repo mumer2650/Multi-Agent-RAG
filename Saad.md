@@ -234,3 +234,49 @@ None
   "timestamp": "2026-05-23"
 }
 ```
+
+# SAGE Frontend Architecture & Documentation
+
+## Overview
+
+This document outlines the frontend architecture, UI/UX features, and API integration schemas for the **SAGE** (Multi-Agent RAG) system. The frontend is built to handle real-time streaming data from a FastAPI backend while maintaining a highly responsive, enterprise-grade user interface.
+
+## 1. Tech Stack
+
+- **Framework:** React (Bootstrapped via Vite for fast HMR and optimized builds)
+- **Styling:** Tailwind CSS (configured with `darkMode: 'class'` for manual theme toggling)
+- **Icons:** `lucide-react`
+- **Data Visualization:** `recharts` (Used for MLOps Analytics)
+
+## 2. UI/UX Implementations
+
+### Layout & Animations
+
+- **Dynamic Search Layout:** The interface features a centered landing greeting that seamlessly transitions to the bottom of the screen upon query submission.
+- **Viewport Lock (`h-screen overflow-hidden`):** Prevents the global page from stretching, keeping the search input securely anchored to the bottom.
+- **Auto-Scroll Hook:** Utilizes `useRef` and `useEffect` to automatically scroll the chat container as new WebSockets tokens stream in.
+- **UI Thread Unblocking:** Implements a zero-delay timeout during form submission to force React to flush state to the DOM instantly, preventing input lag.
+
+### Theme Management
+
+- **Dark/Light Mode Toggle:** Implements native Tailwind dark mode. The user's theme choice is saved to the browser's `localStorage` for persistence.
+
+## 3. Component Architecture
+
+- `App.jsx` / `main.jsx`: Entry points wrapping the application.
+- `Header.jsx`: Manages branding, theme toggle, and view navigation (Chat vs. Admin).
+- `SearchBar.jsx`: Manages local query state and streaming locks.
+- `Home.jsx`: The main orchestrator managing the chat history array, agent state, and WebSocket lifecycle.
+- `AdminDashboard.jsx`: Fetches and visualizes backend MLOps metrics using Recharts and provides a UI for Document Ingestion.
+
+## 4. API Integrations
+
+The frontend connects to the FastAPI backend via four distinct endpoints:
+
+1. **Real-Time Chat Stream (`ws://127.0.0.1:8000/ws/chat`)**
+   - Sends user queries as JSON (`ChatRequest`).
+   - Receives streamed JSON (`StreamResponse`) to render live agent status updates and typing effects.
+2. **MLOps Metrics (`GET http://127.0.0.1:8000/metrics`)**
+   - Fetches the latest RAGAS evaluation scores to populate the Admin Dashboard charts.
+3. **Knowledge Base Ingestion (`POST http://127.0.0.1:8000/ingest`)**
+   - Transmits `multipart/form-data` (PDF manuals) to the backend for chunking and vector indexing.

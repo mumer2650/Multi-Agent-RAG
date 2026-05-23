@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
+import AdminDashboard from '../components/AdminDashboard';
 
 /**
  * Home Component (ChatLayout)
@@ -9,6 +10,9 @@ import SearchBar from '../components/SearchBar';
  * for the WebSocket connection and message stream.
  */
 export default function Home() {
+  // State for toggling between the Chat UI and the Admin Dashboard
+  const [currentView, setCurrentView] = useState('chat');
+
   // Boolean state tracking whether the user has initiated a conversation.
   const [isSearchActive, setIsSearchActive] = useState(false);
   
@@ -160,56 +164,62 @@ export default function Home() {
     // This strictly confines the app to the exact viewport height, preventing the 
     // global page from scrolling and ensuring the search bar remains locked to the bottom.
     <div className="h-screen overflow-hidden flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-300 text-slate-900 dark:text-slate-100 font-sans">
-      <Header />
+      <Header currentView={currentView} onViewChange={setCurrentView} />
       
       <main className="flex-1 flex flex-col relative w-full h-[calc(100vh-88px)]">
         
-        {/* Chat Stream Area */}
-        {isSearchActive && (
-          <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 flex flex-col">
-            <div className="max-w-4xl w-full mx-auto space-y-6">
-              {/* Render aggregated messages in a clean, readable text block */}
-              {messages.map((msg, idx) => (
-                <div 
-                  key={idx} 
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div 
-                    className={`max-w-[85%] sm:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg ${
-                      msg.role === 'user' 
-                        ? 'bg-blue-600 text-white rounded-br-sm' 
-                        : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm'
-                    }`}
-                  >
-                    <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                  </div>
+        {currentView === 'admin' ? (
+          <AdminDashboard />
+        ) : (
+          <>
+            {/* Chat Stream Area */}
+            {isSearchActive && (
+              <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 flex flex-col">
+                <div className="max-w-4xl w-full mx-auto space-y-6">
+                  {/* Render aggregated messages in a clean, readable text block */}
+                  {messages.map((msg, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div 
+                        className={`max-w-[85%] sm:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg ${
+                          msg.role === 'user' 
+                            ? 'bg-blue-600 text-white rounded-br-sm' 
+                            : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm'
+                        }`}
+                      >
+                        <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Anchor element for the auto-scroll hook to target */}
+                  <div ref={messagesEndRef} />
                 </div>
-              ))}
-              
-              {/* Anchor element for the auto-scroll hook to target */}
-              <div ref={messagesEndRef} />
-            </div>
-          </div>
-        )}
+              </div>
+            )}
 
-        {/* Search Bar Container */}
-        <div className={`w-full ${!isSearchActive ? 'flex-1 flex flex-col' : 'pb-6 pt-2 shrink-0'}`}>
-          
-          {/* Render the agentState in a small, italicized text block above the search bar */}
-          {agentState && (
-            <div className="max-w-4xl mx-auto w-full px-4 mb-3 text-center">
-              <span className="text-sm italic text-slate-500 dark:text-slate-400 animate-pulse">
-                {agentState}
-              </span>
+            {/* Search Bar Container */}
+            <div className={`w-full ${!isSearchActive ? 'flex-1 flex flex-col' : 'pb-6 pt-2 shrink-0'}`}>
+              
+              {/* Render the agentState in a small, italicized text block above the search bar */}
+              {agentState && (
+                <div className="max-w-4xl mx-auto w-full px-4 mb-3 text-center">
+                  <span className="text-sm italic text-slate-500 dark:text-slate-400 animate-pulse">
+                    {agentState}
+                  </span>
+                </div>
+              )}
+              
+              <SearchBar 
+                isActive={isSearchActive} 
+                onSearch={handleSearch} 
+                isStreaming={isStreaming} 
+              />
             </div>
-          )}
-          
-          <SearchBar 
-            isActive={isSearchActive} 
-            onSearch={handleSearch} 
-            isStreaming={isStreaming} 
-          />
-        </div>
+          </>
+        )}
       </main>
     </div>
   );
