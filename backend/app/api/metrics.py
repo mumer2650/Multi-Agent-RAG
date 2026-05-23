@@ -12,8 +12,8 @@ async def get_metrics():
     (context precision, faithfulness, etc.).
     """
     return {
-        "context_precision": 0.85, 
-        "faithfulness": 0.92, 
-        "answer_relevance": 0.88, 
+        "context_precision": 0.50, 
+        "faithfulness": 0.90, 
+        "answer_relevance": 0.70, 
         "timestamp": "2026-05-23"
     }

@@ -30,7 +30,7 @@ import { Sun, Moon } from 'lucide-react';
  *    When the Header component first mounts, a `useEffect` hook reads `localStorage.getItem('theme')` 
  *    to initialize the local state and apply the corresponding 'dark' class to the DOM immediately.
  */
-export default function Header() {
+export default function Header({ currentView, onViewChange }) {
   // Initialize the theme state by checking localStorage or OS preference
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -75,19 +75,47 @@ export default function Header() {
         SAGE
       </div>
       
-      {/* Theme Toggle Button */}
-      <button
-        onClick={toggleTheme}
-        className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-        aria-label="Toggle Dark Mode"
-        title="Toggle Dark/Light Mode"
-      >
-        {isDark ? (
-          <Sun className="w-5 h-5 text-yellow-500" />
-        ) : (
-          <Moon className="w-5 h-5" />
+      <div className="flex items-center gap-6">
+        {/* Navigation Group */}
+        {onViewChange && (
+          <div className="flex gap-4 items-center">
+            <button 
+              onClick={() => onViewChange('chat')}
+              className={`px-4 py-2 rounded-full font-medium transition-colors ${
+                currentView === 'chat' 
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md border-none' 
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 bg-transparent'
+              }`}
+            >
+              Chat
+            </button>
+            <button 
+              onClick={() => onViewChange('admin')}
+              className={`px-4 py-2 rounded-full font-medium transition-colors ${
+                currentView === 'admin' 
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md border-none' 
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 bg-transparent'
+              }`}
+            >
+              Admin Dashboard
+            </button>
+          </div>
         )}
-      </button>
+        
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+          aria-label="Toggle Dark Mode"
+          title="Toggle Dark/Light Mode"
+        >
+          {isDark ? (
+            <Sun className="w-5 h-5 text-yellow-500" />
+          ) : (
+            <Moon className="w-5 h-5" />
+          )}
+        </button>
+      </div>
     </header>
   );
 }
