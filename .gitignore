@@ -6,6 +6,7 @@ chroma_db/
 chromadb/
 *.faiss
 *.pkl
+data/
 
 # Ignore downloaded local models (if you store them inside the project)
 models/
