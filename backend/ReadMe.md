@@ -23,3 +23,5 @@ backend/
 │ └── main.py # FastAPI app initialization and router inclusion
 │
 └── requirements.txt # fastapi, uvicorn, websockets, sqlalchemy, pydantic
+
+uvicorn app.main:app --reload --port 8000
