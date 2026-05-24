@@ -1,54 +1,49 @@
 import os
 import re
 import uuid
-from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader
-from langchain_community.document_loaders import PDFPlumberLoader
+import shutil
+import json 
+from langchain_community.document_loaders import DirectoryLoader, PDFPlumberLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_classic.storage import LocalFileStore
 from vector_store import get_vector_store
+from keyword_search import build_bm25_index
 
-
-
-# Set up storage path for Parent documents on your drive
-STORAGE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../backend/storage"))
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+STORAGE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "backend", "storage"))
 PARENT_STORE_PATH = os.path.join(STORAGE_DIR, "parent_store")
 
-# Initialize an storage layer for parent text chunks
 os.makedirs(PARENT_STORE_PATH, exist_ok=True)
 parent_docstore = LocalFileStore(PARENT_STORE_PATH)
 
+def reset_database():
+    print("🧹 Cleaning ALL databases for a fresh sync...")
+    paths_to_delete = [
+        os.path.join(STORAGE_DIR, "chroma_db"),
+        PARENT_STORE_PATH,
+        os.path.join(STORAGE_DIR, "bm25_index.pkl")
+    ]
+    for path in paths_to_delete:
+        if os.path.exists(path):
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+            else:
+                os.remove(path)
+    print("   - All databases reset.")
+
 def clean_text(text: str) -> str:
-    """Cleans up artificial line breaks and weird spacing found in PDFs."""
     text = re.sub(r'(?<!\n)\n(?!\n)', ' ', text)
     text = re.sub(r' +', ' ', text)
     return text.strip()
 
 def ingest_documents_pipeline(raw_documents):
-    """
-    Core engine that takes a list of loaded LangChain documents,
-    chunks them into Parent-Child pairs, and uploads them to the stores.
-    """
-    # 1. Connect to our initialized ChromaDB
     vector_store = get_vector_store()
     
-    # 2. Configure Text Splitters
-    parent_splitter = RecursiveCharacterTextSplitter(
-        separators=["\n\n", ". ", "? ", "! "],
-        chunk_size=1500, 
-        chunk_overlap=150
-    )
-    
-    child_splitter = RecursiveCharacterTextSplitter(
-        separators=["\n\n", ". ", "? ", "! ", " "],
-        chunk_size=300, 
-        chunk_overlap=50
-    )
+    parent_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=150)
+    child_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50)
 
-    parent_chunks = []
-    child_chunks = []
-    parent_keys_and_texts = []
+    parent_chunks, child_chunks, parent_keys_and_texts = [], [], []
 
-    # 3. Process Chunking Loop
     for doc in raw_documents:
         doc.page_content = clean_text(doc.page_content)
         parents = parent_splitter.split_documents([doc])
@@ -56,57 +51,59 @@ def ingest_documents_pipeline(raw_documents):
         for parent in parents:
             parent_id = str(uuid.uuid4())
             parent.metadata["doc_id"] = parent_id
+            
+            # --- HIS LOGIC: Extract Citation Data ---
+            source = doc.metadata.get("source", "unknown")
+            page = doc.metadata.get("page", 0)
+            
             parent_chunks.append(parent)
             
-            # Pack parent into format required for key-value document stores
-            # Key: parent_id, Value: raw text content
-            parent_keys_and_texts.append((parent_id, parent.page_content.encode("utf-8")))
+            # --- THE MERGE: Pack the text AND his citations into JSON for easy retrieval ---
+            parent_dict = {
+                "text": parent.page_content,
+                "source": source,
+                "page": page
+            }
+            parent_keys_and_texts.append((parent_id, json.dumps(parent_dict).encode("utf-8")))
             
             children = child_splitter.split_documents([parent])
-            for child in children:
+            
+            # --- HIS LOGIC: Inject metadata into child chunks ---
+            for child_index, child in enumerate(children):
                 child.metadata["doc_id"] = parent_id
+                child.metadata["source"] = source
+                child.metadata["page"] = page
+                child.metadata["chunk_index"] = child_index
                 child_chunks.append(child)
 
-    # 4. SAVE TO DATABASES (The missing link)
+    print(f"Saving {len(parent_chunks)} Parent contexts to disk...")
+    parent_docstore.mset(parent_keys_and_texts)
+
     if child_chunks:
-        print(f"Embedding and adding {len(child_chunks)} child chunks to ChromaDB...")
-        vector_store.add_documents(child_chunks)
+        print(f"Embedding {len(child_chunks)} chunks into ChromaDB...")
+        batch_size = 1000  
+        for i in range(0, len(child_chunks), batch_size):
+            batch = child_chunks[i : i + batch_size]
+            vector_store.add_documents(batch)
+            print(f"Uploaded batch {i // batch_size + 1} to ChromaDB...")
         
-        print(f"Saving {len(parent_chunks)} parent contexts to local file store...")
-        parent_docstore.mset(parent_keys_and_texts)
-        
-        print("Success! Data completely saved into the Memory Vault.")
+    print("Indexing BM25...")
+    build_bm25_index(child_chunks)
+    print("✅ BM25 Keyword Index built successfully.")
     
     return parent_chunks, child_chunks
 
 def load_directory_base_knowledge(data_directory: str):
-    """Loads all static base PDFs from the directory and triggers the pipeline."""
     print(f"Loading base documents from directory: {data_directory}...")
     loader = DirectoryLoader(data_directory, glob="*.pdf", loader_cls=PDFPlumberLoader)
     raw_documents = loader.load()
-    
     if not raw_documents:
-        print("Error: No documents found. Data directory might be empty.")
         return [], []
-        
     return ingest_documents_pipeline(raw_documents)
 
-def ingest_single_user_file(file_path: str):
-    """
-    EXPOSED WORKFLOW FUNCTION: This is what Member 1 (Saad) will call
-    via FastAPI whenever a user uploads a dynamic file in the app!
-    """
-    print(f"Processing real-time user upload: {file_path}")
-    loader = PDFPlumberLoader(file_path)
-    raw_documents = loader.load()
-    if raw_documents:
-        ingest_documents_pipeline(raw_documents)
-        return True
-    return False
-
 if __name__ == "__main__":
-    # Test path setting
-    DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../data"))
+    reset_database() 
     
-    # Run pipeline on our base data directory
-    parents, children = load_directory_base_knowledge(DATA_PATH)
+    DATA_PATH = os.path.abspath(os.path.join(CURRENT_DIR, "../../data"))
+    load_directory_base_knowledge(DATA_PATH)
+    print("🚀 Pipeline complete!")
