@@ -21,7 +21,6 @@ To process your base documents (like course manuals or technical specs):
    ```bash
    python ai_core/retrieval/ingestion.py
 
-
 # Active Search: The Retrieval Engine
 
 This module is the "Search Brain" of our AI. It takes a natural language question from the user, dives into our Memory Vault, and pulls out the exact paragraphs the LLM needs to answer the question without hallucinating.
