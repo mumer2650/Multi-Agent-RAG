@@ -18,6 +18,8 @@ class GraphState(TypedDict):
     retrieved_docs: list
     reranked_docs: list
 
+    retrieval_error: str | None
+
     # Retry Logic
     retrieval_attempts: int
     max_retrieval_attempts: int
@@ -30,6 +32,8 @@ class GraphState(TypedDict):
 
     # Validation
     validation_passed: bool
+
+    validation_reason: str | None
 
     # Final
     final_answer: Optional[str]
