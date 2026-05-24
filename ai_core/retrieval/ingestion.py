@@ -63,8 +63,12 @@ def ingest_documents_pipeline(raw_documents):
             parent_keys_and_texts.append((parent_id, parent.page_content.encode("utf-8")))
             
             children = child_splitter.split_documents([parent])
-            for child in children:
+
+            for child_index, child in enumerate(children):
                 child.metadata["doc_id"] = parent_id
+                child.metadata["source"] = (doc.metadata.get("source", "unknown"))
+                child.metadata["page"] = (doc.metadata.get("page", 0))
+                child.metadata["chunk_index"] = child_index
                 child_chunks.append(child)
 
     # 4. SAVE TO DATABASES (The missing link)

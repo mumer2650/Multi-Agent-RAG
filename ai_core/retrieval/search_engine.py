@@ -1,5 +1,5 @@
 import os
-from vector_store import get_vector_store
+from ai_core.retrieval.vector_store import (get_vector_store)
 from langchain_classic.storage import LocalFileStore
 
 # 1. Locate and lock onto our persistent Parent Storage directory
@@ -24,23 +24,30 @@ def retrieve_context_pipeline(query: str, k: int = 3):
     for child in child_matches:
         parent_id = child.metadata.get("doc_id")
         
-        if parent_id and parent_id not in seen_parent_ids:
-            seen_parent_ids.add(parent_id)
+        if (not parent_id or parent_id in seen_parent_ids):
+            continue
+        
+        seen_parent_ids.add(parent_id)
             
-            # Fetch the encrypted bytes from our disk store
-            parent_bytes = parent_docstore.mget([parent_id])[0]
-            
-            if parent_bytes:
-                # Decode bytes back to an English string
-                parent_text = parent_bytes.decode("utf-8")
-                retrieved_parents.append(parent_text)
+        parent_bytes = parent_docstore.mget([parent_id])[0]
+
+        if parent_bytes:
+            # Decode bytes back to an English string
+            parent_text = parent_bytes.decode("utf-8")
+            retrieved_parents.append({
+                "doc_id": parent_id,
+                "text": parent_text,
+                "source": child.metadata.get("source","unknown"),
+                "page": child.metadata.get("page",0),
+                "chunk_index": child.metadata.get("chunk_index",0)
+                })
                 
     return retrieved_parents
 
 # --- TESTING MODULE ENGINE ---
 if __name__ == "__main__":
     # Let's test your engine with a natural language query!
-    test_query = "What is AI Energy Mode?"
+    test_query = "Does Air Conditioner supports 4-Way Swing?"
     
     contexts = retrieve_context_pipeline(test_query, k=2)
     
