@@ -4,19 +4,23 @@ def route_agent(state):
 
 
 def check_context(state):
+    docs = state.get("reranked_docs",[])
 
-    docs = state.get("reranked_docs", [])
+    attempts = state.get("retrieval_attempts", 0)
+
+    max_attempts = state.get("max_retrieval_attempts", 3)
+
+    print(f"Docs: {len(docs)} | Attempts: {attempts}/{max_attempts}")
 
     if len(docs) == 0:
 
-        if (state["retrieval_attempts"] < state["max_retrieval_attempts"]
-        ):
-            return "rewrite"
+        if attempts >= max_attempts:
 
-        return "fail"
+            return "fail"
+
+        return "rewrite"
 
     return "enough"
-
 
 def validation_condition(state):
 
