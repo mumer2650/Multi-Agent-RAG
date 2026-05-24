@@ -7,6 +7,7 @@ chromadb/
 *.faiss
 *.pkl
 data/
+data1/
 
 # Ignore downloaded local models (if you store them inside the project)
 models/
