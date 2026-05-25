@@ -5,9 +5,35 @@ import shutil
 import json 
 from langchain_community.document_loaders import DirectoryLoader, PDFPlumberLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_classic.storage import LocalFileStore
+#from langchain_classic.storage import LocalFileStore
 from vector_store import get_vector_store
 from keyword_search import build_bm25_index
+import sqlite3
+
+class LocalFileStore:
+    """High-Performance SQLite replacement. Writes thousands of chunks in milliseconds."""
+    def __init__(self, path):
+        self.path = path
+        os.makedirs(self.path, exist_ok=True)
+        self.db_path = os.path.join(self.path, "parents.db")
+
+    def mget(self, keys):
+        results = []
+        with sqlite3.connect(self.db_path) as conn:
+            # DEFENSIVE PROGRAMMING: Ensure table exists before reading
+            conn.execute("CREATE TABLE IF NOT EXISTS store (id TEXT PRIMARY KEY, data BLOB)")
+            cursor = conn.cursor()
+            for key in keys:
+                cursor.execute("SELECT data FROM store WHERE id=?", (key,))
+                row = cursor.fetchone()
+                results.append(row[0] if row else None)
+        return results
+
+    def mset(self, key_value_pairs):
+        with sqlite3.connect(self.db_path) as conn:
+            # DEFENSIVE PROGRAMMING: Ensure table exists right before saving!
+            conn.execute("CREATE TABLE IF NOT EXISTS store (id TEXT PRIMARY KEY, data BLOB)")
+            conn.executemany("INSERT OR REPLACE INTO store (id, data) VALUES (?, ?)", key_value_pairs)
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 STORAGE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "backend", "storage"))
@@ -29,6 +55,9 @@ def reset_database():
                 shutil.rmtree(path)
             else:
                 os.remove(path)
+    
+    
+    os.makedirs(PARENT_STORE_PATH, exist_ok=True)
     print("   - All databases reset.")
 
 def clean_text(text: str) -> str:

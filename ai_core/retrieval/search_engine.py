@@ -1,9 +1,35 @@
 import os
 import json
-from ai_core.retrieval.vector_store import (get_vector_store)
-from langchain_classic.storage import LocalFileStore
+from ai_core.retrieval.vector_store import get_vector_store
+#from langchain_classic.storage import LocalFileStore
 from ai_core.retrieval.keyword_search import keyword_search
 from sentence_transformers import CrossEncoder
+import sqlite3
+
+class LocalFileStore:
+    """High-Performance SQLite replacement. Writes thousands of chunks in milliseconds."""
+    def __init__(self, path):
+        self.path = path
+        os.makedirs(self.path, exist_ok=True)
+        self.db_path = os.path.join(self.path, "parents.db")
+
+    def mget(self, keys):
+        results = []
+        with sqlite3.connect(self.db_path) as conn:
+            # DEFENSIVE PROGRAMMING: Ensure table exists before reading
+            conn.execute("CREATE TABLE IF NOT EXISTS store (id TEXT PRIMARY KEY, data BLOB)")
+            cursor = conn.cursor()
+            for key in keys:
+                cursor.execute("SELECT data FROM store WHERE id=?", (key,))
+                row = cursor.fetchone()
+                results.append(row[0] if row else None)
+        return results
+
+    def mset(self, key_value_pairs):
+        with sqlite3.connect(self.db_path) as conn:
+            # DEFENSIVE PROGRAMMING: Ensure table exists right before saving!
+            conn.execute("CREATE TABLE IF NOT EXISTS store (id TEXT PRIMARY KEY, data BLOB)")
+            conn.executemany("INSERT OR REPLACE INTO store (id, data) VALUES (?, ?)", key_value_pairs)
 
 # --- THE MASTER PATH FIX ---
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -82,7 +108,7 @@ def advanced_search(query: str, k: int = 15):
 
 # --- TESTING MODULE ENGINE ---
 if __name__ == "__main__":
-    test_query = "What is AI Energy Mode?"
+    test_query = "What is the purpose of the Galaxy Wearable app when using Galaxy Buds FE?"
     
     contexts = advanced_search(test_query, k=15)
     
