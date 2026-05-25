@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.chat import router as chat_router
-from app.api.metrics import router as metrics_router
-from app.api.ingest import router as ingest_router
-from app.db.database import engine
-from app.db import models
+from backend.app.api.chat import router as chat_router
+from backend.app.api.metrics import router as metrics_router
+from backend.app.api.ingest import router as ingest_router
+from backend.app.db.database import engine
+from backend.app.db import models
 
 
 # Initialize the FastAPI application [cite: 183, 184]
