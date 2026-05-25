@@ -1,5 +1,15 @@
+import sys
+import os
 from ai_core.graph.workflow import graph
 import matplotlib.pyplot as plt
+
+
+# ==========================================
+# PATH SETUP (same as backend)
+# ==========================================
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 
 # ==========================================
@@ -86,49 +96,41 @@ def render_chart(chart):
 
 
 # ==========================================
+# INITIAL STATE TEMPLATE (same as backend)
+# ==========================================
+def create_initial_state(query, history=None):
+    """Create the initial state for the LangGraph pipeline."""
+    if history is None:
+        history = []
+
+    return {
+        "messages":               history + [{"role": "user", "content": query}],
+        "user_query":             query,
+        "selected_agent":         None,
+        "tool_required":          False,
+        "retrieved_docs":         [],
+        "retrieval_error":        None,
+        "retrieval_attempts":     0,
+        "max_retrieval_attempts": 3,
+        "tool_output":            None,
+        "chart":                  None,
+        "citations":              [],
+        "validation_passed":      False,
+        "validation_reason":      None,
+        "final_answer":           None,
+        "error":                  None,
+    }
+
+
+# ==========================================
 # MAIN CHAT LOOP
 # ==========================================
 def run_chat():
 
-    state = {
-
-        # Conversation
-        "messages": [],
-
-        # User Query
-        "user_query": "",
-
-        # Routing
-        "selected_agent": None,
-
-        "tool_required": False,
-
-        # Retrieval
-        "retrieved_docs": [],
-
-        "retrieval_attempts": 0,
-
-        "max_retrieval_attempts": 3,
-
-        # Tools
-        "tool_output": None,
-
-        # Visualization
-        "chart": None,
-
-        # Validation
-        "validation_passed": False,
-
-        # Output
-        "final_answer": None,
-
-        # Errors
-        "error": None
-    }
-
-    print("Multi-Agent RAG Started")
-
+    print("Multi-Agent RAG Started (Console Mode)")
     print("Type exit to quit\n")
+
+    conversation_history = []
 
     while True:
 
@@ -138,36 +140,9 @@ def run_chat():
             break
 
         # ==========================================
-        # SAVE USER MESSAGE
+        # USE BACKEND STATE INITIALIZATION
         # ==========================================
-        state["messages"].append({
-            "role": "user",
-            "content": query
-        })
-
-        # ==========================================
-        # UPDATE QUERY
-        # ==========================================
-        state["user_query"] = query
-
-        # ==========================================
-        # RESET REQUEST STATE
-        # ==========================================
-        state["retrieved_docs"] = []
-
-        state["retrieval_attempts"] = 0
-
-        state["tool_output"] = None
-
-        state["chart"] = None
-
-        state["citations"] = []
-
-        state["validation_passed"] = False
-
-        state["final_answer"] = None
-
-        state["error"] = None
+        state = create_initial_state(query, conversation_history)
 
         # ==========================================
         # RUN WORKFLOW
@@ -175,7 +150,6 @@ def run_chat():
         try:
 
             result = graph.invoke(state)
-
             state.update(result)
 
         except Exception as workflow_error:
@@ -213,11 +187,16 @@ def run_chat():
                 print(str(chart_error))
 
         # ==========================================
-        # SAVE ASSISTANT MESSAGE
+        # SAVE ASSISTANT MESSAGE & UPDATE HISTORY
         # ==========================================
         if state.get("final_answer"):
 
-            state["messages"].append({
+            conversation_history.append({
+                "role": "user",
+                "content": query
+            })
+
+            conversation_history.append({
                 "role": "assistant",
                 "content": state["final_answer"]
             })

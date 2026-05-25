@@ -1,8 +1,11 @@
-import asyncio
 import json
+import logging
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import ValidationError
-from app.schemas.chat import ChatRequest, StreamResponse
+from backend.app.schemas.chat import ChatRequest, StreamResponse
+from backend.app.services.ai_bridge import run_pipeline
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -10,70 +13,98 @@ router = APIRouter()
 async def websocket_chat_endpoint(websocket: WebSocket):
     """
     WebSocket endpoint for real-time chat communication.
-    
+
     This endpoint maintains an open connection with the client. It waits for a JSON
-    payload matching the `ChatRequest` schema. Once received, it mocks the behavior 
-    of a complex LangGraph multi-agent pipeline by sending status updates and streaming
-    a text response word-by-word.
-    
-    Future LangGraph Integration:
-        Instead of the mock loop, this endpoint will eventually:
-        1. Parse the incoming request into a ChatRequest.
-        2. Instantiate or retrieve the compiled LangGraph workflow.
-        3. Iterate asynchronously over the graph's streaming output 
-           (e.g., `async for event in app.astream_events(...)`).
-        4. Map LangGraph events to `StreamResponse` payloads and send them to the client.
+    payload matching the `ChatRequest` schema. Once received, it runs the real
+    LangGraph multi-agent pipeline via ai_bridge and streams status updates,
+    answer tokens, citations, and chart data back to the frontend.
+
+    The endpoint:
+    1. Maintains conversation history across multiple turns
+    2. Streams all events from the LangGraph pipeline
+    3. Reconstructs and saves the assistant message after the response is complete
     """
     await websocket.accept()
-    
+    logger.info("WebSocket client connected")
+
+    conversation_history = []
+
     try:
         while True:
             # Wait to receive a JSON payload from the client
             data = await websocket.receive_text()
-            
+            logger.debug(f"Received message: {data[:100]}...")
+
             try:
                 # Validate the incoming data against our schema
                 request_data = json.loads(data)
                 chat_request = ChatRequest(**request_data)
             except (json.JSONDecodeError, ValidationError) as e:
                 # Handle invalid formatting gracefully
-                error_resp = StreamResponse(type="error", content=f"Invalid request format: {str(e)}")
+                error_resp = StreamResponse(
+                    type="error",
+                    content=f"Invalid request format: {str(e)}"
+                )
+                logger.warning(f"Validation error: {e}")
                 await websocket.send_json(error_resp.model_dump())
                 continue
 
             # =================================================================
-            # MOCK MULTI-AGENT PIPELINE
+            # REAL MULTI-AGENT PIPELINE
             # =================================================================
-            # The following loop simulates the behavior of the LangGraph orchestrator
-            # transitioning between different specialized agents.
-            
-            # Step 1: Simulate the Routing Agent deciding where to send the query
-            status_routing = StreamResponse(type="status", content="Agent routing query...")
-            await websocket.send_json(status_routing.model_dump())
-            await asyncio.sleep(1.0)
-            
-            # Step 2: Simulate the Retrieval Agent querying the database
-            status_querying = StreamResponse(type="status", content="Querying appliance database...")
-            await websocket.send_json(status_querying.model_dump())
-            await asyncio.sleep(1.0)
-            
-            # Step 3: Simulate the Generation Agent streaming the final answer token-by-token
-            mock_response_string = "Based on the manual, the LG fridge requires a 2-inch clearance."
-            words = mock_response_string.split(" ")
-            
-            for i, word in enumerate(words):
-                # Add a space after the word, unless it's the very last word
-                content = word + " " if i < len(words) - 1 else word
-                token_resp = StreamResponse(type="token", content=content)
-                await websocket.send_json(token_resp.model_dump())
-                await asyncio.sleep(0.1)
-                
-            # Signal the end of the stream
-            await websocket.send_json(StreamResponse(type="done", content="").model_dump())
+            # Run the LangGraph workflow through ai_bridge and stream every
+            # event (status updates, tokens, citations, chart, done) to the client.
+
+            logger.info(f"Processing query: {chat_request.query[:50]}...")
+            reconstructed_answer = ""
+            pipeline_error = False
+
+            try:
+                async for response in run_pipeline(
+                    query=chat_request.query,
+                    history=conversation_history
+                ):
+                    await websocket.send_json(response.model_dump())
+
+                    # Track streamed tokens to reconstruct the full answer
+                    if response.type == "token":
+                        reconstructed_answer += response.content
+
+                    # Log errors
+                    if response.type == "error":
+                        pipeline_error = True
+                        logger.error(f"Pipeline error: {response.content}")
+
+            except Exception as pipeline_error_detail:
+                pipeline_error = True
+                error_resp = StreamResponse(
+                    type="error",
+                    content=f"Pipeline error: {str(pipeline_error_detail)}"
+                )
+                logger.error(f"Pipeline failed: {pipeline_error_detail}", exc_info=True)
+                await websocket.send_json(error_resp.model_dump())
+
+            # =================================================================
+            # SAVE CONVERSATION TURNS
+            # =================================================================
+            # Only save to history if the pipeline succeeded
+            if not pipeline_error:
+                conversation_history.append({
+                    "role": "user",
+                    "content": chat_request.query
+                })
+
+                # Save the reconstructed assistant response
+                if reconstructed_answer.strip():
+                    conversation_history.append({
+                        "role": "assistant",
+                        "content": reconstructed_answer.strip()
+                    })
+                    logger.debug(f"Saved assistant message to history: {reconstructed_answer[:50]}...")
+
+            logger.debug(f"Conversation history length: {len(conversation_history)}")
 
     except WebSocketDisconnect:
-        # Handle the client disconnecting gracefully
-        print("Client disconnected from WebSocket.")
+        logger.info("Client disconnected from WebSocket")
     except Exception as e:
-        # Catch unexpected server-side errors
-        print(f"WebSocket Error: {e}")
+        logger.error(f"WebSocket Error: {e}", exc_info=True)
