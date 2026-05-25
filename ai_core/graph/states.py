@@ -16,8 +16,7 @@ class GraphState(TypedDict):
 
     # Retrieval
     retrieved_docs: list
-    reranked_docs: list
-
+    
     retrieval_error: str | None
 
     # Retry Logic
@@ -34,6 +33,9 @@ class GraphState(TypedDict):
     validation_passed: bool
 
     validation_reason: str | None
+
+    # Visualization
+    chart: Optional[dict]
 
     # Final
     final_answer: Optional[str]

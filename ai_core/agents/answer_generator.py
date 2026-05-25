@@ -1,148 +1,171 @@
 from ai_core.llm.ollama_client import llm
 
+
 def answer_generator(state):
 
-    #Retrieved Context
-    
-    docs = state.get("reranked_docs", [])
+    docs = state.get("retrieved_docs", [])
 
-    tool_output = state.get("tool_output")
+    tool_output = state.get("tool_output", {})
 
     user_query = state.get("user_query", "")
 
-    
-    # CONVERSATION MEMORY
-    messages = state.get("messages",[])
+    messages = state.get("messages", [])[-6:]
+
+    chart = None
 
     context = ""
 
-    
-    # BUILD DOCUMENT CONTEXT
-
-    for index, doc in enumerate(docs):
-
-        doc_text = doc.get("text","")
-
-        context += (f"\n\nDocument {index + 1}:\n {doc_text}")
-
+    # =====================================================
     # TOOL OUTPUT
-    if tool_output:
-        context += (f"\n\nTool Output:\n {tool_output}")
+    # =====================================================
 
+    if isinstance(tool_output, dict):
 
-    # EMPTY CONTEXT FALLBACK
-    
+        tool_type = tool_output.get("type")
+
+        # =========================================
+        # PYTHON RESULT
+        # =========================================
+        if tool_type == "python_result":
+
+            chart = tool_output.get("chart")
+
+            analysis = tool_output.get("analysis", [])
+
+            context += "\n\nPYTHON ANALYSIS:\n"
+
+            context += str(analysis)
+
+        # =========================================
+        # SQL RESULT
+        # =========================================
+        elif tool_type == "sql_result":
+
+            sql_data = tool_output.get("data", [])
+            sql_action = tool_output.get("action", "")
+
+            # Guard: empty SQL results should NOT go to LLM
+            if not sql_data or (isinstance(sql_data, list) and len(sql_data) == 0):
+
+                return {
+                    "final_answer": (
+                        "No matching products were found in the database "
+                        "for your query. Please try a different search "
+                        "term or category."
+                    ),
+                    "chart": None
+                }
+
+            context += "\n\nSQL RESULTS:\n"
+
+            context += str(sql_data)
+
+        # =========================================
+        # GENERIC TOOL OUTPUT
+        # =========================================
+        else:
+
+            context += "\n\nTOOL OUTPUT:\n"
+
+            context += str(tool_output)
+
+    else:
+
+        context += "\n\nTOOL OUTPUT:\n"
+
+        context += str(tool_output)
+
+    # =====================================================
+    # RETRIEVAL FLOW
+    # =====================================================
+
+    for index, doc in enumerate(docs[:3]):
+
+        if not isinstance(doc, dict):
+            continue
+
+        source = doc.get('source', 'unknown')
+        page = doc.get('page', 'N/A')
+
+        context += (
+            f"\n\nDocument {index + 1}"
+            f" [Source: {source}, Page: {page}]"
+            f"\nContent:\n{doc.get('text', '')}"
+        )
+
+    # =====================================================
+    # EMPTY CHECK
+    # =====================================================
+
     if not context.strip():
+
         return {
             "final_answer": (
-                "I could not find enough "
-                "information to answer "
-                "the question accurately."
-            )
+                "The provided documents do not "
+                "contain enough relevant information."
+            ),
+            "chart": None
         }
 
-    
+    # =====================================================
     # SYSTEM PROMPT
-    
+    # =====================================================
+
     system_prompt = """
-    You are a highly accurate AI assistant.
+You are an ecommerce AI assistant.
 
-    Your task is to answer the user's question
-    using ONLY the provided retrieved context.
+Answer ONLY from provided context.
 
-    You may use previous conversation history
-    ONLY for conversational continuity.
+If SQL results exist:
+- summarize products clearly
 
-    RULES:
+If Python analysis exists:
+- explain insights clearly
 
-    1. Do NOT hallucinate.
+If retrieved documents exist:
+- answer based on the document content
+- cite sources by mentioning the document source name and page number
+- format citations as [Source: filename, Page: N] at the end of relevant statements
 
-    2. Do NOT invent facts.
+Do not hallucinate. Do not invent information not present in the context.
+If the context does not contain enough information, say so clearly.
+"""
 
-    3. If information is missing,
-       clearly say:
-       "The provided context does not contain enough information."
-
-    4. Use concise and professional responses.
-
-    5. Prefer factual grounded answers.
-
-    6. If tool output is provided,
-       prioritize it carefully.
-
-    7. Never invent product specifications,
-       prices, ratings, or features.
-
-    8. NEVER answer from your own knowledge
-       if retrieval context is missing.
-    """
-
-    # USER PROMPT
     user_prompt = f"""
-    User Question:
-    {user_query}
+Question:
+{user_query}
 
-    Retrieved Context:
-    {context}
-    """
+Context:
+{context}
+"""
 
+    # =====================================================
+    # LLM CALL
+    # =====================================================
 
-    # LLM INVOCATION
     try:
 
         response = llm.invoke([
-
-            {
-                "role": "system",
-
-                "content": system_prompt
-            },
-
-            
-            # CONVERSATION MEMORY
+            {"role": "system", "content": system_prompt},
             *messages,
-
-            # FINAL TASK
-            {
-                "role": "user",
-
-                "content": user_prompt
-            }
+            {"role": "user", "content": user_prompt}
         ])
 
-        generated_answer = response.content
+        final_answer = response.content
 
     except Exception as error:
 
         return {
-
-            "final_answer": ("An error occurred while generating the answer."),
-            "generation_error": str(error)
+            "final_answer": "Error generating answer.",
+            "chart": chart,
+            "error": str(error)
         }
 
-    # CITATIONS
-    citations = state.get("citations",[])
-
-    citation_text = ""
-
-    if citations:
-        citation_text += "\n\nSources:\n"
-        for citation in citations:
-
-            source = citation.get("source", "unknown")
-
-            page = citation.get("page", 0)
-
-            citation_text += (f"- {source} (Page {page})\n")
-
-    
-    # FINAL ANSWER
-
-    final_answer = (
-        generated_answer + citation_text
-    )
+    # =====================================================
+    # FINAL RETURN
+    # =====================================================
 
     return {
-
-        "final_answer": final_answer
+        "final_answer": final_answer,
+        "chart": chart
     }

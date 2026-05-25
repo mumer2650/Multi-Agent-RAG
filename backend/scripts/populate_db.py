@@ -1,7 +1,7 @@
 import os
 import re
-from app.db.database import SessionLocal
-from app.db.models import Category, Product, ProductSpecification
+from backend.app.db.database import SessionLocal
+from backend.app.db.models import Category, Product, ProductSpecification
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATASET_DIR = os.path.join(PROJECT_ROOT, "dataset")

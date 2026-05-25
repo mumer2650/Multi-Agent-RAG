@@ -1,86 +1,260 @@
-from langchain_core.prompts import ChatPromptTemplate
+import re
 
-from ai_core.llm.ollama_client import llm
+from ai_core.tools.sql_tools import (
+    get_products_by_category,
+    get_product_specifications,
+    get_products_under_price
+)
 
-#from ai_core.tools.sql_tool import execute_sql_query
+from ai_core.tools.analytics_tools import (
+    get_top_rated_products,
+    get_best_energy_products
+)
 
+from ai_core.tools.review_tools import (
+    get_positive_reviews,
+    search_reviews
+)
 
-SQL_SYSTEM_PROMPT = """
-You are an expert SQL generation agent.
+from ai_core.tools.recommendation_tools import (
+    recommend_energy_efficient_products,
+    recommend_inverter_products
+)
 
-Your job:
-1. Convert user question into SQL query
-2. Use only available schema
-3. Never hallucinate columns
-4. Generate safe SELECT-only queries
-5. Never generate DELETE, UPDATE, DROP, ALTER
+from ai_core.tools.energy_tools import (
+    get_energy_efficient_products,
+    get_category_statistics
+)
 
-Schema:
+CATEGORY_MAPPINGS = {
 
-TABLE products:
-- id
-- product_name
-- category
-- brand
-- price
-- description
-- inverter
-- wifi_enabled
-- smart_features
-- rating
-- review_count
-- stock
+    "air conditioner": "air_conditioners",
+    "ac": "air_conditioners",
 
-TABLE air_conditioners:
-- product_id
-- cooling_capacity_btu
-- heating_capacity_btu
-- cooling_power_w
-- heating_power_w
-- eer
-- cop
-- indoor_noise_db
-- outdoor_noise_db
-- refrigerant_type
+    "buds": "buds",
 
-TABLE reviews:
-- id
-- product_id
-- rating
-- review_text
-- sentiment
-- review_date
+    "dishwasher": "dishwashers",
 
-Rules:
-- Return ONLY SQL
-- Use LIMIT where appropriate
-- Use JOINS correctly
-- Use LOWER() for text matching
-"""
+    "dispenser": "dispenser",
 
+    "led": "leds",
+    "tv": "leds",
+    "qled": "leds",
 
-prompt = ChatPromptTemplate.from_messages([
-    ("system", SQL_SYSTEM_PROMPT),
-    ("human", "{query}")
-])
+    "refrigerator": "refrigerators",
+    "fridge": "refrigerators",
 
-
-sql_chain = prompt | llm
-
+    "washing machine": "washing_machines",
+    "washer": "washing_machines"
+}
 
 
 def sql_agent(state):
 
-    user_query = state["user_query"]
+    query = state.get("user_query", "").lower()
 
-    response = sql_chain.invoke({
-        "query": user_query
-    })
+    try:
 
-    sql_query = response.content.strip()
+        # =====================================================
+        # TOP RATED (check BEFORE category to catch "top rated [category]")
+        # =====================================================
 
-    sql_result = execute_sql_query(sql_query)
+        if "top rated" in query:
 
-    return {
-        "tool_output": str(sql_result)
-    }
+            category = None
+
+            for keyword, mapped_category in CATEGORY_MAPPINGS.items():
+
+                if keyword in query:
+                    category = mapped_category
+                    break
+
+            result = get_top_rated_products(category=category)
+
+            return {
+                "tool_output": {
+                    "type": "sql_result",
+                    "action": "top_rated",
+                    "data": result
+                }
+            }
+
+        # =====================================================
+        # SPECIFICATIONS
+        # =====================================================
+
+        if any(x in query for x in ["specification", "specs", "features"]):
+
+            result = get_product_specifications(query)
+
+            return {
+                "tool_output": {
+                    "type": "sql_result",
+                    "action": "specifications",
+                    "data": result
+                }
+            }
+
+        category = None
+
+        for keyword, mapped_category in CATEGORY_MAPPINGS.items():
+
+            if keyword in query:
+                category = mapped_category
+                break
+
+        # =====================================================
+        # CATEGORY + PRICE FILTER
+        # =====================================================
+
+        if category:
+
+            data = get_products_by_category(category)
+
+            # Price filtering
+            if "under" in query:
+
+                numbers = re.findall(r"\d+", query)
+
+                if numbers:
+
+                    max_price = int(numbers[0])
+
+                    filtered = []
+
+                    for item in data:
+
+                        if item.get("price", 0) <= max_price:
+                            filtered.append(item)
+
+                    data = filtered
+
+            return {
+                "tool_output": {
+                    "type": "sql_result",
+                    "action": "product_query",
+                    "data": data
+                }
+            }
+
+        # =====================================================
+        # ENERGY
+        # =====================================================
+
+        if "energy" in query:
+
+            result = get_best_energy_products()
+
+            return {
+                "tool_output": {
+                    "type": "sql_result",
+                    "action": "energy",
+                    "data": result
+                }
+            }
+
+        # =====================================================
+        # REVIEWS
+        # =====================================================
+
+        if "review" in query:
+
+            result = search_reviews(query)
+
+            return {
+                "tool_output": {
+                    "type": "sql_result",
+                    "action": "reviews",
+                    "data": result
+                }
+            }
+
+        # =====================================================
+        # RECOMMENDATIONS
+        # =====================================================
+
+        if "recommend" in query:
+
+            if "inverter" in query:
+                result = recommend_inverter_products()
+
+            else:
+                result = recommend_energy_efficient_products()
+
+            return {
+                "tool_output": {
+                    "type": "sql_result",
+                    "action": "recommendation",
+                    "data": result
+                }
+            }
+
+        # =====================================================
+        # ENERGY EFFICIENCY FILTER
+        # =====================================================
+
+        if "efficient" in query and "under" in query:
+
+            numbers = re.findall(r"\d+", query)
+            max_price = int(numbers[0]) if numbers else None
+
+            category = None
+            for keyword, mapped_category in CATEGORY_MAPPINGS.items():
+                if keyword in query:
+                    category = mapped_category
+                    break
+
+            result = get_energy_efficient_products(
+                min_rating=3.0,
+                max_price=max_price,
+                category=category
+            )
+
+            return {
+                "tool_output": {
+                    "type": "sql_result",
+                    "action": "energy_filter",
+                    "data": result
+                }
+            }
+
+        # =====================================================
+        # CATEGORY STATISTICS
+        # =====================================================
+
+        if any(x in query for x in ["statistics", "average", "total", "distribution", "summary"]):
+
+            category = None
+            for keyword, mapped_category in CATEGORY_MAPPINGS.items():
+                if keyword in query:
+                    category = mapped_category
+                    break
+
+            if category:
+                result = get_category_statistics(category)
+
+                return {
+                    "tool_output": {
+                        "type": "sql_result",
+                        "action": "statistics",
+                        "data": result
+                    }
+                }
+
+        return {
+            "tool_output": {
+                "type": "sql_result",
+                "action": "empty",
+                "data": []
+            }
+        }
+
+    except Exception as error:
+
+        return {
+            "tool_output": {
+                "type": "sql_result",
+                "error": str(error),
+                "data": []
+            }
+        }
