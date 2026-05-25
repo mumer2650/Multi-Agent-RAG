@@ -1,48 +1,91 @@
 from ai_core.llm.ollama_client import llm
+import re
 
-# SUPERVISOR AGENT
 
 def supervisor_agent(state):
-    query = state["user_query"]
+
+    query = state["user_query"].lower()
+
+    # ==========================================
+    # FORCE RULES (MOST IMPORTANT)
+    # ==========================================
+
+    graph_keywords = [
+        "graph",
+        "plot",
+        "chart",
+        "visualize",
+        "comparison",
+        "compare"
+    ]
+
+    math_keywords = [
+        "calculate",
+        "emi",
+        "interest",
+        "formula",
+        "equation",
+        "percentage",
+        "discount math"
+    ]
+
+    sql_keywords = [
+        "list",
+        "show",
+        "display",
+        "top rated",
+        "under",
+        "price",
+        "products",
+        "tv",
+        "air conditioner",
+        "refrigerator",
+        "washing machine",
+        "buds"
+    ]
+
+    # ==========================================
+    # GRAPH QUERIES
+    # MUST GO SQL → PYTHON
+    # ==========================================
+
+    if any(word in query for word in graph_keywords):
+
+        return {
+            "selected_agent": "sql",
+            "tool_required": True
+        }
+
+    # ==========================================
+    # PURE MATH QUERIES
+    # ==========================================
+
+    if any(word in query for word in math_keywords):
+
+        return {
+            "selected_agent": "python",
+            "tool_required": True
+        }
+
+    # ==========================================
+    # SQL QUERIES
+    # ==========================================
+
+    if any(word in query for word in sql_keywords):
+
+        return {
+            "selected_agent": "sql",
+            "tool_required": True
+        }
+
+    # ==========================================
+    # FALLBACK TO LLM
+    # ==========================================
 
     system_prompt = """
-    You are a supervisor agent.
+    You are a routing system.
 
-    Your task is to decide which specialized
-    agent should handle the user's query.
-
-    Available agents:
-
-    1. retrieval
-       Use for:
-       - product information
-       - ecommerce product features
-       - specifications
-       - manuals
-       - FAQs
-       - knowledge retrieval
-       - document question answering
-
-    2. sql
-       Use for:
-       - inventory queries
-       - shipment tracking
-       - order analytics
-       - database operations
-       - structured business data
-
-    3. python
-       Use for:
-       - calculations
-       - mathematical analysis
-       - comparisons
-       - numerical reasoning
-       - data analysis
-
-    IMPORTANT:
-    Return ONLY ONE WORD.
-
-    Allowed outputs:
+    Return ONLY one word:
     retrieval
     sql
     python
@@ -61,41 +104,30 @@ def supervisor_agent(state):
             }
         ])
 
-        selected_agent = (response.content.strip().lower())
+        raw = response.content.lower()
 
-        print("\n========== SUPERVISOR ==========")
-        print("Query:", query)
-        print("Selected Agent:", selected_agent)
-        print("================================\n")
+        match = re.search(
+            r"(retrieval|sql|python)",
+            raw
+        )
 
-        # SAFETY VALIDATION
-
-        allowed_agents = ["retrieval", "sql", "python"]
-
-        if selected_agent not in allowed_agents:
-
-            print("[SUPERVISOR WARNING] Invalid agent returned.")
-
-            selected_agent = "retrieval"
+        selected = (
+            match.group(1)
+            if match
+            else "retrieval"
+        )
 
         return {
-
-            "selected_agent": selected_agent,
+            "selected_agent": selected,
             "tool_required": (
-                selected_agent != "retrieval"
+                selected != "retrieval"
             )
         }
 
     except Exception as error:
-        print(
-            "[SUPERVISOR ERROR]",str(error))
 
-        # SAFE FALLBACK
         return {
-
             "selected_agent": "retrieval",
-
             "tool_required": False,
-
             "error": str(error)
         }

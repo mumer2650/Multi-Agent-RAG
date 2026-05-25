@@ -4,7 +4,7 @@ def route_agent(state):
 
 
 def check_context(state):
-    docs = state.get("reranked_docs",[])
+    docs = state.get("retrieved_docs",[])
 
     attempts = state.get("retrieval_attempts", 0)
 
