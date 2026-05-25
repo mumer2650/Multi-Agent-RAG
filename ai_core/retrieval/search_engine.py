@@ -33,7 +33,7 @@ class LocalFileStore:
 
 # --- THE MASTER PATH FIX ---
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-STORAGE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "backend", "storage"))
+STORAGE_DIR = os.path.abspath(os.path.join(CURRENT_DIR,"..", "backend", "storage"))
 PARENT_STORE_PATH = os.path.join(STORAGE_DIR, "parent_store")
 
 parent_docstore = LocalFileStore(PARENT_STORE_PATH)

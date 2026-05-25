@@ -1,14 +1,28 @@
+from ai_core.retrieval.search_engine import (advanced_search)
+
 def retrieval_agent(state):
 
-    """
-    Placeholder retrieval agent.
+    query = state["user_query"]
 
-    Actual retrieval logic
-    will be added later.
-    """
+    retrieval_attempts = state.get("retrieval_attempts",0)
 
-    retrieved_docs = []
+    try:
 
-    return {
-        "retrieved_docs": retrieved_docs
-    }
+        retrieved_docs = advanced_search(query=query, k=10)
+        
+        print("Retrieved Docs:", len(retrieved_docs))
+
+        return {
+
+            "retrieved_docs": retrieved_docs,
+            "retrieval_attempts":retrieval_attempts + 1
+        }
+
+    except Exception as error:
+
+        return {
+
+            "retrieved_docs": [],
+            "retrieval_error": str(error),
+            "retrieval_attempts": retrieval_attempts + 1
+        }

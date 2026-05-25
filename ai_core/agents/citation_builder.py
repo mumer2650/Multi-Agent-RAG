@@ -1,18 +1,21 @@
 def citation_builder(state):
 
-    docs = state.get("reranked_docs", [])
-
+    reranked_docs = state.get("reranked_docs",[])
     citations = []
+    seen = set()
 
-    for idx, doc in enumerate(docs):
+    for doc in reranked_docs:
+        source = doc.get("source", "unknown")
 
-        citation = {
-            "id": idx + 1,
-            "source": "placeholder_source"
-        }
+        page = doc.get("page", 0)
 
-        citations.append(citation)
+        citation_key = (source, page)
 
-    return {
-        "citations": citations
-    }
+        if citation_key in seen:
+            continue
+
+        seen.add(citation_key)
+
+        citations.append({"source": source, "page": page})
+
+    return {"citations": citations}

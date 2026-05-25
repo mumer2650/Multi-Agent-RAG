@@ -1,8 +1,8 @@
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import (StateGraph,START,END)
 
-from ai_core.graph.states import GraphState
+from ai_core.graph.states import (GraphState)
 
-from ai_core.graph.conditions import (route_agent, check_context, validation_condition)
+from ai_core.graph.conditions import (route_agent,check_context,validation_condition)
 
 from ai_core.agents.supervisor_agent import (supervisor_agent)
 
@@ -22,10 +22,35 @@ from ai_core.agents.citation_builder import (citation_builder)
 
 from ai_core.agents.validator_agent import (validator_agent)
 
-print ("Workflow Started")
+print("Workflow Started")
 
 graph_builder = StateGraph(GraphState)
 
+
+
+# rerank_documents() is NOT a graph node.
+# It expects: query, documents
+# LangGraph nodes always receive: state
+# So we create a wrapper node.
+
+def reranker_node(state):
+
+    query = state["user_query"]
+
+    retrieved_docs = state.get(
+        "retrieved_docs",
+        []
+    )
+
+    reranked_docs = rerank_documents(
+        query=query,
+        documents=retrieved_docs,
+        top_k=5
+    )
+
+    return {
+        "reranked_docs": reranked_docs
+    }
 
 # NODES
 
@@ -37,7 +62,7 @@ graph_builder.add_node("sql_agent", sql_agent)
 
 graph_builder.add_node("python_agent", python_agent)
 
-graph_builder.add_node("reranker", rerank_documents)
+graph_builder.add_node("reranker", reranker_node)
 
 graph_builder.add_node("query_rewriter", query_rewriter)
 
@@ -58,38 +83,53 @@ graph_builder.add_conditional_edges("supervisor", route_agent,
         "retrieval": "retrieval_agent",
         "sql": "sql_agent",
         "python": "python_agent"
-    })
+    }
+)
 
 
-graph_builder.add_edge("retrieval_agent", "reranker") 
+# RETRIEVAL FLOW
 
-graph_builder.add_conditional_edges("reranker",
-    check_context,
+graph_builder.add_edge("retrieval_agent","reranker")
+
+graph_builder.add_conditional_edges("reranker", check_context,
     {
         "rewrite": "query_rewriter",
+
         "fail": END,
+
         "enough": "answer_generator"
     }
 )
 
-graph_builder.add_edge("query_rewriter", "retrieval_agent")
+
+# RETRY LOOP
+
+graph_builder.add_edge("query_rewriter","retrieval_agent")
+
+# SQL + PYTHON FLOW
 
 graph_builder.add_edge("sql_agent", "answer_generator")
 
 graph_builder.add_edge("python_agent", "answer_generator")
 
+
+
+# CITATION FLOW
 graph_builder.add_edge("answer_generator", "citation_builder")
 
-graph_builder.add_edge("citation_builder","validator")
+graph_builder.add_edge("citation_builder", "validator")
 
-graph_builder.add_conditional_edges("validator",
-    validation_condition,
+
+# VALIDATION FLOW
+graph_builder.add_conditional_edges("validator", validation_condition,
     {
         "pass": END,
         "fail": END
     }
 )
 
+# COMPILE GRAPH
 graph = graph_builder.compile()
 
-print ("Workflow Ended")
+
+print("Workflow Ended")

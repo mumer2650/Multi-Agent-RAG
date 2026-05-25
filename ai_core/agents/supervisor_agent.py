@@ -1,66 +1,101 @@
-from typing import Literal
-from pydantic import BaseModel, Field
-
 from ai_core.llm.ollama_client import llm
 
-
-class SupervisorDecision(BaseModel):
-
-    selected_agent: Literal[
-        "retrieval",
-        "sql",
-        "python"
-    ]
-
-    tool_required: bool = Field(
-        description="Whether external tool execution is required"
-    )
-
-supervisor_llm = llm.with_structured_output(SupervisorDecision)
-
+# SUPERVISOR AGENT
 
 def supervisor_agent(state):
-
     query = state["user_query"]
 
     system_prompt = """
     You are a supervisor agent.
 
-    Decide which specialized agent
-    should handle the query.
+    Your task is to decide which specialized
+    agent should handle the user's query.
 
-    Rules:
+    Available agents:
+
     1. retrieval
-       - factual questions
-       - document QA
+       Use for:
+       - product information
+       - ecommerce product features
+       - specifications
+       - manuals
+       - FAQs
        - knowledge retrieval
+       - document question answering
 
     2. sql
-       - databases
-       - logs
-       - structured querying
+       Use for:
+       - inventory queries
+       - shipment tracking
+       - order analytics
+       - database operations
+       - structured business data
 
     3. python
+       Use for:
        - calculations
-       - code execution
-       - analysis
-       - math
+       - mathematical analysis
+       - comparisons
+       - numerical reasoning
+       - data analysis
 
-    Return structured output only.
+    IMPORTANT:
+    Return ONLY ONE WORD.
+
+    Allowed outputs:
+    retrieval
+    sql
+    python
     """
 
-    result = supervisor_llm.invoke([
-        {
-            "role": "system",
-            "content": system_prompt
-        },
-        {
-            "role": "user",
-            "content": query
-        }
-    ])
+    try:
 
-    return {
-        "selected_agent": result.selected_agent,
-        "tool_required": result.tool_required
-    }
+        response = llm.invoke([
+            {
+                "role": "system",
+                "content": system_prompt
+            },
+            {
+                "role": "user",
+                "content": query
+            }
+        ])
+
+        selected_agent = (response.content.strip().lower())
+
+        print("\n========== SUPERVISOR ==========")
+        print("Query:", query)
+        print("Selected Agent:", selected_agent)
+        print("================================\n")
+
+        # SAFETY VALIDATION
+
+        allowed_agents = ["retrieval", "sql", "python"]
+
+        if selected_agent not in allowed_agents:
+
+            print("[SUPERVISOR WARNING] Invalid agent returned.")
+
+            selected_agent = "retrieval"
+
+        return {
+
+            "selected_agent": selected_agent,
+            "tool_required": (
+                selected_agent != "retrieval"
+            )
+        }
+
+    except Exception as error:
+        print(
+            "[SUPERVISOR ERROR]",str(error))
+
+        # SAFE FALLBACK
+        return {
+
+            "selected_agent": "retrieval",
+
+            "tool_required": False,
+
+            "error": str(error)
+        }
