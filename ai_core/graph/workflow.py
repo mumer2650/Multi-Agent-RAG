@@ -48,7 +48,8 @@ graph_builder.add_conditional_edges(
     {
         "retrieval": "retrieval_agent",
         "sql": "sql_agent",
-        "python": "python_agent"
+        "python": "python_agent",
+        "answer": "answer_generator"
     }
 )
 

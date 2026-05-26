@@ -16,7 +16,7 @@ def check_context(state):
 
         if attempts >= max_attempts:
 
-            return "fail"
+            return "enough"
 
         return "rewrite"
 

@@ -64,16 +64,14 @@ def answer_generator(state):
         # GENERIC TOOL OUTPUT
         # =========================================
         else:
-
-            context += "\n\nTOOL OUTPUT:\n"
-
-            context += str(tool_output)
+            if tool_output:
+                context += "\n\nTOOL OUTPUT:\n"
+                context += str(tool_output)
 
     else:
-
-        context += "\n\nTOOL OUTPUT:\n"
-
-        context += str(tool_output)
+        if tool_output:
+            context += "\n\nTOOL OUTPUT:\n"
+            context += str(tool_output)
 
     # =====================================================
     # RETRIEVAL FLOW
@@ -98,14 +96,41 @@ def answer_generator(state):
     # =====================================================
 
     if not context.strip():
+        system_prompt = """
+You are an expert, helpful AI assistant.
+The user has asked a question, but no relevant information was found in the retrieved company documents or internal database.
 
-        return {
-            "final_answer": (
-                "The provided documents do not "
-                "contain enough relevant information."
-            ),
-            "chart": None
-        }
+INSTRUCTIONS:
+1. First, explicitly state that you could not find the answer in the provided documents/database.
+2. Then, if the question pertains to general knowledge (e.g., general programming, history, math, or publicly known facts), attempt to answer it directly to the best of your ability.
+3. If the question is specific to internal company data, proprietary products, or cannot be answered without the specific context that is missing, politely inform the user that you do not have access to that information.
+4. Do NOT hallucinate or invent features, prices, policies, or internal data. When guessing or making general statements, make it clear that you are speaking generally.
+5. IMPORTANT: You must ONLY answer in English, regardless of the language the user's question is written in.
+
+Be extremely careful to clearly separate what is general knowledge from what might be a hallucination about the specific company context. Answer clearly and concisely.
+"""
+        user_prompt = f"Question:\n{user_query}"
+        
+        try:
+            # We already have the original user query in messages, or user_query is the fallback
+            prompt_messages = [{"role": "system", "content": system_prompt}]
+            
+            if messages:
+                prompt_messages.extend(messages)
+            else:
+                prompt_messages.append({"role": "user", "content": f"Question:\n{user_query}"})
+
+            response = llm.invoke(prompt_messages)
+            return {
+                "final_answer": response.content,
+                "chart": None
+            }
+        except Exception as error:
+            return {
+                "final_answer": "Error generating answer.",
+                "chart": None,
+                "error": str(error)
+            }
 
     # =====================================================
     # SYSTEM PROMPT
@@ -129,6 +154,8 @@ If retrieved documents exist:
 
 Do not hallucinate. Do not invent information not present in the context.
 If the context does not contain enough information, say so clearly.
+
+IMPORTANT: You must ONLY answer in English, regardless of the language the user's question is written in.
 """
 
     user_prompt = f"""

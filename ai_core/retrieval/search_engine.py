@@ -54,14 +54,21 @@ def _sparse_bm25_search(query: str, k: int):
     return [item["doc_id"] for item in bm25_results]
 
 @traceable(name="Cross-Encoder Reranker", run_type="chain")
-def _cross_encoder_rerank(query: str, candidate_parents_data: list):
+def _cross_encoder_rerank(query: str, candidate_parents_data: list, threshold: float = -5.0):
     print(f"⚖️  Reranking {len(candidate_parents_data)} candidate parent contexts...")
     cross_inp = [[query, data["text"]] for data in candidate_parents_data]
     rerank_scores = reranker.predict(cross_inp)
     for i, data in enumerate(candidate_parents_data):
         data["score"] = float(rerank_scores[i])
-    candidate_parents_data.sort(key=lambda x: x["score"], reverse=True)
-    return candidate_parents_data[:3]
+    
+    # Filter out highly irrelevant documents based on the score threshold
+    filtered_parents_data = [data for data in candidate_parents_data if data["score"] >= threshold]
+    if not filtered_parents_data:
+        print(f"⚠️ All retrieved contexts dropped. Top score was {max([data['score'] for data in candidate_parents_data], default='None')}")
+        return []
+
+    filtered_parents_data.sort(key=lambda x: x["score"], reverse=True)
+    return filtered_parents_data[:3]
 
 @traceable(name="advanced_search", run_type="retriever")
 def advanced_search(query: str, k: int = 15):

@@ -6,9 +6,12 @@ def query_rewriter(state):
     query = state["user_query"]
 
     system_prompt = """
-    Rewrite the user query
-    to improve retrieval quality.
-    """
+You are a search query optimizer. 
+Your task is to rewrite the user query to improve retrieval quality from a vector database or search engine.
+If the query is conversational or needs context from the chat history, resolve the context.
+If it's already a good search query (e.g., simple keywords, math equations, or short questions), you MUST keep it exactly as is.
+DO NOT answer the query. For example, if the query is "2+2", do not output "4", output "2+2". Return ONLY the rewritten search query and nothing else. No conversational filler, no explanations.
+"""
 
     response = llm.invoke([
         {
