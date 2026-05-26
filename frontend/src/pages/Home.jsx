@@ -89,8 +89,11 @@ export default function Home() {
           const data = JSON.parse(event.data);
           
           if (data.type === 'status') {
-            // Update the agentState variable so the user sees what the AI is doing
             setAgentState(data.content);
+            setMessages((prev) => [
+              ...prev.map(msg => (msg.role === 'step') ? { ...msg, isAnimating: false } : msg),
+              { role: 'step', content: data.content, isAnimating: true }
+            ]);
           } 
           else if (data.type === 'token') {
             // Once tokens start arriving, clear the agent thinking status
@@ -117,12 +120,16 @@ export default function Home() {
           else if (data.type === 'done') {
             // Un-lock the input field for the next query
             setIsStreaming(false);
+            // Stop animations for all steps of this execution
+            setMessages(prev => prev.map(msg => (msg.role === 'step') ? { ...msg, isAnimating: false } : msg));
           }
           else if (data.type === 'error') {
             // Display any backend errors directly in the agent status bar
             console.error("Backend Error:", data.content);
             setAgentState(`Error: ${data.content}`);
             setIsStreaming(false);
+            // Stop animations on error as well
+            setMessages(prev => prev.map(msg => (msg.role === 'step') ? { ...msg, isAnimating: false } : msg));
             ws.close();
           }
         } catch (err) {
@@ -177,7 +184,57 @@ export default function Home() {
               <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 flex flex-col">
                 <div className="max-w-4xl w-full mx-auto space-y-6">
                   {/* Render aggregated messages in a clean, readable text block */}
-                  {messages.map((msg, idx) => (
+                  {messages.map((msg, idx) => {
+                    if (msg.role === 'step') {
+                      const isAnimating = msg.isAnimating !== false;
+                      
+                      return (
+                        <div key={idx} className={`flex relative items-start my-4 ml-8 ${isAnimating ? "" : "opacity-80"}`}>
+                          
+                          {/* Continuous Energy Flow Line */}
+                          <div className={`absolute left-[-20px] top-7 w-[2px] h-[calc(100%+15px)] rounded-full opacity-60 ${isAnimating ? "bg-gradient-to-b from-blue-500 via-purple-500 to-transparent" : "bg-slate-300 dark:bg-slate-700"}`}></div>
+
+                          {/* Animated Processing Node */}
+                          <div className="absolute left-[-25.5px] top-3 flex items-center justify-center">
+                            {isAnimating && <div className="absolute w-5 h-5 rounded-full bg-blue-400/40 animate-ping"></div>}
+                            <div className={`absolute w-3 h-3 rounded-full ${isAnimating ? "bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.8)] animate-pulse" : "bg-slate-400 dark:bg-slate-600"}`}></div>
+                            <div className="w-1.5 h-1.5 rounded-full bg-white relative z-10"></div>
+                          </div>
+
+                          {/* Futuristic Rotating Gradient Bubble */}
+                          <div className="relative overflow-hidden p-[2px] rounded-full shadow-md group">
+                            {/* Animated rotating border */}
+                            {isAnimating ? (
+                              <div className="absolute inset-[-100%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#c084fc_0%,#3b82f6_50%,#2dd4bf_100%)] opacity-80"></div>
+                            ) : (
+                              <div className="absolute inset-x-0 inset-y-0 bg-slate-300 dark:bg-slate-700"></div>
+                            )}
+                            
+                            {/* Bubble Content */}
+                            <div className="relative bg-slate-50 dark:bg-slate-900 rounded-full px-5 py-2 flex items-center gap-3">
+                              {/* Inner spinning gear / reactor */}
+                              <div className="w-4 h-4">
+                                {isAnimating ? (
+                                  <svg className="animate-spin text-blue-500 drop-shadow-[0_0_5px_rgba(59,130,246,0.8)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                  </svg>
+                                ) : (
+                                  <svg className="text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                  </svg>
+                                )}
+                              </div>
+                              <span className={`font-bold text-sm tracking-wide ${isAnimating ? "bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400" : "text-slate-500 dark:text-slate-400"}`}>
+                                {msg.content}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    return (
                     <div 
                       key={idx} 
                       className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -192,7 +249,7 @@ export default function Home() {
                         <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                       </div>
                     </div>
-                  ))}
+                  )})}
                   
                   {/* Anchor element for the auto-scroll hook to target */}
                   <div ref={messagesEndRef} />

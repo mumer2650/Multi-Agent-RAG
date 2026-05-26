@@ -123,7 +123,7 @@ async def run_pipeline(query: str, history: list = None):
                         if node_name and node_name in NODE_LABELS:
                             label = NODE_LABELS[node_name]
                             yield StreamResponse(type="status", content=label)
-
+                            
                             if isinstance(data, dict):
                                 final_state.update(data)
                 except Exception as e:
