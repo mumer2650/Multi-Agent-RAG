@@ -5,6 +5,7 @@ from ai_core.retrieval.vector_store import get_vector_store
 from ai_core.retrieval.keyword_search import keyword_search
 from sentence_transformers import CrossEncoder
 import sqlite3
+from langsmith import traceable
 
 class LocalFileStore:
     """High-Performance SQLite replacement. Writes thousands of chunks in milliseconds."""
@@ -41,6 +42,28 @@ parent_docstore = LocalFileStore(PARENT_STORE_PATH)
 print("Loading Final Judge (Cross-Encoder)...")
 reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
+@traceable(name="Dense Vector Search", run_type="retriever")
+def _dense_vector_search(query: str, k: int):
+    vector_store = get_vector_store()
+    vector_results = vector_store.similarity_search(query, k=k)
+    return [doc.metadata.get("doc_id") for doc in vector_results if doc.metadata.get("doc_id")]
+
+@traceable(name="Sparse BM25 Search", run_type="retriever")
+def _sparse_bm25_search(query: str, k: int):
+    bm25_results = keyword_search(query, k=k)
+    return [item["doc_id"] for item in bm25_results]
+
+@traceable(name="Cross-Encoder Reranker", run_type="chain")
+def _cross_encoder_rerank(query: str, candidate_parents_data: list):
+    print(f"⚖️  Reranking {len(candidate_parents_data)} candidate parent contexts...")
+    cross_inp = [[query, data["text"]] for data in candidate_parents_data]
+    rerank_scores = reranker.predict(cross_inp)
+    for i, data in enumerate(candidate_parents_data):
+        data["score"] = float(rerank_scores[i])
+    candidate_parents_data.sort(key=lambda x: x["score"], reverse=True)
+    return candidate_parents_data[:3]
+
+@traceable(name="advanced_search", run_type="retriever")
 def advanced_search(query: str, k: int = 15):
     """
     1. Hybrid Search (Vector + BM25)
@@ -51,13 +74,10 @@ def advanced_search(query: str, k: int = 15):
     print(f"\n🔍 Executing Advanced Hybrid Search for: '{query}'")
     
     # --- STEP 1: VECTOR SEARCH ---
-    vector_store = get_vector_store()
-    vector_results = vector_store.similarity_search(query, k=k)
-    vector_ids = [doc.metadata.get("doc_id") for doc in vector_results if doc.metadata.get("doc_id")]
+    vector_ids = _dense_vector_search(query, k)
     
     # --- STEP 2: BM25 KEYWORD SEARCH ---
-    bm25_results = keyword_search(query, k=k)
-    bm25_ids = [item["doc_id"] for item in bm25_results]
+    bm25_ids = _sparse_bm25_search(query, k)
 
     # --- STEP 3: RRF (Reciprocal Rank Fusion) ---
     fused_scores = {}
@@ -89,21 +109,7 @@ def advanced_search(query: str, k: int = 15):
         return []
 
     # --- STEP 5: CROSS-ENCODER RERANKING ---
-    print(f"⚖️  Reranking {len(candidate_parents_data)} candidate parent contexts...")
-    
-    # Extract just the text to show the Reranker model
-    cross_inp = [[query, data["text"]] for data in candidate_parents_data]
-    rerank_scores = reranker.predict(cross_inp)
-    
-    # Re-attach the scores to the dictionary format
-    for i, data in enumerate(candidate_parents_data):
-        data["score"] = float(rerank_scores[i])
-        
-    # Sort by the final Cross-Encoder score
-    candidate_parents_data.sort(key=lambda x: x["score"], reverse=True)
-    
-    # Return the exact requested dictionary format (Top 3)
-    return candidate_parents_data[:3]
+    return _cross_encoder_rerank(query, candidate_parents_data)
 
 
 # --- TESTING MODULE ENGINE ---

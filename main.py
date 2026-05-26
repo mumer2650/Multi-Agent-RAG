@@ -1,5 +1,8 @@
 import sys
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from ai_core.graph.workflow import graph
 import matplotlib.pyplot as plt
 
@@ -145,12 +148,17 @@ def run_chat():
         state = create_initial_state(query, conversation_history)
 
         # ==========================================
-        # RUN WORKFLOW
+        # RUN WORKFLOW (With Path Visualization)
         # ==========================================
         try:
-
-            result = graph.invoke(state)
-            state.update(result)
+            print("\n🛣️  Executing Workflow...")
+            
+            # Using stream to visualize the path followed by the graph
+            for event in graph.stream(state):
+                for node_name, node_state in event.items():
+                    print(f"  ➔ [{node_name}] executed")
+                    # Update state with the output from the current node
+                    state.update(node_state)
 
         except Exception as workflow_error:
 

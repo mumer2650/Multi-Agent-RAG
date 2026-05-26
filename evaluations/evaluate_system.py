@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 from langchain_community.chat_models import ChatOllama
 from langchain_community.embeddings import OllamaEmbeddings
 from ragas.llms import LangchainLLMWrapper
+from langsmith import traceable
+from langchain_core.tracers import LangChainTracer
 
 load_dotenv()
 
@@ -34,6 +36,10 @@ if PROJECT_ROOT not in sys.path:
 
 # Import YOUR search engine function
 from ai_core.retrieval.search_engine import advanced_search
+
+@traceable(name="advanced_search", run_type="retriever")
+def traced_advanced_search(query: str, k: int):
+    return advanced_search(query, k=k)
 
 def run_evaluation():
     print("🚀 Starting Automated RAG Evaluation Pipeline (Local Mode)...")
@@ -63,7 +69,7 @@ def run_evaluation():
         ground_truths.append(item["ground_truth"]) 
         
         # Run YOUR engine!
-        search_results = advanced_search(query, k=int(os.getenv("EVAL_TOP_K", "5")))
+        search_results = traced_advanced_search(query, k=int(os.getenv("EVAL_TOP_K", "5")))
         retrieved_texts = [res["text"] for res in search_results]
         
         # Fallback if search fails
@@ -84,6 +90,8 @@ def run_evaluation():
     print("⚖️  Grading Retrieval Accuracy (Context Precision & Recall)...")
     print("⏳ Note: Local evaluation runs on your CPU/RAM, so this may take a minute. No rate limits!")
     
+    tracer = LangChainTracer(project_name=os.getenv("LANGCHAIN_PROJECT", "multi-agent-rag-dev"))
+
     results = evaluate(
         dataset,
         metrics=[context_precision, context_recall],
@@ -91,6 +99,7 @@ def run_evaluation():
         embeddings=grader_embeddings,
         raise_exceptions=False,
         run_config=ragas_run_config,
+        callbacks=[tracer]
     )
 
     # 6. Output the Scorecard
