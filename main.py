@@ -1,5 +1,8 @@
 import sys
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from ai_core.graph.workflow import graph
 import matplotlib.pyplot as plt
 
