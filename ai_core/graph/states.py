@@ -13,6 +13,9 @@ class GraphState(TypedDict):
     # Routing
     selected_agent: Optional[str]
     tool_required: bool
+    competitor_detected: bool
+    off_topic: bool
+    sql_failed_try_retrieval: bool
 
     # Retrieval
     retrieved_docs: list

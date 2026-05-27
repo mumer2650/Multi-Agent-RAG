@@ -74,6 +74,10 @@ graph_builder.add_edge("query_rewriter", "retrieval_agent")
 # 🔥 SQL → SMART ROUTING
 # =========================
 def sql_router(state):
+    # FALLBACK LAYER 3: If SQL failed (e.g. 0 results), route to retrieval
+    if state.get("sql_failed_try_retrieval"):
+        return "retrieval"
+
     query = state.get("user_query", "").lower()
 
     # GRAPH / VISUALIZATION CASE
@@ -86,6 +90,7 @@ graph_builder.add_conditional_edges(
     "sql_agent",
     sql_router,
     {
+        "retrieval": "retrieval_agent",
         "python": "python_agent",
         "answer": "answer_generator"
     }

@@ -6,6 +6,8 @@ from ai_core.tools.db_session import (get_db_session)
 
 
 def get_products_by_category(category_name: str):
+    if not isinstance(category_name, str) or not category_name.strip():
+        raise ValueError("category_name must be a non-empty string.")
 
     db = get_db_session()
 
@@ -39,6 +41,8 @@ def get_products_by_category(category_name: str):
 
 
 def get_product_specifications(model_name: str):
+    if not isinstance(model_name, str) or not model_name.strip():
+        raise ValueError("model_name must be a non-empty string.")
 
     db = get_db_session()
 
@@ -74,6 +78,10 @@ def get_product_specifications(model_name: str):
         db.close()
 
 def get_products_under_price(max_price: int):
+    if not isinstance(max_price, (int, float)):
+        raise ValueError("max_price must be a numeric value.")
+    if max_price < 0:
+        raise ValueError("max_price cannot be negative.")
 
     db = get_db_session()
 

@@ -54,7 +54,7 @@ def _sparse_bm25_search(query: str, k: int):
     return [item["doc_id"] for item in bm25_results]
 
 @traceable(name="Cross-Encoder Reranker", run_type="chain")
-def _cross_encoder_rerank(query: str, candidate_parents_data: list, threshold: float = -5.0):
+def _cross_encoder_rerank(query: str, candidate_parents_data: list, threshold: float = -100.0):
     print(f"⚖️  Reranking {len(candidate_parents_data)} candidate parent contexts...")
     cross_inp = [[query, data["text"]] for data in candidate_parents_data]
     rerank_scores = reranker.predict(cross_inp)
