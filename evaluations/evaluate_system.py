@@ -21,7 +21,7 @@ RAGAS_TIMEOUT_SECONDS = int(os.getenv("RAGAS_TIMEOUT_SECONDS", "600"))
 
 print("🧠 Connecting to Local Ollama Model (Llama 3.2:1B)...")
 base_evaluator = ChatOllama(
-    model="llama3.2:3b",
+    model="llama3.2:1b",
     temperature=0,
     system="You are a strict evaluator. You MUST respond ONLY in valid JSON format. Do not include conversational filler."
 )

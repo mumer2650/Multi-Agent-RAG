@@ -112,19 +112,24 @@ def sql_agent(state):
             data = get_products_by_category(category)
 
             # Price filtering
-            if "under" in query:
-
-                numbers = re.findall(r"\d+", query)
+            price_keywords = ["under", "budget", "below", "max", "maximum", "cheaper"]
+            if any(k in query for k in price_keywords) or re.search(r"\d+", query):
+                
+                # remove typical thousands separators to parse full numbers
+                query_cleaned = query.replace(",", "")
+                numbers = re.findall(r"\d+", query_cleaned)
 
                 if numbers:
-
+                    
+                    # Sort or map properly, here we take the first matched number
+                    # Some inputs might have "100000"
                     max_price = int(numbers[0])
 
                     filtered = []
 
                     for item in data:
-
-                        if item.get("price", 0) <= max_price:
+                        price = item.get("price")
+                        if price is not None and price <= max_price:
                             filtered.append(item)
 
                     data = filtered
@@ -136,6 +141,24 @@ def sql_agent(state):
                     "data": data
                 }
             }
+
+        # =====================================================
+        # PRICE FILTER WITHOUT CATEGORY
+        # =====================================================
+        price_keywords = ["under", "budget", "below", "max", "maximum", "cheaper"]
+        if any(k in query for k in price_keywords) and re.search(r"\d+", query):
+            query_cleaned = query.replace(",", "")
+            numbers = re.findall(r"\d+", query_cleaned)
+            if numbers:
+                max_price = int(numbers[0])
+                data = get_products_under_price(max_price)
+                return {
+                    "tool_output": {
+                        "type": "sql_result",
+                        "action": "price_query",
+                        "data": data
+                    }
+                }
 
         # =====================================================
         # ENERGY
@@ -159,7 +182,10 @@ def sql_agent(state):
 
         if "review" in query:
 
-            result = search_reviews(query)
+            if "positive" in query or "good" in query or "best" in query:
+                result = get_positive_reviews()
+            else:
+                result = search_reviews(query)
 
             return {
                 "tool_output": {
@@ -195,7 +221,8 @@ def sql_agent(state):
 
         if "efficient" in query and "under" in query:
 
-            numbers = re.findall(r"\d+", query)
+            query_cleaned = query.replace(",", "")
+            numbers = re.findall(r"\d+", query_cleaned)
             max_price = int(numbers[0]) if numbers else None
 
             category = None
