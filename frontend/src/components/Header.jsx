@@ -69,9 +69,10 @@ export default function Header({ currentView, onViewChange }) {
   };
 
   return (
-    <header className="flex justify-between items-center p-6 bg-transparent transition-colors duration-300 relative z-10 w-full max-w-7xl mx-auto">
+    <header className="sticky top-0 w-full z-50 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-gray-200 dark:border-gray-800 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center w-full">
       {/* App Title */}
-      <div className="font-extrabold text-3xl tracking-tight text-slate-900 dark:text-white select-none cursor-pointer">
+      <div className="font-extrabold text-3xl tracking-tight bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent select-none cursor-pointer">
         SAGE
       </div>
       
@@ -115,6 +116,7 @@ export default function Header({ currentView, onViewChange }) {
             <Moon className="w-5 h-5" />
           )}
         </button>
+      </div>
       </div>
     </header>
   );

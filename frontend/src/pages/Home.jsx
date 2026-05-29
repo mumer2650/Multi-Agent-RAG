@@ -170,7 +170,7 @@ export default function Home() {
     // Layout Lock: We use 'h-screen overflow-hidden' instead of 'min-h-screen'.
     // This strictly confines the app to the exact viewport height, preventing the 
     // global page from scrolling and ensuring the search bar remains locked to the bottom.
-    <div className="h-screen overflow-hidden flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-300 text-slate-900 dark:text-slate-100 font-sans">
+    <div className="h-screen overflow-hidden flex flex-col bg-gray-50 text-gray-900 dark:bg-slate-900 dark:text-gray-100 transition-colors duration-300 font-sans">
       <Header currentView={currentView} onViewChange={setCurrentView} />
       
       <main className="flex-1 flex flex-col relative w-full h-[calc(100vh-88px)]">
