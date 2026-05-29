@@ -54,7 +54,7 @@ export default function SearchBar({ isActive, onSearch, isStreaming }) {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent mb-4 tracking-tight">
             How can I help you today?
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-lg max-w-2xl">
+          <p className="text-slate-500 dark:text-slate-300 text-lg max-w-2xl">
             SAGE is your expert assistant for appliance specifications, spatial clearances, and energy calculations.
           </p>
         </div>
@@ -63,13 +63,13 @@ export default function SearchBar({ isActive, onSearch, isStreaming }) {
       {/* The Search Form Container */}
       <form 
         onSubmit={handleSearchSubmit}
-        className={`relative flex items-center w-full rounded-[2rem] bg-white dark:bg-slate-800 transition-all duration-500
+        className={`relative flex items-center w-full rounded-[2rem] bg-white dark:bg-slate-800 transition-all duration-500 group
           ${isActive 
             ? 'border border-slate-300 dark:border-slate-600 shadow-sm' 
             : 'border border-transparent animate-glow'
           }`}
       >
-        <Search className="absolute left-6 w-6 h-6 text-slate-400 dark:text-slate-500 pointer-events-none" />
+        <Search className="absolute left-6 w-6 h-6 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors pointer-events-none" />
         
         <input
           type="text"

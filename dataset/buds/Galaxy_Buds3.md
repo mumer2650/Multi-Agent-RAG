@@ -1,6 +1,6 @@
 # Galaxy Buds3
 
-**Price:** ₨. 56,699.00 (Buy now and save up to 30% off on Buds 3)
+**Price:** Rs. 56,699.00
 
 ### Features
 

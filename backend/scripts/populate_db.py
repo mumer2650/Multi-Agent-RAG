@@ -1,7 +1,7 @@
 import os
 import re
-from backend.app.db.database import SessionLocal
-from backend.app.db.models import Category, Product, ProductSpecification
+from backend.app.db.database import SessionLocal, engine
+from backend.app.db.models import Category, Product, ProductSpecification, Review, Base
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATASET_DIR = os.path.join(PROJECT_ROOT, "dataset")
@@ -9,55 +9,71 @@ DATASET_DIR = os.path.join(PROJECT_ROOT, "dataset")
 def parse_markdown(md_content):
     """Parses strictly formatted Markdown into a dictionary for the database."""
     
-    # 1. Model Name: Grabs whatever is on the first line after "# "
+    # 1. Model Name
     model_name_match = re.search(r'^#\s+(.+)', md_content, re.MULTILINE)
     model_name = model_name_match.group(1).strip() if model_name_match else "Unknown Model"
 
-    # 2. Price: Looks for "**Price:** Rs. " and grabs the numbers
+    # 2. Price
     price = None
     price_match = re.search(r'\*\*Price:\*\*\s*Rs\.\s*([\d,]+)', md_content)
     if price_match:
         price = int(price_match.group(1).replace(',', ''))
 
-    # 3. Inverter Status: Simple keyword check anywhere in the text
+    # 3. Inverter Status
     has_inverter = bool(re.search(r'inverter', md_content, re.IGNORECASE))
 
-    # 4. Features Text: Grabs everything between "### Features" and "### Specifications"
+    # 4. Features Text
     features_text = ""
     features_match = re.search(r'### Features\n+(.*?)(?=### Specifications|### Reviews|$)', md_content, re.DOTALL)
     if features_match:
         features_text = features_match.group(1).strip()
 
-    # 5. Specifications: Finds the section, then extracts all "* **Key:** Value" pairs
+    # 5. Specifications
     specs = []
     specs_section = re.search(r'### Specifications\n+(.*?)(?=### Reviews|$)', md_content, re.DOTALL)
     if specs_section:
-        spec_lines = re.findall(r'\*\s*\*\*(.*?):\*\*\s*(.*)', specs_section.group(1))
+        # UPDATED: Matches both '*' and '-' bullets
+        spec_lines = re.findall(r'[-*]\s*\*\*(.*?):\*\*\s*(.*)', specs_section.group(1))
         for key, value in spec_lines:
             specs.append({"spec_name": key.strip(), "spec_value": value.strip()})
+
+    # 6. Reviews (NEW)
+    reviews = []
+    reviews_section = re.search(r'### Reviews\n+(.*)', md_content, re.DOTALL)
+    if reviews_section:
+        # This regex looks for: "Number. Review Text (X stars"
+        review_lines = re.findall(r'\d+\.\s*(.*?)\s*\((\d)\s*stars?,', reviews_section.group(1))
+        for text, rating in review_lines:
+            reviews.append({
+                "rating": int(rating),
+                "review_text": text.strip()
+            })
 
     return {
         "model_name": model_name,
         "price": price,
         "has_inverter": has_inverter,
         "features_text": features_text,
-        "specs": specs
+        "specs": specs,
+        "reviews": reviews
     }
 
 def populate_database():
     print("Starting Markdown Database Ingestion...\n" + "="*40)
+    
+    # CREATE TABLES IF THEY DON'T EXIST
+    Base.metadata.create_all(bind=engine)
+    
     db = SessionLocal()
 
     for category_name in os.listdir(DATASET_DIR):
         category_path = os.path.join(DATASET_DIR, category_name)
 
-        # Skip files, evaluations folder, etc.
         if not os.path.isdir(category_path) or category_name == "evaluations":
             continue
 
         print(f"\n📂 CATEGORY: {category_name}")
 
-        # Ensure category exists in DB
         category = db.query(Category).filter_by(category_name=category_name).first()
         if not category:
             category = Category(category_name=category_name)
@@ -65,7 +81,6 @@ def populate_database():
             db.commit()
             db.refresh(category)
 
-        # Process only .md files
         for filename in os.listdir(category_path):
             if not filename.endswith(".md"):
                 continue
@@ -76,10 +91,9 @@ def populate_database():
                 with open(md_path, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
-                # Parse the Markdown
                 data = parse_markdown(content)
                 
-                # Insert the Main Product
+                # Insert Product
                 new_product = Product(
                     category_id=category.id,
                     model_name=data['model_name'],
@@ -91,7 +105,7 @@ def populate_database():
                 db.commit()
                 db.refresh(new_product)
 
-                # Insert the Specifications mapping to the new product ID
+                # Insert Specs
                 for spec in data['specs']:
                     new_spec = ProductSpecification(
                         product_id=new_product.id,
@@ -99,9 +113,20 @@ def populate_database():
                         spec_value=spec['spec_value']
                     )
                     db.add(new_spec)
+                
+                # Insert Reviews (NEW)
+                for rev in data['reviews']:
+                    new_review = Review(
+                        product_id=new_product.id,
+                        rating=rev['rating'],
+                        review_text=rev['review_text'],
+                        # Sentiment is left blank for now; you can use NLP on it later!
+                    )
+                    db.add(new_review)
+
                 db.commit()
 
-                print(f"  ✅ SAVED: {data['model_name']} (Rs. {data['price']} | {len(data['specs'])} specs)")
+                print(f"  ✅ SAVED: {data['model_name']} (Rs. {data['price']} | {len(data['specs'])} specs | {len(data['reviews'])} reviews)")
                 
             except Exception as e:
                 print(f"  ❌ ERROR processing {filename}: {e}")
