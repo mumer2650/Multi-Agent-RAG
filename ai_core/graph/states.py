@@ -19,22 +19,26 @@ class GraphState(TypedDict):
 
     # Retrieval
     retrieved_docs: list
-    
     retrieval_error: str | None
 
-    # Retry Logic
+    # Retry Logic (Retrieval)
     retrieval_attempts: int
     max_retrieval_attempts: int
 
+    # Retry Logic (SQL) - NEW FIELDS
+    sql_attempts: int
+    max_sql_attempts: int
+    last_sql_error: str | None
+    generated_sql: str | None
+
     # Tool Outputs
-    tool_output: Optional[str]
+    tool_output: Optional[dict]  # Changed to dict since we output {"type": "sql_result", "action": "...", "data": []}
 
     # Citations
     citations: list
 
     # Validation
     validation_passed: bool
-
     validation_reason: str | None
 
     # Visualization
