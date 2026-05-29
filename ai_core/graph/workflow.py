@@ -10,7 +10,6 @@ from ai_core.graph.conditions import (
 from ai_core.agents.supervisor_agent import supervisor_agent
 from ai_core.agents.retrieval_agent import retrieval_agent
 from ai_core.agents.sql_agent import sql_agent
-from ai_core.agents.python_agent import python_agent
 from ai_core.retrieval.query_rewriter import query_rewriter
 from ai_core.agents.answer_generator import answer_generator
 from ai_core.agents.citation_builder import citation_builder
@@ -21,23 +20,20 @@ print("Workflow Started")
 graph_builder = StateGraph(GraphState)
 
 # =========================
-# NODES
+# NODES (Python agent removed)
 # =========================
 graph_builder.add_node("supervisor", supervisor_agent)
 graph_builder.add_node("retrieval_agent", retrieval_agent)
 graph_builder.add_node("sql_agent", sql_agent)
-graph_builder.add_node("python_agent", python_agent)
 graph_builder.add_node("query_rewriter", query_rewriter)
 graph_builder.add_node("answer_generator", answer_generator)
 graph_builder.add_node("citation_builder", citation_builder)
 graph_builder.add_node("validator", validator_agent)
 
-
 # =========================
 # ENTRY
 # =========================
 graph_builder.add_edge(START, "supervisor")
-
 
 # =========================
 # SUPERVISOR ROUTING
@@ -48,11 +44,9 @@ graph_builder.add_conditional_edges(
     {
         "retrieval": "retrieval_agent",
         "sql": "sql_agent",
-        "python": "python_agent",
         "answer": "answer_generator"
     }
 )
-
 
 # =========================
 # RETRIEVAL FLOW
@@ -69,39 +63,41 @@ graph_builder.add_conditional_edges(
 
 graph_builder.add_edge("query_rewriter", "retrieval_agent")
 
-
 # =========================
-# 🔥 SQL → SMART ROUTING
+# 🔥 SQL → SMART ROUTING & RETRY LOOP
 # =========================
 def sql_router(state):
-    # FALLBACK LAYER 3: If SQL failed (e.g. 0 results), route to retrieval
-    if state.get("sql_failed_try_retrieval"):
+    attempts = state.get("sql_attempts", 0)
+    max_attempts = state.get("max_sql_attempts", 3)
+    last_error = state.get("last_sql_error")
+    tool_output = state.get("tool_output") or {}
+
+    # SCENARIO 1: SQL Syntax Error -> Trigger Retry Loop
+    if last_error:
+        if attempts < max_attempts:
+            print(f"🔄 Retrying SQL generation (Attempt {attempts + 1} of {max_attempts})...")
+            return "retry_sql"
+        else:
+            print("⚠️ Max SQL retries reached. Falling back to Retrieval Agent...")
+            return "retrieval"
+
+    # SCENARIO 2: Valid SQL, but 0 products found -> Fallback to Retrieval
+    if isinstance(tool_output, dict) and tool_output.get("action") == "empty":
+        print("⚠️ SQL executed successfully but returned 0 results. Falling back to Retrieval Agent...")
         return "retrieval"
 
-    query = state.get("user_query", "").lower()
-
-    # GRAPH / VISUALIZATION CASE
-    if any(word in query for word in ["graph", "plot", "chart", "visualize", "compare"]):
-        return "python"
-
+    # SCENARIO 3: Valid SQL and Data Found -> Move to Answer Generator
     return "answer"
 
 graph_builder.add_conditional_edges(
     "sql_agent",
     sql_router,
     {
-        "retrieval": "retrieval_agent",
-        "python": "python_agent",
+        "retry_sql": "sql_agent",        # Loops back to itself!
+        "retrieval": "retrieval_agent",  # The Safety Net fallback
         "answer": "answer_generator"
     }
 )
-
-
-# =========================
-# PYTHON FLOW
-# =========================
-graph_builder.add_edge("python_agent", "answer_generator")
-
 
 # =========================
 # FINAL PIPELINE
@@ -117,7 +113,6 @@ graph_builder.add_conditional_edges(
         "fail": END
     }
 )
-
 
 # =========================
 # COMPILE

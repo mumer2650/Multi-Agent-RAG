@@ -56,10 +56,17 @@ def create_initial_state(query: str, history: list = None):
         "user_query":             query,
         "selected_agent":         None,
         "tool_required":          False,
+        
         "retrieved_docs":         [],
         "retrieval_error":        None,
         "retrieval_attempts":     0,
         "max_retrieval_attempts": 3,
+        
+        "sql_attempts":           0,
+        "max_sql_attempts":       3,
+        "last_sql_error":         None,
+        "generated_sql":          None,
+        
         "tool_output":            None,
         "chart":                  None,
         "citations":              [],
