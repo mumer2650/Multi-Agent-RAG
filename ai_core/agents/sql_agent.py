@@ -28,7 +28,7 @@ from ai_core.tools.energy_tools import (
 
 CATEGORY_MAPPINGS = {
 
-    "air conditioner": "air_conditioners",
+    "air_conditioner": "air_conditioners",
     "ac": "air_conditioners",
 
     "buds": "buds",
@@ -37,14 +37,14 @@ CATEGORY_MAPPINGS = {
 
     "dispenser": "dispenser",
 
-    "led": "leds",
+    "leds": "leds",
     "tv": "leds",
     "qled": "leds",
 
     "refrigerator": "refrigerators",
     "fridge": "refrigerators",
 
-    "washing machine": "washing_machines",
+    "washing_machine": "washing_machines",
     "washer": "washing_machines"
 }
 
@@ -52,6 +52,7 @@ CATEGORY_MAPPINGS = {
 def sql_agent(state):
 
     query = state.get("user_query", "").lower()
+    category = state.get("extracted_category")
 
     try:
 

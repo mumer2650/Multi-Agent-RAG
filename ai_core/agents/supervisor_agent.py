@@ -20,6 +20,9 @@ class IntentClassification(BaseModel):
         description="Must be 'sql', 'retrieval', or 'answer'"
     )
     confidence: int = Field(description="Confidence integer from 1 to 10")
+    category: Literal["air_conditioners", "leds", "refrigerators", "washing_machines", "dispenser", "buds", "dishwasher","unknown"] = Field(
+        description="The product category the user is asking about."
+    )
 
 # Initialize Local Embeddings for semantic guardrail
 embeddings = OllamaEmbeddings(model="nomic-embed-text")
@@ -58,7 +61,7 @@ def supervisor_agent(state):
         }
 
     # 1B. Semantic Guardrail (Local check if query is completely off-topic)
-    core_domain = "home appliances, electronics, refrigerators, washing machines, tvs, air conditioners, fixing appliances, warranties, troubleshooting"
+    core_domain = "home appliances, electronics, refrigerators, washing machines, tvs, dishwashers,air conditioners, fixing appliances, warranties, troubleshooting"
     try:
         query_vec = embeddings.embed_query(query)
         domain_vec = embeddings.embed_query(core_domain)
@@ -80,7 +83,7 @@ def supervisor_agent(state):
     # LAYER 2: INTENT CLASSIFICATION (Powered by Gemini)
     # ==========================================
     system_prompt = """
-    You are the intelligent routing system for Sage Appliances, an electronics ecommerce company.
+    You are the intelligent routing system for Samsung Appliances, an electronics ecommerce company.
     Analyze the user's query and categorize it into EXACTLY ONE of these intents:
 
     1. "sql": For product recommendations, prices, budgets, specifications, reviews, energy efficiency, and availability.
@@ -101,6 +104,8 @@ def supervisor_agent(state):
         
         intent = result.intent
         confidence = result.confidence
+        category = result.category
+        
         print(f"🧠 Supervisor (Gemini) categorized intent as: {intent} (Confidence: {confidence}/10)")
         
         if intent == "sql":
@@ -118,6 +123,7 @@ def supervisor_agent(state):
         return {
             "selected_agent": selected,
             "tool_required": tool_required,
+            "extracted_category": result.category,
             "competitor_detected": False,
             "off_topic": False
         }
@@ -128,6 +134,7 @@ def supervisor_agent(state):
         return {
             "selected_agent": "retrieval",
             "tool_required": False,
+            "extracted_category": result.category,
             "competitor_detected": False,
             "off_topic": False
         }
