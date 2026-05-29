@@ -37,8 +37,13 @@ NOTE ON JOINS: To search for products by category (like 'air_conditioners'), you
 # Path to your database
 #DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "sage_appliances.db")
 
-DB_PATH = r"D:\Study\4_Forth Semester\AI\project\MultiAgent_RAG\backend\storage\sqlite\sage_appliances.db"
-
+DB_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 
+    "backend", 
+    "storage", 
+    "sqlite", 
+    "sage_appliances.db"
+)
 
 def sql_agent(state):
     query = state.get("user_query", "")
