@@ -58,7 +58,7 @@ yarn-error.log*
 # 4. Environment Variables & Secrets
 # =========================
 # NEVER commit your actual .env files
-.env
+#.env
 .env.local
 .env.development.local
 .env.test.local
