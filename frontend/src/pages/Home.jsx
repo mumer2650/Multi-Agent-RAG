@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import AdminDashboard from '../components/AdminDashboard';
+import CitationBlock from '../components/CitationBlock';
 
 /**
  * Home Component (ChatLayout)
@@ -116,12 +117,31 @@ export default function Home() {
               }
               return newMessages;
             });
-          } 
+          }
           else if (data.type === 'done') {
             // Un-lock the input field for the next query
             setIsStreaming(false);
             // Stop animations for all steps of this execution
             setMessages(prev => prev.map(msg => (msg.role === 'step') ? { ...msg, isAnimating: false } : msg));
+          }
+          else if (data.type === 'citations') {
+            // Attach citations to the most recent AI message
+            try {
+              const citations = JSON.parse(data.content);
+              setMessages((prev) => {
+                const newMessages = [...prev];
+                // Find the last AI message and attach citations to it
+                for (let i = newMessages.length - 1; i >= 0; i--) {
+                  if (newMessages[i].role === 'ai') {
+                    newMessages[i] = { ...newMessages[i], citations };
+                    break;
+                  }
+                }
+                return newMessages;
+              });
+            } catch (err) {
+              console.error("Failed to parse citations:", err);
+            }
           }
           else if (data.type === 'error') {
             // Display any backend errors directly in the agent status bar
@@ -235,19 +255,24 @@ export default function Home() {
                     }
                     
                     return (
-                    <div 
-                      key={idx} 
-                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    <div
+                      key={idx}
+                      className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                     >
-                      <div 
+                      <div
                         className={`max-w-[85%] sm:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg ${
-                          msg.role === 'user' 
-                            ? 'bg-blue-600 text-white rounded-br-sm' 
+                          msg.role === 'user'
+                            ? 'bg-blue-600 text-white rounded-br-sm'
                             : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm'
                         }`}
                       >
                         <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                       </div>
+                      {msg.role === 'ai' && msg.citations && (
+                        <div className="mt-3 w-full">
+                          <CitationBlock citations={msg.citations} />
+                        </div>
+                      )}
                     </div>
                   )})}
                   

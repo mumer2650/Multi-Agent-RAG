@@ -1,52 +1,188 @@
 from ai_core.llm.ollama_client import llm
 
+# ── Formatting helpers ─────────────────────────────────────────────────────────
+
+# Internal DB fields that should never appear in user-facing output
+_SKIP_FIELDS  = {'id', 'product_id', 'category_id', 'embedding_id'}
+# Fields whose values are monetary (get Rs prefix + comma formatting)
+_MONEY_FIELDS = {'price', 'original_price', 'sale_price'}
+
+
+def _fmt_value(key: str, val) -> str:
+    """Render a single key-value pair as a human-readable string."""
+    label = key.replace('_', ' ').title()
+    if key in _MONEY_FIELDS and isinstance(val, (int, float)):
+        return f"{label}: Rs {int(val):,}"
+    if isinstance(val, float):
+        return f"{label}: {val:.2f}"
+    return f"{label}: {val}"
+
+
+def _render_sql_rows(sql_data: list, action: str) -> str:
+    """
+    Build the final answer string from SQL rows.
+
+    Replaces the old hardcoded formatter that only showed model_name + price
+    and ignored all other columns (causing missing average_rating, count, etc.)
+
+    Handles three patterns:
+
+    Pattern 1 — Pure aggregate (single summary row, no GROUP BY):
+      e.g. {'model_name': 'Samsung ACs with Wi-Fi', 'count': 3}
+      → "Samsung ACs with Wi-Fi: 3"
+
+    Pattern 2 — Category-level grouped rows:
+      e.g. {'model_name': 'dishwashers', 'average_rating': 4.67}
+      → "• dishwashers — Average Rating: 4.67"
+
+    Pattern 3 — Normal per-product rows:
+      e.g. {'model_name': 'Galaxy Buds FE', 'price': 25999}
+      → "• Galaxy Buds FE — Price: Rs 25,999"
+    """
+    if not sql_data:
+        return ""
+
+    # ── Pattern 1: single aggregate row ───────────────────────────────────────
+    if action == "aggregate" and len(sql_data) == 1:
+        row   = sql_data[0]
+        label = row.get('model_name', 'Result')
+        extras = {
+            k: v for k, v in row.items()
+            if k != 'model_name' and k not in _SKIP_FIELDS and v is not None
+        }
+        if not extras:
+            return label
+
+        parts = []
+        for key, val in extras.items():
+            if key == 'count' and isinstance(val, (int, float)):
+                # "Samsung ACs with Wi-Fi: 3"  (just the number, no label clutter)
+                parts.append(str(int(val)))
+            elif isinstance(val, float):
+                parts.append(f"{val:.2f}")
+            else:
+                parts.append(str(val))
+
+        return f"{label}: {', '.join(parts)}"
+
+    # ── Patterns 2 & 3: multi-row results ─────────────────────────────────────
+    rows_out = []
+    for row in sql_data:
+        model_name = row.get('model_name', 'Result')
+        extras = {
+            k: v for k, v in row.items()
+            if k != 'model_name' and k not in _SKIP_FIELDS and v is not None
+        }
+        if extras:
+            detail = ', '.join(_fmt_value(k, v) for k, v in extras.items())
+            rows_out.append(f"• {model_name} — {detail}")
+        else:
+            rows_out.append(f"• {model_name}")
+
+    n = len(sql_data)
+    # Use a product-specific header if any row has a price, otherwise generic
+    has_price = any('price' in row for row in sql_data)
+    if has_price:
+        header = f"Found {n} product{'s' if n != 1 else ''} matching your criteria:"
+    else:
+        header = f"Here are the results ({n} {'entry' if n == 1 else 'entries'}):"
+
+    return header + "\n\n" + "\n".join(rows_out)
+
+
+# ── Legacy large-result summariser (unchanged) ─────────────────────────────────
+
+def _summarize_sql_results(sql_data: list) -> str:
+    if not sql_data:
+        return ""
+
+    num_rows = len(sql_data)
+
+    if num_rows >= 100:
+        prices  = [r.get('price')  for r in sql_data if isinstance(r.get('price'),  (int, float))]
+        ratings = [r.get('rating') for r in sql_data if isinstance(r.get('rating'), (int, float))]
+
+        summary = f"Found {num_rows} products matching your criteria.\n\n"
+        if prices:
+            summary += f"Price Range: Rs {min(prices):,} - Rs {max(prices):,}\n"
+            summary += f"Average Price: Rs {sum(prices)/len(prices):,.0f}\n"
+        if ratings:
+            summary += f"Rating Range: {min(ratings):.1f} - {max(ratings):.1f}/5\n"
+            summary += f"Average Rating: {sum(ratings)/len(ratings):.1f}/5\n"
+        summary += "\nTop 10 products:\n"
+        key_fields = ['model_name', 'price', 'rating', 'id', 'category_name']
+        for row in sql_data[:10]:
+            summary += f"• { {k: v for k, v in row.items() if k in key_fields} }\n"
+        if num_rows > 10:
+            summary += f"\n... and {num_rows - 10} more products available\n"
+        return summary
+
+    elif num_rows > 20:
+        summary = f"Found {num_rows} products. Showing key details:\n\n"
+        for row in sql_data:
+            summary += "• "
+            for key in ['model_name', 'price', 'rating', 'has_inverter']:
+                if key in row:
+                    summary += f"{key}: {row[key]}, "
+            summary = summary.rstrip(", ") + "\n"
+        return summary
+
+    else:
+        summary = f"Found {num_rows} products:\n\n"
+        for row in sql_data:
+            summary += "• "
+            for key in ['model_name', 'price', 'rating', 'has_inverter', 'energy_rating']:
+                if key in row:
+                    summary += f"{key}: {row[key]}, "
+            summary = summary.rstrip(", ") + "\n"
+        return summary
+
+
+def _format_sql_results(sql_data: list, fields=None) -> str:
+    if not sql_data:
+        return ""
+    if fields is None:
+        fields = ['model_name', 'price', 'rating', 'has_inverter', 'energy_rating']
+    lines = []
+    for row in sql_data:
+        parts = [str(row[k]) for k in fields if k in row]
+        lines.append("• " + ", ".join(parts) if parts else f"• {row}")
+    return "\n".join(lines)
+
+
+# ── Main node ──────────────────────────────────────────────────────────────────
 
 def answer_generator(state):
 
-    docs = state.get("retrieved_docs", [])
-
+    docs        = state.get("retrieved_docs", [])
     tool_output = state.get("tool_output", {})
+    user_query  = state.get("user_query", "")
+    messages    = state.get("messages", [])[-6:]
+    chart       = None
+    context     = ""
 
-    user_query = state.get("user_query", "")
+    if tool_output and tool_output.get("type") == "sql_result":
+        print(f"[DEBUG] answer_generator received SQL results: "
+              f"{len(tool_output.get('data', []))} rows")
 
-    messages = state.get("messages", [])[-6:]
-
-    chart = None
-
-    context = ""
-
-    # =====================================================
-    # TOOL OUTPUT
-    # =====================================================
+    # ── Tool output ────────────────────────────────────────────────────────────
 
     if isinstance(tool_output, dict):
-
         tool_type = tool_output.get("type")
 
-        # =========================================
-        # PYTHON RESULT
-        # =========================================
+        # ── Python result ──────────────────────────────────────────────────────
         if tool_type == "python_result":
-
-            chart = tool_output.get("chart")
-
+            chart    = tool_output.get("chart")
             analysis = tool_output.get("analysis", [])
+            context += "\n\nPYTHON ANALYSIS:\n" + str(analysis)
 
-            context += "\n\nPYTHON ANALYSIS:\n"
-
-            context += str(analysis)
-
-        # =========================================
-        # SQL RESULT
-        # =========================================
+        # ── SQL result ─────────────────────────────────────────────────────────
         elif tool_type == "sql_result":
+            sql_data   = tool_output.get("data", [])
+            sql_action = tool_output.get("action", "data_found")
 
-            sql_data = tool_output.get("data", [])
-            sql_action = tool_output.get("action", "")
-
-            # Guard: empty SQL results should NOT go to LLM
-            if not sql_data or (isinstance(sql_data, list) and len(sql_data) == 0):
-
+            # Empty result — exit early
+            if not sql_data:
                 return {
                     "final_answer": (
                         "No matching products were found in the database "
@@ -56,44 +192,43 @@ def answer_generator(state):
                     "chart": None
                 }
 
-            context += "\n\nSQL RESULTS:\n"
+            # ── Small result sets (≤ 20 rows): render directly, skip the LLM ──
+            # OLD code only showed model_name + price → fixed by _render_sql_rows
+            if len(sql_data) <= 20:
+                return {
+                    "final_answer": _render_sql_rows(sql_data, sql_action),
+                    "chart": None
+                }
 
-            context += str(sql_data)
+            # Large result sets: summarise and pass to LLM
+            context += "\n\nSQL RESULTS:\n" + _summarize_sql_results(sql_data)
 
-        # =========================================
-        # GENERIC TOOL OUTPUT
-        # =========================================
+        # ── Generic tool output ────────────────────────────────────────────────
         else:
             if tool_output:
-                context += "\n\nTOOL OUTPUT:\n"
-                context += str(tool_output)
+                context += "\n\nTOOL OUTPUT:\n" + str(tool_output)
 
     else:
         if tool_output:
-            context += "\n\nTOOL OUTPUT:\n"
-            context += str(tool_output)
+            context += "\n\nTOOL OUTPUT:\n" + str(tool_output)
 
-    # =====================================================
-    # RETRIEVAL FLOW
-    # =====================================================
+    # ── Retrieval docs ─────────────────────────────────────────────────────────
 
     for index, doc in enumerate(docs[:3]):
-
         if not isinstance(doc, dict):
             continue
-
         source = doc.get('source', 'unknown')
-        page = doc.get('page', 'N/A')
-
+        page   = doc.get('page', 'N/A')
         context += (
             f"\n\nDocument {index + 1}"
             f" [Source: {source}, Page: {page}]"
             f"\nContent:\n{doc.get('text', '')}"
         )
 
-    # =====================================================
-    # EMPTY CHECK
-    # =====================================================
+    # ── Empty context fallback ─────────────────────────────────────────────────
+
+    print(f"[DEBUG] Before empty check - Context length: {len(context)}, "
+          f"stripped: {len(context.strip())}")
 
     if not context.strip():
         system_prompt = """
@@ -109,34 +244,26 @@ INSTRUCTIONS:
 
 Be extremely careful to clearly separate what is general knowledge from what might be a hallucination about the specific company context. Answer clearly and concisely.
 """
-        user_prompt = f"Question:\n{user_query}"
-        
         try:
-            # We already have the original user query in messages, or user_query is the fallback
             prompt_messages = [{"role": "system", "content": system_prompt}]
-            
             if messages:
                 prompt_messages.extend(messages)
             else:
                 prompt_messages.append({"role": "user", "content": f"Question:\n{user_query}"})
-
             response = llm.invoke(prompt_messages)
-            return {
-                "final_answer": response.content,
-                "chart": None
-            }
+            return {"final_answer": response.content, "chart": None}
         except Exception as error:
-            return {
-                "final_answer": "Error generating answer.",
-                "chart": None,
-                "error": str(error)
-            }
+            return {"final_answer": "Error generating answer.", "chart": None, "error": str(error)}
 
-    # =====================================================
-    # SYSTEM PROMPT
-    # =====================================================
+    # ── System prompt ──────────────────────────────────────────────────────────
 
-    system_prompt = """
+    if tool_output and tool_output.get("type") == "sql_result":
+        system_prompt = (
+            "You are a helpful assistant. Answer the user's question based on "
+            "the provided data. Be concise and clear."
+        )
+    else:
+        system_prompt = """
 You are an ecommerce AI assistant.
 
 Answer ONLY from provided context.
@@ -152,50 +279,33 @@ If retrieved documents exist:
 Do not hallucinate. Do not invent information not present in the context.
 If the context does not contain enough information, say so clearly.
 
-You are Sage AI, the official assistant for Sage Appliances. 
-You will be provided with context from our database or manuals. 
-You MUST base your entire answer ONLY on the provided context. 
-If the context is empty or does not contain the answer, you must say 'I do not have that information in my database.' 
+You are Sage AI, the official assistant for Sage Appliances.
+You will be provided with context from our database or manuals.
+You MUST base your entire answer ONLY on the provided context.
+If the context is empty or does not contain the answer, you must say 'I do not have that information in my database.'
 DO NOT invent product names, prices, or car models.
 
 IMPORTANT: You must ONLY answer in English, regardless of the language the user's question is written in.
 """
 
-    user_prompt = f"""
-Question:
-{user_query}
+    user_prompt = f"Question:\n{user_query}\n\nContext:\n{context}"
 
-Context:
-{context}
-"""
+    # ── LLM call ───────────────────────────────────────────────────────────────
 
-    # =====================================================
-    # LLM CALL
-    # =====================================================
+    if "SQL RESULTS" in context:
+        print(f"[DEBUG] Context length: {len(context)} chars")
+        print(f"[DEBUG] Context preview: {context[:200]}...")
+
+    print(f"[DEBUG] Sending to LLM - System prompt length: {len(system_prompt)}")
+    print(f"[DEBUG] User prompt length: {len(user_prompt)}")
+    print(f"[DEBUG] User prompt: {user_prompt[:150]}...")
 
     try:
-
         response = llm.invoke([
             {"role": "system", "content": system_prompt},
             *messages,
             {"role": "user", "content": user_prompt}
         ])
-
-        final_answer = response.content
-
+        return {"final_answer": response.content, "chart": chart}
     except Exception as error:
-
-        return {
-            "final_answer": "Error generating answer.",
-            "chart": chart,
-            "error": str(error)
-        }
-
-    # =====================================================
-    # FINAL RETURN
-    # =====================================================
-
-    return {
-        "final_answer": final_answer,
-        "chart": chart
-    }
+        return {"final_answer": "Error generating answer.", "chart": chart, "error": str(error)}
