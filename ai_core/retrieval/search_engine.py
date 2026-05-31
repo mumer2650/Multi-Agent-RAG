@@ -17,13 +17,14 @@ class LocalFileStore:
     def mget(self, keys):
         results = []
         with sqlite3.connect(self.db_path) as conn:
-            # DEFENSIVE PROGRAMMING: Ensure table exists before reading
             conn.execute("CREATE TABLE IF NOT EXISTS store (id TEXT PRIMARY KEY, data BLOB)")
             cursor = conn.cursor()
+            placeholders = ','.join(['?' for _ in keys])
+            cursor.execute(f"SELECT id, data FROM store WHERE id IN ({placeholders})", keys)
+            rows = cursor.fetchall()
+            row_dict = {row[0]: row[1] for row in rows}
             for key in keys:
-                cursor.execute("SELECT data FROM store WHERE id=?", (key,))
-                row = cursor.fetchone()
-                results.append(row[0] if row else None)
+                results.append(row_dict.get(key))
         return results
 
     def mset(self, key_value_pairs):
@@ -98,18 +99,15 @@ def advanced_search(query: str, k: int = 15):
     sorted_fused_ids = sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)
     top_candidate_ids = [doc_id for doc_id, score in sorted_fused_ids][:10]
 
-    # --- STEP 4: RESOLVE PARENT CONTEXTS & CLEAN CITATIONS ---
+    # --- STEP 4: RESOLVE PARENT CONTEXTS & CLEAN CITATIONS (BATCH FETCH) ---
+    parent_bytes_list = parent_docstore.mget(top_candidate_ids)
     candidate_parents_data = []
-    for doc_id in top_candidate_ids:
-        parent_bytes = parent_docstore.mget([doc_id])[0]
+    for doc_id, parent_bytes in zip(top_candidate_ids, parent_bytes_list):
         if parent_bytes:
-            # Decode the JSON we saved in ingestion.py
             parent_data = json.loads(parent_bytes.decode("utf-8"))
-            parent_data["doc_id"] = doc_id  # Attach the ID for reference
-            
+            parent_data["doc_id"] = doc_id
             raw_source = parent_data.get("source", "unknown")
             parent_data["source"] = os.path.basename(raw_source)
-            
             candidate_parents_data.append(parent_data)
 
     if not candidate_parents_data:
