@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Copy, Edit3, Check } from 'lucide-react';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import AdminDashboard from '../components/AdminDashboard';
@@ -19,6 +20,12 @@ export default function Home() {
   
   // Array state holding the actual chat tokens/words.
   const [messages, setMessages] = useState([]);
+  
+  // State for the main search bar input, lifted up so chat bubbles can edit it
+  const [query, setQuery] = useState('');
+
+  // Tracks which message was just copied to show a brief checkmark animation
+  const [copiedIndex, setCopiedIndex] = useState(null);
   
   // A string to display the current 'thinking' status of the AI.
   const [agentState, setAgentState] = useState('');
@@ -49,18 +56,30 @@ export default function Home() {
   }, [messages, agentState]);
 
   /**
+   * Helper function to copy text to the clipboard and show a temporary checkmark.
+   * 
+   * @param {string} text - The text to copy.
+   * @param {number} idx - The index of the message being copied.
+   */
+  const handleCopy = (text, idx) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(idx);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
+
+  /**
    * Callback fired when the SearchBar form is submitted.
    * 
    * Purpose: Establishes a native browser WebSocket connection to the backend,
    * sends the user query, and processes the incoming streaming JSON payload.
    * 
-   * @param {string} query - The search string entered by the user.
+   * @param {string} submittedQuery - The search string entered by the user.
    */
-  const handleSearch = (query) => {
+  const handleSearch = (submittedQuery) => {
     if (!isSearchActive) setIsSearchActive(true);
     
     // Append the user query to the local chat stream immediately
-    setMessages((prev) => [...prev, { role: 'user', content: query }]);
+    setMessages((prev) => [...prev, { role: 'user', content: submittedQuery }]);
     
     // Lock the input field and set an initial connecting status
     setIsStreaming(true);
@@ -77,7 +96,7 @@ export default function Home() {
        */
       ws.onopen = () => {
         setAgentState(''); // Clear connecting text
-        ws.send(JSON.stringify({ query: query }));
+        ws.send(JSON.stringify({ query: submittedQuery }));
       };
 
       /**
@@ -255,22 +274,45 @@ export default function Home() {
                     }
                     
                     return (
-                    <div
-                      key={idx}
-                      className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
+                    <div 
+                      key={idx} 
+                      className={`flex ${msg.role === 'user' ? 'justify-end mb-2 group' : 'justify-start'}`}
                     >
-                      <div
-                        className={`max-w-[85%] sm:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg ${
-                          msg.role === 'user'
-                            ? 'bg-blue-600 text-white rounded-br-sm'
-                            : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm'
-                        }`}
-                      >
-                        <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                      </div>
-                      {msg.role === 'ai' && msg.citations && (
-                        <div className="mt-3 w-full">
-                          <CitationBlock citations={msg.citations} />
+                      {msg.role === 'user' ? (
+                        <div className="flex flex-col items-end max-w-[85%] sm:max-w-[75%]">
+                          <div className="bg-blue-600 text-white rounded-3xl rounded-br-sm px-6 py-4 shadow-sm text-lg w-full">
+                            <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                          </div>
+                          
+                          {/* Utility Buttons (Copy / Edit) - Visible on hover */}
+                          <div className="flex gap-2 mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <button 
+                              onClick={() => handleCopy(msg.content, idx)}
+                              className="text-slate-400 hover:text-blue-500 transition-colors p-1 flex items-center gap-1 text-xs font-medium"
+                              title="Copy prompt"
+                            >
+                              {copiedIndex === idx ? (
+                                <><Check className="w-3.5 h-3.5 text-emerald-500" /> <span className="text-emerald-500">Copied</span></>
+                              ) : (
+                                <><Copy className="w-3.5 h-3.5" /> Copy</>
+                              )}
+                            </button>
+                            <button 
+                              onClick={() => {
+                                setQuery(msg.content);
+                                // Optional UX touch: smooth scroll to bottom when they click edit so they see the search bar
+                                scrollToBottom();
+                              }}
+                              className="text-slate-400 hover:text-blue-500 transition-colors p-1 flex items-center gap-1 text-xs font-medium ml-2"
+                              title="Edit prompt"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" /> Edit
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="max-w-[85%] sm:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm">
+                          <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                         </div>
                       )}
                     </div>
@@ -298,6 +340,8 @@ export default function Home() {
                 isActive={isSearchActive} 
                 onSearch={handleSearch} 
                 isStreaming={isStreaming} 
+                query={query}
+                setQuery={setQuery}
               />
             </div>
           </>
