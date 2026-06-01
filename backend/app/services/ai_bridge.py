@@ -113,50 +113,21 @@ async def run_pipeline(query: str, history: list = None):
     # STREAM THROUGH GRAPH NODES
     # ==========================================
     try:
-        # Use graph.astream_events for better event handling
-        # Falls back to graph.astream() if astream_events is not available
-        stream_method = getattr(graph, 'astream_events', None)
+        # Use astream directly to match main.py's output exactly
+        logger.debug("Using graph.astream()")
+        async for event in graph.astream(state):
+            try:
+                for node_name, node_output in event.items():
+                    # Send EXACT string from backend terminal
+                    label = f"➔ [{node_name}] executed"
+                    yield StreamResponse(type="status", content=label)
 
-        if stream_method:
-            # Using astream_events (LangGraph 0.2+)
-            logger.debug("Using graph.astream_events()")
-            async for event in stream_method(state, version="v2"):
-                try:
-                    # Handle event structure from astream_events
-                    if event.get("event") == "on_chain_end":
-                        node_name = event.get("name")
-                        data = event.get("data", {}).get("output", {})
-
-                        if node_name and node_name in NODE_LABELS:
-                            label = NODE_LABELS[node_name]
-                            yield StreamResponse(type="status", content=label)
-                            
-                            if isinstance(data, dict):
-                                final_state.update(data)
-                except Exception as e:
-                    logger.warning(f"Error processing event: {e}")
-                    continue
-        else:
-            # Using astream (LangGraph 0.1.x)
-            logger.debug("Using graph.astream()")
-            async for event in graph.astream(state):
-                try:
-                    # Handle event structure from astream
-                    # event is a dict like {"supervisor": {output_dict}}
-                    for node_name, node_output in event.items():
-                        # Send status update for this node
-                        label = NODE_LABELS.get(
-                            node_name,
-                            f"Processing {node_name}..."
-                        )
-                        yield StreamResponse(type="status", content=label)
-
-                        # Merge node output into our tracked final state
-                        if isinstance(node_output, dict):
-                            final_state.update(node_output)
-                except Exception as e:
-                    logger.warning(f"Error processing node event: {e}")
-                    continue
+                    # Merge node output into our tracked final state
+                    if isinstance(node_output, dict):
+                        final_state.update(node_output)
+            except Exception as e:
+                logger.warning(f"Error processing node event: {e}")
+                continue
 
         logger.info("Graph streaming completed successfully")
 
