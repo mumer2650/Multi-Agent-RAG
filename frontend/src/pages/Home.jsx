@@ -311,8 +311,13 @@ export default function Home() {
                           </div>
                         </div>
                       ) : (
-                        <div className="max-w-[85%] sm:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm">
-                          <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                        <div className="flex flex-col items-start w-full">
+                          <div className="max-w-[85%] sm:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm">
+                            <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                          </div>
+                          {msg.citations && msg.citations.length > 0 && (
+                            <CitationBlock citations={msg.citations} />
+                          )}
                         </div>
                       )}
                     </div>
