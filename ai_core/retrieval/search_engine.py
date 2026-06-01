@@ -35,13 +35,12 @@ class LocalFileStore:
 
 # --- THE MASTER PATH FIX ---
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-STORAGE_DIR = os.path.abspath(os.path.join(CURRENT_DIR,"..", "backend", "storage"))
+STORAGE_DIR = os.path.abspath(os.path.join(CURRENT_DIR,"..", "..", "backend", "storage"))
 PARENT_STORE_PATH = os.path.join(STORAGE_DIR, "parent_store")
 
 parent_docstore = LocalFileStore(PARENT_STORE_PATH)
 
-print("Loading Final Judge (Cross-Encoder)...")
-reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+# Removed CrossEncoder initialization for massive latency reduction
 
 @traceable(name="Dense Vector Search", run_type="retriever")
 def _dense_vector_search(query: str, k: int):
@@ -113,8 +112,9 @@ def advanced_search(query: str, k: int = 15):
     if not candidate_parents_data:
         return []
 
-    # --- STEP 5: CROSS-ENCODER RERANKING ---
-    return _cross_encoder_rerank(query, candidate_parents_data)
+    # --- STEP 5: RETURN TOP RESULTS (Bypassing Cross-Encoder for speed) ---
+    # We only return the top 2 to reduce the context window size and prevent the 1B model from hallucinating.
+    return candidate_parents_data[:2]
 
 
 # --- TESTING MODULE ENGINE ---

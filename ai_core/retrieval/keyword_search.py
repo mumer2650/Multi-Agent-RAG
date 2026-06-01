@@ -3,7 +3,7 @@ import os
 from rank_bm25 import BM25Okapi
 
 # Set storage path
-STORAGE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "backend", "storage"))
+STORAGE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend", "storage"))
 INDEX_PATH = os.path.join(STORAGE_DIR, "bm25_index.pkl")
 
 def build_bm25_index(all_chunks):
