@@ -36,7 +36,7 @@ class LocalFileStore:
             conn.executemany("INSERT OR REPLACE INTO store (id, data) VALUES (?, ?)", key_value_pairs)
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-STORAGE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "backend", "storage"))
+STORAGE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", "backend", "storage"))
 PARENT_STORE_PATH = os.path.join(STORAGE_DIR, "parent_store")
 
 os.makedirs(PARENT_STORE_PATH, exist_ok=True)

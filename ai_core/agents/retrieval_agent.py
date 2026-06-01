@@ -8,7 +8,7 @@ def retrieval_agent(state):
 
     try:
 
-        retrieved_docs = advanced_search(query=query, k=10)
+        retrieved_docs = advanced_search(query=query, k=5)
         
         print("Retrieved Docs:", len(retrieved_docs))
 
