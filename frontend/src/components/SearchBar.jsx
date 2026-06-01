@@ -14,7 +14,7 @@ import { Search, ArrowUp } from 'lucide-react';
  * @param {string} props.query - The current query text.
  * @param {Function} props.setQuery - Function to update the query text.
  */
-export default function SearchBar({ isActive, onSearch, isStreaming, query, setQuery }) {
+export default function SearchBar({ isActive, onSearch, isStreaming, query = '', setQuery }) {
   
   // Local state to store the history of submitted prompts
   const [history, setHistory] = useState([]);
