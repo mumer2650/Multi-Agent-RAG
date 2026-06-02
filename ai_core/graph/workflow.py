@@ -10,6 +10,7 @@ from ai_core.graph.conditions import (
 from ai_core.agents.supervisor_agent import supervisor_agent
 from ai_core.agents.retrieval_agent import retrieval_agent
 from ai_core.agents.sql_agent import sql_agent
+from ai_core.agents.python_agent import python_agent
 from ai_core.retrieval.query_rewriter import query_rewriter
 from ai_core.agents.answer_generator import answer_generator
 from ai_core.agents.citation_builder import citation_builder
@@ -25,6 +26,7 @@ graph_builder = StateGraph(GraphState)
 graph_builder.add_node("supervisor", supervisor_agent)
 graph_builder.add_node("retrieval_agent", retrieval_agent)
 graph_builder.add_node("sql_agent", sql_agent)
+graph_builder.add_node("python_agent", python_agent)
 graph_builder.add_node("query_rewriter", query_rewriter)
 graph_builder.add_node("answer_generator", answer_generator)
 graph_builder.add_node("citation_builder", citation_builder)
@@ -44,6 +46,7 @@ graph_builder.add_conditional_edges(
     {
         "retrieval": "retrieval_agent",
         "sql": "sql_agent",
+        "python": "python_agent",
         "answer": "answer_generator"
     }
 )
@@ -98,6 +101,11 @@ graph_builder.add_conditional_edges(
         "answer": "answer_generator"
     }
 )
+
+# =========================
+# PYTHON AGENT → ANSWER GENERATOR
+# =========================
+graph_builder.add_edge("python_agent", "answer_generator")
 
 # =========================
 # FINAL PIPELINE

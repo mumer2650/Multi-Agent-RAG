@@ -16,8 +16,8 @@ load_dotenv()
 # ==========================================
 class IntentClassification(BaseModel):
     # We can bring 'confidence' back because Gemini handles complex schemas perfectly!
-    intent: Literal["sql", "retrieval", "answer"] = Field(
-        description="Must be 'sql', 'retrieval', or 'answer'"
+    intent: Literal["sql", "retrieval", "python", "answer"] = Field(
+        description="Must be 'sql', 'retrieval', 'python', or 'answer'"
     )
     confidence: int = Field(description="Confidence integer from 1 to 10")
     category: Literal["air_conditioners", "leds", "refrigerators", "washing_machines", "dispenser", "buds", "dishwasher","unknown"] = Field(
@@ -88,7 +88,8 @@ def supervisor_agent(state):
 
     1. "sql": For product recommendations, prices, budgets, specifications, reviews, energy efficiency, and availability.
     2. "retrieval": For information from user manuals, troubleshooting guides, fixing appliances, warranty policies, and how-to descriptions.
-    3. "answer": ONLY for general conversational pleasantries, simple greetings, or basic math.
+    3. "python": For complex calculations and analysis—electricity bills, payback periods, energy efficiency ratios, multi-criteria rankings, CO2 emissions, sentiment analysis, and advanced visualizations. Always use this when the query requires mathematical calculations on product data.
+    4. "answer": ONLY for general conversational pleasantries, simple greetings, or basic math.
 
     You must return a JSON object with 'intent' and 'confidence'.
     """
@@ -111,6 +112,9 @@ def supervisor_agent(state):
         if intent == "sql":
             selected = "sql"
             tool_required = True
+        elif intent == "python":
+            selected = "python"
+            tool_required = True
         elif intent == "retrieval":
             selected = "retrieval"
             tool_required = False
@@ -124,6 +128,7 @@ def supervisor_agent(state):
             "selected_agent": selected,
             "tool_required": tool_required,
             "extracted_category": result.category,
+            "category": result.category,
             "competitor_detected": False,
             "off_topic": False
         }
@@ -134,7 +139,8 @@ def supervisor_agent(state):
         return {
             "selected_agent": "retrieval",
             "tool_required": False,
-            "extracted_category": result.category,
+            "extracted_category": "unknown",
+            "category": "unknown",
             "competitor_detected": False,
             "off_topic": False
         }

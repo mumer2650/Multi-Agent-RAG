@@ -16,6 +16,7 @@ class GraphState(TypedDict):
     competitor_detected: bool
     off_topic: bool
     sql_failed_try_retrieval: bool
+    category: Optional[str]  # Product category extracted by supervisor (air_conditioners, etc)
 
     # Retrieval
     retrieved_docs: list
