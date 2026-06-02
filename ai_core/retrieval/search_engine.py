@@ -1,5 +1,6 @@
 import os
 import json
+import concurrent.futures
 from ai_core.retrieval.vector_store import get_vector_store
 #from langchain_classic.storage import LocalFileStore
 from ai_core.retrieval.keyword_search import keyword_search
@@ -80,11 +81,13 @@ def advanced_search(query: str, k: int = 15):
     """
     print(f"\n🔍 Executing Advanced Hybrid Search for: '{query}'")
     
-    # --- STEP 1: VECTOR SEARCH ---
-    vector_ids = _dense_vector_search(query, k)
-    
-    # --- STEP 2: BM25 KEYWORD SEARCH ---
-    bm25_ids = _sparse_bm25_search(query, k)
+    # --- STEP 1 & 2: CONCURRENT VECTOR AND BM25 SEARCH ---
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        vector_future = executor.submit(_dense_vector_search, query, k)
+        bm25_future = executor.submit(_sparse_bm25_search, query, k)
+        
+        vector_ids = vector_future.result()
+        bm25_ids = bm25_future.result()
 
     # --- STEP 3: RRF (Reciprocal Rank Fusion) ---
     fused_scores = {}
@@ -113,8 +116,8 @@ def advanced_search(query: str, k: int = 15):
         return []
 
     # --- STEP 5: RETURN TOP RESULTS (Bypassing Cross-Encoder for speed) ---
-    # We only return the top 2 to reduce the context window size and prevent the 1B model from hallucinating.
-    return candidate_parents_data[:2]
+    # Increased to top 4 to provide better context while avoiding total hallucination
+    return candidate_parents_data[:4]
 
 
 # --- TESTING MODULE ENGINE ---

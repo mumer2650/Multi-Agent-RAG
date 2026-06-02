@@ -25,3 +25,4 @@ backend/
 └── requirements.txt # fastapi, uvicorn, websockets, sqlalchemy, pydantic
 
 uvicorn app.main:app --reload --port 8000
+uvicorn backend.app.main:app --reload --port 8000

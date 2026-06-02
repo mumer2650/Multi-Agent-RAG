@@ -1150,6 +1150,65 @@ def analyze_ownership_cost(query: str, products: List[Dict[str, Any]], state: Di
     }
 
 
+def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dict[str, Any]) -> Dict[str, Any]:
+    """Generates visualization chart data based on retrieved SQL products."""
+    if not products:
+        return {
+            "tool_output": {
+                "type": "python_result",
+                "analysis": "No data available to plot.",
+                "chart": None
+            }
+        }
+    
+    # Analyze the keys of the first product to determine what to plot
+    sample = products[0]
+    keys = list(sample.keys())
+    # Remove common label keys to find numeric data to plot
+    numeric_keys = [k for k in keys if k not in ["model_name", "id", "category_id", "category"]]
+    
+    if len(numeric_keys) >= 2:
+        # Scatter chart (e.g., price vs capacity)
+        x_key = numeric_keys[0]
+        y_key = numeric_keys[1]
+        # Try to make price the X axis if it exists
+        if "price" in numeric_keys:
+            x_key = "price"
+            y_key = next((k for k in numeric_keys if k != "price"), numeric_keys[1])
+            
+        chart = build_scatter_chart(products, x_key, y_key, f"{y_key.replace('_', ' ').title()} vs {x_key.title()}")
+        analysis_text = f"Generated scatter chart comparing {y_key} and {x_key}."
+    elif len(numeric_keys) == 1:
+        # Bar chart
+        y_key = numeric_keys[0]
+        chart = {
+            "chartType": "bar",
+            "title": f"Comparison of {y_key.replace('_', ' ').title()}",
+            "xKey": "model_name",
+            "yKey": y_key,
+            "data": products
+        }
+        analysis_text = f"Generated bar chart for {y_key}."
+    else:
+        # Fallback chart
+        chart = {
+            "chartType": "bar",
+            "title": "Product Comparison",
+            "xKey": "model_name",
+            "yKey": "price" if "price" in keys else "model_name",
+            "data": products
+        }
+        analysis_text = "Generated chart."
+
+    return {
+        "tool_output": {
+            "type": "python_result",
+            "analysis": analysis_text,
+            "chart": chart
+        }
+    }
+
+
 # =========================================================
 # MAIN PYTHON AGENT ROUTER
 # =========================================================
@@ -1185,7 +1244,11 @@ def python_agent(state: Dict[str, Any]):
         print(f"[Python Agent] Fetched {len(products)} products. Analyzing query intent...")
 
         # Step 2: Route to appropriate analysis based on query type
-        if detect_room_size_query(user_query):
+        if detect_visualization_query(user_query):
+            print("[Python Agent] -> Visualization Analysis")
+            return analyze_visualization(user_query, products, state)
+            
+        elif category == "air_conditioners" and detect_room_size_query(user_query):
             print("[Python Agent] -> Room Size Analysis")
             return analyze_room_size(user_query, products, state)
 

@@ -251,7 +251,13 @@ RULE 6 — DEDUPLICATION:
 
 RULE 7 — ALWAYS add LIMIT 100.
 
-RULE 8 — Return ONLY the raw SQL. No markdown, no explanation.
+RULE 8 — NEVER DO MATH IN SQL:
+  • Do NOT calculate cost differences, multiplication, or complex math in SQL.
+  • For queries involving calculations (e.g. "cost difference", "monthly bill"), just return the raw product data (prices, specs, energy ratings) so the Python agent can perform the math.
+  • ✓ Good: SELECT p.model_name, p.price, p.energy_rating FROM products ...
+  • ✗ Bad: SELECT (MAX(price) - MIN(price)) AS cost_difference ...
+
+RULE 9 — Return ONLY the raw SQL. No markdown, no explanation.
 
 USER QUESTION: {query}
 """

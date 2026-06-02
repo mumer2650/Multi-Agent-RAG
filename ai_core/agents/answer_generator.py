@@ -237,12 +237,11 @@ The user has asked a question, but no relevant information was found in the retr
 
 INSTRUCTIONS:
 1. First, explicitly state that you could not find the answer in the provided documents/database.
-2. Then, if the question pertains to general knowledge (e.g., general programming, history, math, or publicly known facts), attempt to answer it directly to the best of your ability.
-3. If the question is specific to internal company data, proprietary products, or cannot be answered without the specific context that is missing, politely inform the user that you do not have access to that information.
-4. Do NOT hallucinate or invent features, prices, policies, or internal data. When guessing or making general statements, make it clear that you are speaking generally.
-5. IMPORTANT: You must ONLY answer in English, regardless of the language the user's question is written in.
+2. Politely inform the user that you do not have access to that information.
+3. Do NOT guess, hallucinate, or attempt to answer the question based on general knowledge.
+4. IMPORTANT: You must ONLY answer in English, regardless of the language the user's question is written in.
 
-Be extremely careful to clearly separate what is general knowledge from what might be a hallucination about the specific company context. Answer clearly and concisely.
+Be extremely careful. Do not invent features, prices, policies, or internal data. Answer clearly and concisely.
 """
         try:
             prompt_messages = [{"role": "system", "content": system_prompt}]
@@ -270,6 +269,10 @@ Answer ONLY from provided context.
 
 If SQL results exist:
 - summarize products clearly
+
+If Python Analysis exists:
+- You MUST list EVERY SINGLE product or row provided in the analysis.
+- NEVER omit, skip, or summarize products out of laziness. 
 
 If retrieved documents exist:
 - answer based on the document content

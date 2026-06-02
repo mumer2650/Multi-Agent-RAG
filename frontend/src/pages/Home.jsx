@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import AdminDashboard from '../components/AdminDashboard';
 import CitationBlock from '../components/CitationBlock';
+import ChartBlock from '../components/ChartBlock';
 
 /**
  * Home Component (ChatLayout)
@@ -162,6 +163,25 @@ export default function Home() {
               console.error("Failed to parse citations:", err);
             }
           }
+          else if (data.type === 'chart') {
+            // Attach chart data to the most recent AI message
+            try {
+              const chartData = JSON.parse(data.content);
+              setMessages((prev) => {
+                const newMessages = [...prev];
+                // Find the last AI message and attach the chart to it
+                for (let i = newMessages.length - 1; i >= 0; i--) {
+                  if (newMessages[i].role === 'ai') {
+                    newMessages[i] = { ...newMessages[i], chart: chartData };
+                    break;
+                  }
+                }
+                return newMessages;
+              });
+            } catch (err) {
+              console.error("Failed to parse chart data:", err);
+            }
+          }
           else if (data.type === 'error') {
             // Display any backend errors directly in the agent status bar
             console.error("Backend Error:", data.content);
@@ -317,6 +337,11 @@ export default function Home() {
                           </div>
                           {msg.citations && msg.citations.length > 0 && (
                             <CitationBlock citations={msg.citations} />
+                          )}
+                          {msg.chart && (
+                            <div className="w-full mt-4 max-w-[85%] sm:max-w-[75%]">
+                              <ChartBlock chartData={msg.chart} />
+                            </div>
                           )}
                         </div>
                       )}
