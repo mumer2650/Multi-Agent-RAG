@@ -101,6 +101,24 @@ def advanced_search(query: str, k: int = 15):
     sorted_fused_ids = sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)
     top_candidate_ids = [doc_id for doc_id, score in sorted_fused_ids][:10]
 
+    # --- STEP 3.5: EXACT KEYWORD SQLite FALLBACK ---
+    # If BM25 missed an exact code (like "4C") due to punctuation, force it into the candidate list!
+    import re
+    keywords = re.findall(r'\b[a-zA-Z0-9]{2,}\b', query.lower())
+    important_keywords = [kw for kw in keywords if re.search(r'\d', kw) and re.search(r'[a-z]', kw)]
+    
+    if important_keywords:
+        import sqlite3
+        with sqlite3.connect(parent_docstore.db_path) as conn:
+            cursor = conn.cursor()
+            for kw in important_keywords:
+                # Use LIKE to find the keyword anywhere in the raw text JSON
+                cursor.execute("SELECT id FROM store WHERE data LIKE ?", (f'%{kw}%',))
+                rows = cursor.fetchall()
+                for row in rows:
+                    if row[0] not in top_candidate_ids:
+                        top_candidate_ids.append(row[0])
+
     # --- STEP 4: RESOLVE PARENT CONTEXTS & CLEAN CITATIONS (BATCH FETCH) ---
     parent_bytes_list = parent_docstore.mget(top_candidate_ids)
     candidate_parents_data = []
@@ -114,6 +132,23 @@ def advanced_search(query: str, k: int = 15):
 
     if not candidate_parents_data:
         return []
+
+    # --- STEP 4.5: ZERO-LATENCY KEYWORD RERANKER ---
+    # Since BM25 uses naive splitting, it misses codes attached to punctuation (e.g. "(4C)").
+    # We extract alphanumeric codes from the query and boost matching parent contexts.
+    import re
+    keywords = re.findall(r'\b[a-zA-Z0-9]{2,}\b', query.lower())
+    # Important keywords are alphanumeric combinations (e.g. "4c", "q70a")
+    important_keywords = [kw for kw in keywords if re.search(r'\d', kw) and re.search(r'[a-z]', kw)]
+    
+    if important_keywords:
+        for data in candidate_parents_data:
+            text = data.get("text", "").lower()
+            # Boost score based on how many important keywords are found in the text
+            data["boost_score"] = sum(1 for kw in important_keywords if kw in text)
+        
+        # Sort by keyword boost first, falling back to original RRF order
+        candidate_parents_data.sort(key=lambda x: x.get("boost_score", 0), reverse=True)
 
     # --- STEP 5: RETURN TOP RESULTS (Bypassing Cross-Encoder for speed) ---
     # Increased to top 4 to provide better context while avoiding total hallucination

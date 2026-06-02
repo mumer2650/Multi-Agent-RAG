@@ -130,7 +130,7 @@ def _summarize_sql_results(sql_data: list) -> str:
             summary += f"Rating Range: {min(ratings):.1f} - {max(ratings):.1f}/5\n"
             summary += f"Average Rating: {sum(ratings)/len(ratings):.1f}/5\n"
         summary += "\nTop 10 products:\n"
-        key_fields = ['model_name', 'price', 'rating', 'id', 'category_name']
+        key_fields = ['model_name', 'price', 'rating', 'id', 'category_name', 'spec_name', 'spec_value']
         for row in sql_data[:10]:
             summary += f"• { {k: v for k, v in row.items() if k in key_fields} }\n"
         if num_rows > 10:
@@ -141,7 +141,7 @@ def _summarize_sql_results(sql_data: list) -> str:
         summary = f"Found {num_rows} products. Showing key details:\n\n"
         for row in sql_data:
             summary += "• "
-            for key in ['model_name', 'price', 'rating', 'has_inverter']:
+            for key in ['model_name', 'price', 'rating', 'has_inverter', 'spec_name', 'spec_value']:
                 if key in row:
                     summary += f"{key}: {row[key]}, "
             summary = summary.rstrip(", ") + "\n"
@@ -151,7 +151,7 @@ def _summarize_sql_results(sql_data: list) -> str:
         summary = f"Found {num_rows} products:\n\n"
         for row in sql_data:
             summary += "• "
-            for key in ['model_name', 'price', 'rating', 'has_inverter', 'energy_rating']:
+            for key in ['model_name', 'price', 'rating', 'has_inverter', 'energy_rating', 'spec_name', 'spec_value']:
                 if key in row:
                     summary += f"{key}: {row[key]}, "
             summary = summary.rstrip(", ") + "\n"
