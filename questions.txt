@@ -18,3 +18,4 @@
 18. What does the "Optimal Fresh+" feature do?
 19. Show me a bar chart of the top 5 most expensive washing machines.
 20. Calculate the annual electricity cost of running a dispenser for 8 hours a day.
+21. Plot a bar chart comparing the prices of all 1.5 Ton Inverter ACs from Samsung and LG.

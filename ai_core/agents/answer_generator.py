@@ -311,15 +311,22 @@ INSTRUCTIONS:
 Be extremely careful. Do not invent features, prices, policies, or internal data. Answer clearly and concisely.
 """
         try:
-            prompt_messages = [{"role": "system", "content": system_prompt}]
-            if messages:
-                prompt_messages.extend(messages)
-            else:
-                prompt_messages.append({"role": "user", "content": f"Question:\n{user_query}"})
+            prompt_messages = [("system", system_prompt)]
+            for m in messages:
+                role = m["role"]
+                if role == "user":
+                    role = "human"
+                elif role in ["assistant", "model"]:
+                    role = "ai"
+                prompt_messages.append((role, m["content"]))
+            
+            if not messages:
+                prompt_messages.append(("human", f"Question:\n{user_query}"))
+                
             response = llm.invoke(prompt_messages)
             return {"final_answer": response.content, "chart": None}
         except Exception as error:
-            return {"final_answer": "Error generating answer.", "chart": None, "error": str(error)}
+            return {"final_answer": f"Error generating answer: {str(error)}", "chart": None, "error": str(error)}
 
     # ── System prompt ──────────────────────────────────────────────────────────
 
@@ -373,11 +380,17 @@ IMPORTANT FORMATTING RULES:
     print(f"[DEBUG] User prompt: {user_prompt[:150]}...")
 
     try:
-        response = llm.invoke([
-            {"role": "system", "content": system_prompt},
-            *messages,
-            {"role": "user", "content": user_prompt}
-        ])
+        invoke_messages = [("system", system_prompt)]
+        for m in messages:
+            role = m["role"]
+            if role == "user":
+                role = "human"
+            elif role == "assistant" or role == "model":
+                role = "ai"
+            invoke_messages.append((role, m["content"]))
+        invoke_messages.append(("human", user_prompt))
+        
+        response = llm.invoke(invoke_messages)
         return {"final_answer": response.content, "chart": chart}
     except Exception as error:
-        return {"final_answer": "Error generating answer.", "chart": chart, "error": str(error)}
+        return {"final_answer": f"Error generating answer: {str(error)}", "chart": chart, "error": str(error)}
