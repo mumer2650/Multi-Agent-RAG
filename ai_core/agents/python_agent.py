@@ -186,7 +186,15 @@ RULE 4 — String specs with units (BTU, kg, rpm, dB) use LIKE: ps.spec_value LI
 RULE 5 — ALWAYS alias primary column as model_name (or category_name AS model_name).
 RULE 6 — Add DISTINCT when joining product_specifications.
 RULE 7 — Always add LIMIT 100.
-RULE 8 — Return ONLY raw SQL. No markdown, no explanation.
+RULE 8 — NEVER DO MATH IN SQL:
+  • Do NOT calculate cost differences, multiplication, division, or complex math in SQL.
+  • For queries involving calculations (e.g. "cost difference", "monthly bill", "payback period", "efficiency ratio"), you MUST return the raw product data.
+  • You MUST SELECT the raw `p.price` and ANY specs (like Wattage, BTU, Capacity) needed to answer the question.
+  • You MUST alias the specs so they are easy to read (e.g. `ps.spec_value AS capacity`).
+  • ✓ Good: SELECT p.model_name, p.price, ps.spec_value AS power_watts FROM products p ...
+  • ✗ Bad: SELECT (MAX(price) - MIN(price)) AS cost_difference ...
+  • ✗ Bad: SELECT p.model_name, (p.price + 500) ...
+RULE 9 — Return ONLY raw SQL. No markdown, no explanation.
 
 QUESTION: {user_query}
 PRODUCT CATEGORY: {category}

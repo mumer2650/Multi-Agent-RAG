@@ -296,7 +296,9 @@ You MUST base your entire answer ONLY on the provided context.
 If the context is empty or does not contain the answer, you must say 'I do not have that information in my database.'
 DO NOT invent product names, prices, or car models.
 
-IMPORTANT: You must ONLY answer in English, regardless of the language the user's question is written in.
+IMPORTANT FORMATTING RULES:
+1. You must ONLY answer in English, regardless of the language the user's question is written in.
+2. ALL prices are in Pakistani Rupees (PKR). You MUST format prices as 'Rs' (e.g. Rs 120,000). NEVER use the dollar sign ($).
 """
 
     user_prompt = f"Question:\n{user_query}\n\nContext:\n{context}"
