@@ -5,14 +5,34 @@ from ai_core.llm.ollama_client import llm
 # Internal DB fields that should never appear in user-facing output
 _SKIP_FIELDS  = {'id', 'product_id', 'category_id', 'embedding_id'}
 # Fields whose values are monetary (get Rs prefix + comma formatting)
-_MONEY_FIELDS = {'price', 'original_price', 'sale_price'}
+_MONEY_FIELDS = {'price', 'original_price', 'sale_price', 'standard_annual_cost', 'efficient_annual_cost', 'annual_savings', 'price_premium', 'annual_cost_rs', 'monthly_cost_rs'}
 
+
+def format_pk_rupees(amount) -> str:
+    """Format numbers using Pakistani/Indian numbering system (Lakhs/Crores)."""
+    try:
+        amount = int(float(amount))
+        s = str(amount)
+        if len(s) <= 3:
+            return s
+        last_three = s[-3:]
+        rest = s[:-3]
+        chunks = []
+        while len(rest) > 2:
+            chunks.append(rest[-2:])
+            rest = rest[:-2]
+        if rest:
+            chunks.append(rest)
+        chunks.reverse()
+        return ",".join(chunks) + "," + last_three
+    except (ValueError, TypeError):
+        return str(amount)
 
 def _fmt_value(key: str, val) -> str:
     """Render a single key-value pair as a human-readable string."""
     label = key.replace('_', ' ').title()
     if key in _MONEY_FIELDS and isinstance(val, (int, float)):
-        return f"{label}: Rs {int(val):,}"
+        return f"{label}: Rs {format_pk_rupees(val)}"
     if isinstance(val, float):
         return f"{label}: {val:.2f}"
     return f"{label}: {val}"
@@ -178,8 +198,47 @@ def answer_generator(state):
             # If we generated a chart, bypass the LLM completely to prevent hallucinations
             if chart:
                 return {
-                    "final_answer": "Here is the chart you requested:",
+                    "final_answer": str(analysis) if isinstance(analysis, str) else "Here is the chart you requested:",
                     "chart": chart
+                }
+            
+            # If the analysis is just a string message (e.g., "Need at least 2 products..."), 
+            # return it directly to prevent the LLM from hallucinating python code examples.
+            if isinstance(analysis, str):
+                return {
+                    "final_answer": analysis,
+                    "chart": None
+                }
+            
+            # If analysis is a list of dictionaries, format it directly and bypass the LLM
+            if isinstance(analysis, list) and len(analysis) > 0 and isinstance(analysis[0], dict):
+                lines = ["Based on the analysis, here are the calculated results:"]
+                for item in analysis:
+                    model = item.get("model", item.get("model_name", "Result"))
+                    details = []
+                    for k, v in item.items():
+                        if k not in ["model", "model_name"] and v is not None:
+                            details.append(_fmt_value(k, v))
+                    if details:
+                        lines.append(f"• {model} — {', '.join(details)}")
+                    else:
+                        lines.append(f"• {model}")
+                
+                return {
+                    "final_answer": "\n".join(lines),
+                    "chart": None
+                }
+
+            # If analysis is a single dictionary, format it directly and bypass the LLM
+            if isinstance(analysis, dict):
+                lines = ["Based on the analysis, here are the calculated results:"]
+                for k, v in analysis.items():
+                    if v is not None:
+                        lines.append(f"• {_fmt_value(k, v)}")
+                
+                return {
+                    "final_answer": "\n".join(lines),
+                    "chart": None
                 }
                 
             context += "\n\nPYTHON ANALYSIS:\n" + str(analysis)

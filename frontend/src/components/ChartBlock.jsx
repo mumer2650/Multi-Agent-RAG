@@ -15,6 +15,12 @@ const ChartBlock = ({ chartData }) => {
 
   const { chartType, title, xKey, yKey, data } = chartData;
 
+  // Format large numbers using the Pakistani/Indian standard (Lakhs/Crores)
+  const formatPKR = (value) => {
+    if (typeof value !== 'number') return value;
+    return new Intl.NumberFormat('en-IN').format(value);
+  };
+
   // Custom Tooltip for dark mode support and better UX
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -26,7 +32,7 @@ const ChartBlock = ({ chartData }) => {
           {payload.map((entry, index) => (
             <p key={`item-${index}`} className="text-sm" style={{ color: entry.color }}>
               <span className="capitalize">{entry.name.replace(/_/g, ' ')}: </span>
-              <span className="font-mono">{entry.value}</span>
+              <span className="font-mono">{typeof entry.value === 'number' ? formatPKR(entry.value) : entry.value}</span>
             </p>
           ))}
         </div>
@@ -46,6 +52,7 @@ const ChartBlock = ({ chartData }) => {
               dataKey={xKey} 
               name={xKey.replace(/_/g, ' ')} 
               tick={{ fill: '#64748b' }} 
+              tickFormatter={formatPKR}
               domain={['auto', 'auto']}
             />
             <YAxis 
@@ -53,6 +60,7 @@ const ChartBlock = ({ chartData }) => {
               dataKey={yKey} 
               name={yKey.replace(/_/g, ' ')} 
               tick={{ fill: '#64748b' }} 
+              tickFormatter={formatPKR}
               domain={['auto', 'auto']}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
@@ -75,6 +83,7 @@ const ChartBlock = ({ chartData }) => {
             />
             <YAxis 
               tick={{ fill: '#64748b' }} 
+              tickFormatter={formatPKR}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend wrapperStyle={{ paddingTop: '20px' }}/>
@@ -98,10 +107,11 @@ const ChartBlock = ({ chartData }) => {
               dataKey={xKey} 
               tick={{ fill: '#64748b' }} 
               // Hide labels if there are too many models
-              tickFormatter={(value) => value.length > 15 ? value.substring(0, 15) + '...' : value}
+              tickFormatter={(value) => typeof value === 'string' && value.length > 15 ? value.substring(0, 15) + '...' : value}
             />
             <YAxis 
               tick={{ fill: '#64748b' }} 
+              tickFormatter={formatPKR}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }} />
             <Legend wrapperStyle={{ paddingTop: '20px' }}/>

@@ -164,19 +164,18 @@ export default function Home() {
             }
           }
           else if (data.type === 'chart') {
-            // Attach chart data to the most recent AI message
             try {
               const chartData = JSON.parse(data.content);
               setMessages((prev) => {
                 const newMessages = [...prev];
-                // Find the last AI message and attach the chart to it
+                // Find the last AI message and attach chart to it
                 for (let i = newMessages.length - 1; i >= 0; i--) {
                   if (newMessages[i].role === 'ai') {
                     newMessages[i] = { ...newMessages[i], chart: chartData };
-                    break;
+                    return newMessages;
                   }
                 }
-                return newMessages;
+                return [...newMessages, { role: 'ai', content: '', chart: chartData }];
               });
             } catch (err) {
               console.error("Failed to parse chart data:", err);
@@ -251,7 +250,7 @@ export default function Home() {
                         <div key={idx} className={`flex relative items-start my-4 ml-8 ${isAnimating ? "" : "opacity-80"}`}>
                           
                           {/* Continuous Energy Flow Line */}
-                          <div className={`absolute left-[-20px] top-7 w-[2px] h-[calc(100%+15px)] rounded-full opacity-60 ${isAnimating ? "bg-gradient-to-b from-blue-500 via-purple-500 to-transparent" : "bg-slate-300 dark:bg-slate-700"}`}></div>
+                          <div className={`absolute left-[-22.5px] top-6 w-[2px] h-[calc(100%+15px)] rounded-full opacity-60 ${isAnimating ? "bg-gradient-to-b from-blue-500 via-purple-500 to-transparent" : "bg-slate-300 dark:bg-slate-700"}`}></div>
 
                           {/* Animated Processing Node */}
                           <div className="absolute left-[-25.5px] top-3 flex items-center justify-center">
@@ -331,17 +330,38 @@ export default function Home() {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-start w-full">
-                          <div className="max-w-[85%] sm:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm">
-                            <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                          </div>
-                          {msg.citations && msg.citations.length > 0 && (
-                            <CitationBlock citations={msg.citations} />
+                        <div className="flex flex-col items-start w-full group">
+                          {msg.content && (
+                            <div className="max-w-[85%] sm:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm">
+                              <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                            </div>
                           )}
+                          
+                          {/* Utility Buttons (Copy) - Visible on hover */}
+                          {msg.content && (
+                            <div className="flex gap-2 mt-2 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                              <button 
+                                onClick={() => handleCopy(msg.content, idx)}
+                                className="text-slate-400 hover:text-blue-500 transition-colors p-1 flex items-center gap-1 text-xs font-medium"
+                                title="Copy response"
+                              >
+                                {copiedIndex === idx ? (
+                                  <><Check className="w-3.5 h-3.5 text-emerald-500" /> <span className="text-emerald-500">Copied</span></>
+                                ) : (
+                                  <><Copy className="w-3.5 h-3.5" /> Copy</>
+                                )}
+                              </button>
+                            </div>
+                          )}
+
                           {msg.chart && (
-                            <div className="w-full mt-4 max-w-[85%] sm:max-w-[75%]">
+                            <div className={`w-full max-w-[85%] sm:max-w-[75%] ${msg.content ? 'mt-4' : ''}`}>
                               <ChartBlock chartData={msg.chart} />
                             </div>
+                          )}
+                          
+                          {msg.citations && msg.citations.length > 0 && (
+                            <CitationBlock citations={msg.citations} />
                           )}
                         </div>
                       )}

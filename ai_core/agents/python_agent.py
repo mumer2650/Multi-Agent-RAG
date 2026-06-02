@@ -186,14 +186,15 @@ RULE 4 — String specs with units (BTU, kg, rpm, dB) use LIKE: ps.spec_value LI
 RULE 5 — ALWAYS alias primary column as model_name (or category_name AS model_name).
 RULE 6 — Add DISTINCT when joining product_specifications.
 RULE 7 — Always add LIMIT 100.
-RULE 8 — NEVER DO MATH IN SQL:
+RULE 8 — NEVER DO MATH OR COMPARISONS IN SQL:
   • Do NOT calculate cost differences, multiplication, division, or complex math in SQL.
-  • For queries involving calculations (e.g. "cost difference", "monthly bill", "payback period", "efficiency ratio"), you MUST return the raw product data.
-  • You MUST SELECT the raw `p.price` and ANY specs (like Wattage, BTU, Capacity) needed to answer the question.
-  • You MUST alias the specs so they are easy to read (e.g. `ps.spec_value AS capacity`).
-  • ✓ Good: SELECT p.model_name, p.price, ps.spec_value AS power_watts FROM products p ...
-  • ✗ Bad: SELECT (MAX(price) - MIN(price)) AS cost_difference ...
-  • ✗ Bad: SELECT p.model_name, (p.price + 500) ...
+  • Do NOT attempt to find the "cheapest" or "most expensive" products using WHERE clauses or subqueries.
+  • For comparative calculations (e.g. "payback period", "cheaper vs expensive"), you MUST fetch ALL products. HOWEVER, if the user explicitly specifies a strict budget or maximum price (e.g. "budget of 150000", "under 200000"), you MUST apply a WHERE filter on price (e.g. `p.price <= 150000`).
+  • When fetching specs from `product_specifications`, you MUST use `LEFT JOIN` (e.g., `LEFT JOIN product_specifications ps ON p.id = ps.product_id`). NEVER use `INNER JOIN` or just `JOIN` for specs, as it will delete products that are missing that spec row!
+  • IMPORTANT: NEVER filter `ps.spec_name` in the `WHERE` or `ON` clause (e.g. do not do `AND ps.spec_name LIKE '%liter%'`). You MUST return ALL specifications for the products so the Python Agent has the complete data sheet to parse itself.
+  • You MUST SELECT `p.model_name`, `p.price`, `ps.spec_name`, and `ps.spec_value`. Do NOT alias `ps.spec_value` as anything else.
+  • ✓ Good: SELECT p.model_name, p.price, ps.spec_name, ps.spec_value FROM products p LEFT JOIN product_specifications ps ...
+  • ✗ Bad: SELECT p.model_name FROM products p JOIN product_specifications ps ON p.id = ps.product_id AND ps.spec_name LIKE '%energy%'
 RULE 9 — Return ONLY raw SQL. No markdown, no explanation.
 
 QUESTION: {user_query}
@@ -309,15 +310,39 @@ def extract_power_watts(product: Dict[str, Any], category: str = None) -> float:
     if not product:
         return POWER_CONSUMPTION_DEFAULTS.get(category, 500)
 
-    # Check if power_consumption_watts is already extracted by SQL
-    if "power_consumption_watts" in product and product["power_consumption_watts"]:
-        try:
-            return float(product["power_consumption_watts"])
-        except:
-            pass
+    # 1. Search all keys/values for kWh/year (this is the most specific metric)
+    import re
+    for key, val in product.items():
+        if val:
+            val_str = str(val).lower()
+            if "kwh/year" in val_str or "kwh" in val_str:
+                match = re.search(r'(\d+)\s*kwh', val_str)
+                if match:
+                    annual_kwh = float(match.group(1))
+                    daily_hours = DAILY_USAGE_HOURS.get(category, 6)
+                    if daily_hours > 0:
+                        # Reverse engineer Watts from annual kWh
+                        return round((annual_kwh * 1000) / (daily_hours * 365), 1)
 
-    # Look in features_text or specs
-    features = product.get("features_text", "").lower()
+    # 2. Check common explicit aliases
+    for key in ["power_watts", "power", "power_consumption_watts", "wattage"]:
+        if key in product and product[key]:
+            val = str(product[key]).lower()
+            match = re.search(r'[-+]?\d*\.\d+|\d+', val.replace(',', ''))
+            if match:
+                return float(match.group())
+
+    # 3. Check spec_value ONLY IF spec_name implies power
+    if "spec_value" in product and product.get("spec_name"):
+        spec_name = str(product["spec_name"]).lower()
+        if "power" in spec_name or "watt" in spec_name or "consumption" in spec_name:
+            val = str(product["spec_value"]).lower()
+            match = re.search(r'[-+]?\d*\.\d+|\d+', val.replace(',', ''))
+            if match:
+                return float(match.group())
+
+    # Look in features_text or model_name for hints
+    features = (str(product.get("features_text", "")) + " " + str(product.get("model_name", ""))).lower()
     if "watt" in features:
         try:
             import re
@@ -339,14 +364,29 @@ def extract_capacity(product: Dict[str, Any], category: str = None) -> float:
     if not product:
         return 0
 
-    if "capacity_value" in product and product["capacity_value"]:
-        try:
-            return float(product["capacity_value"])
-        except:
-            pass
+    # Check common aliases created by SQL Agent
+    for key in ["capacity", "capacity_value"]:
+        if key in product and product[key]:
+            val = product[key]
+            if isinstance(val, (int, float)):
+                return float(val)
+            import re
+            match = re.search(r'[-+]?\d*\.\d+|\d+', str(val).replace(',', ''))
+            if match:
+                return float(match.group())
 
-    # Look in features_text for hints
-    features = product.get("features_text", "").lower()
+    # Check spec_value ONLY IF spec_name implies capacity
+    if "spec_value" in product and product.get("spec_name"):
+        spec_name = str(product["spec_name"]).lower()
+        if any(kw in spec_name for kw in ["capacity", "liter", "net", "kg", "btu", "ton"]):
+            val = str(product["spec_value"]).lower()
+            import re
+            match = re.search(r'[-+]?\d*\.\d+|\d+', val.replace(',', ''))
+            if match:
+                return float(match.group())
+
+    # Look in features_text and model_name for hints
+    features = (str(product.get("features_text", "")) + " " + str(product.get("model_name", ""))).lower()
 
     if category == "air_conditioners":
         # Look for ton or BTU
@@ -549,13 +589,14 @@ def calculate_sentiment_ratio(
 def score_products_by_criteria(
     products: List[Dict[str, Any]],
     criteria_weights: Dict[str, float],
-    category: str = None
-) -> List[Dict[str, float]]:
+    category: str = None,
+    daily_hours: float = 6
+) -> List[Dict[str, Any]]:
     """
     Score products on weighted multi-criteria basis.
     criteria_weights: {"price": 0.3, "efficiency": 0.4, "rating": 0.3}
     Normalizes each criterion to 0-100 scale first.
-    Returns: list of {model_name, score}
+    Returns: list of {model, score, price, power_watts, annual_cost_rs}
     """
     if not products or not criteria_weights:
         return []
@@ -596,9 +637,15 @@ def score_products_by_criteria(
                 normalized = 100 * (rating / 5)
                 score += normalized * weight
 
+        power = extract_power_watts(product, category)
+        _, annual_cost = calculate_annual_electricity_cost(power, daily_hours)
+
         scores.append({
-            "model_name": product.get("model_name", "Unknown"),
-            "score": round(score, 2)
+            "model": product.get("model_name", "Unknown"),
+            "recommendation_score": round(score, 2),
+            "price": product.get("price"),
+            "power_watts": power,
+            "annual_cost_rs": round(annual_cost, 2)
         })
 
     # Sort by score descending
@@ -892,6 +939,43 @@ def detect_water_savings_query(query: str) -> bool:
 # ANALYSIS FUNCTIONS
 # =========================================================
 
+def _aggregate_and_heal_products(products: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Aggregates multi-row SQL outputs into unique products and fetches any missing DB specs."""
+    if not products:
+        return []
+        
+    aggregated = {}
+    for p in products:
+        name = p.get("model_name")
+        if not name:
+            continue
+        if name not in aggregated:
+            aggregated[name] = dict(p)
+        if p.get("spec_name") and p.get("spec_value"):
+            aggregated[name][p["spec_name"]] = p["spec_value"]
+
+    unique_products = list(aggregated.values())
+    
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        for p in unique_products:
+            cursor.execute("""
+                SELECT ps.spec_name, ps.spec_value 
+                FROM product_specifications ps 
+                JOIN products prod ON prod.id = ps.product_id 
+                WHERE prod.model_name = ?
+            """, (p["model_name"],))
+            for row in cursor.fetchall():
+                spec_n, spec_v = row[0], row[1]
+                if spec_n and spec_n not in p:
+                    p[spec_n] = spec_v
+        conn.close()
+    except Exception as e:
+        print(f"[Self-Healing Error] {str(e)}")
+        
+    return unique_products
+
 def analyze_electricity_costs(query: str, products: List[Dict[str, Any]], state: Dict[str, Any]) -> Dict[str, Any]:
     """Analyze electricity bills for selected products."""
     if not products:
@@ -905,6 +989,7 @@ def analyze_electricity_costs(query: str, products: List[Dict[str, Any]], state:
 
     category = state.get("category", "unknown")
     daily_hours = DAILY_USAGE_HOURS.get(category, 6)
+    products = _aggregate_and_heal_products(products)
     analysis = []
 
     for product in products:
@@ -923,6 +1008,9 @@ def analyze_electricity_costs(query: str, products: List[Dict[str, Any]], state:
             "annual_kwh": round(annual_kwh, 2),
             "annual_cost_rs": round(annual_cost, 2)
         })
+
+    # Sort by cheapest annual cost and take top 5
+    analysis = sorted(analysis, key=lambda x: x["annual_cost_rs"])[:5]
 
     return {
         "tool_output": {
@@ -945,6 +1033,7 @@ def analyze_efficiency_ratios(query: str, products: List[Dict[str, Any]], state:
         }
 
     category = state.get("category", "unknown")
+    products = _aggregate_and_heal_products(products)
     analysis = []
 
     for product in products:
@@ -959,8 +1048,8 @@ def analyze_efficiency_ratios(query: str, products: List[Dict[str, Any]], state:
             "efficiency_ratio": round(ratio, 4)
         })
 
-    # Sort by efficiency descending
-    analysis = sorted(analysis, key=lambda x: x["efficiency_ratio"], reverse=True)
+    # Sort by efficiency descending and take top 5
+    analysis = sorted(analysis, key=lambda x: x["efficiency_ratio"], reverse=True)[:5]
 
     return {
         "tool_output": {
@@ -982,12 +1071,47 @@ def analyze_payback_period(query: str, products: List[Dict[str, Any]], state: Di
             }
         }
 
+    # Detect cross-category invalid comparisons
+    import re
+    query_lower = query.lower()
+    detected_cats = sum(1 for kw_regex in [
+        r"\b(ac|air conditioner|split)\b",
+        r"\b(fridge|refrigerator|freezer)\b",
+        r"\b(washing machine|washer)\b",
+        r"\b(led|tv|television)\b"
+    ] if re.search(kw_regex, query_lower))
+    
+    if detected_cats > 1:
+        return {"tool_output": {"type": "python_result", "analysis": "Error: Cannot calculate payback period between products of completely different categories.", "chart": None}}
+
     category = state.get("category", "unknown")
     daily_hours = DAILY_USAGE_HOURS.get(category, 6)
 
-    # Assume first product is standard, second is efficient
-    standard = products[0]
-    efficient = products[1]
+    unique_products = _aggregate_and_heal_products(products)
+    if len(unique_products) < 2:
+        return {"tool_output": {"type": "python_result", "analysis": "Need at least 2 distinct products for payback comparison.", "chart": None}}
+
+    # Intelligently find the cheapest (standard) and most efficient models
+    sorted_by_price = sorted([p for p in unique_products if p.get("price")], key=lambda x: x.get("price", 999999))
+    if not sorted_by_price:
+        return {"tool_output": {"type": "python_result", "analysis": "Could not find products with valid prices for comparison.", "chart": None}}
+
+    standard = sorted_by_price[0] # Cheapest
+
+    # For efficient model, sort by efficiency ratio (capacity / power)
+    # We must filter out the standard model so we don't compare it to itself
+    remaining_products = [p for p in unique_products if p.get("model_name") != standard.get("model_name")]
+    
+    if not remaining_products:
+        return {"tool_output": {"type": "python_result", "analysis": "Need at least 2 distinct products for payback comparison.", "chart": None}}
+        
+    def get_efficiency(p):
+        power = extract_power_watts(p, category)
+        capacity = extract_capacity(p, category)
+        return calculate_energy_efficiency_ratio(capacity, power) if power > 0 else 0
+
+    sorted_by_efficiency = sorted(remaining_products, key=get_efficiency, reverse=True)
+    efficient = sorted_by_efficiency[0] # Most efficient
 
     standard_power = extract_power_watts(standard, category)
     efficient_power = extract_power_watts(efficient, category)
@@ -1031,11 +1155,13 @@ def analyze_multi_criteria_ranking(query: str, products: List[Dict[str, Any]], s
         }
 
     category = state.get("category", "unknown")
+    daily_hours = DAILY_USAGE_HOURS.get(category, 6)
+    products = _aggregate_and_heal_products(products)
 
     # Default weights: price (30%), efficiency (40%), rating (30%)
     weights = {"price": 0.3, "efficiency": 0.4, "rating": 0.3}
 
-    scored = score_products_by_criteria(products, weights, category)
+    scored = score_products_by_criteria(products, weights, category, daily_hours)[:5] # Keep top 5 to prevent spam
 
     return {
         "tool_output": {
@@ -1048,11 +1174,11 @@ def analyze_multi_criteria_ranking(query: str, products: List[Dict[str, Any]], s
 
 def analyze_co2_impact(query: str, products: List[Dict[str, Any]], state: Dict[str, Any]) -> Dict[str, Any]:
     """Analyze CO2 emissions and savings."""
-    if len(products) < 2:
+    if not products:
         return {
             "tool_output": {
                 "type": "python_result",
-                "analysis": "Need at least 2 products for CO2 comparison.",
+                "analysis": "No products found for CO2 comparison.",
                 "chart": None
             }
         }
@@ -1060,8 +1186,29 @@ def analyze_co2_impact(query: str, products: List[Dict[str, Any]], state: Dict[s
     category = state.get("category", "unknown")
     daily_hours = DAILY_USAGE_HOURS.get(category, 6)
 
-    standard = products[0]
-    efficient = products[1]
+    unique_products = _aggregate_and_heal_products(products)
+    if len(unique_products) < 2:
+        return {"tool_output": {"type": "python_result", "analysis": "Need at least 2 distinct products for CO2 comparison.", "chart": None}}
+
+    # Intelligently find the cheapest (standard) and most efficient models
+    sorted_by_price = sorted([p for p in unique_products if p.get("price")], key=lambda x: x.get("price", 999999))
+    if not sorted_by_price:
+        return {"tool_output": {"type": "python_result", "analysis": "Could not find products with valid prices for comparison.", "chart": None}}
+
+    standard = sorted_by_price[0] # Cheapest
+
+    remaining_products = [p for p in unique_products if p.get("model_name") != standard.get("model_name")]
+    
+    if not remaining_products:
+        return {"tool_output": {"type": "python_result", "analysis": "Need at least 2 distinct products for CO2 comparison.", "chart": None}}
+        
+    def get_efficiency(p):
+        power = extract_power_watts(p, category)
+        capacity = extract_capacity(p, category)
+        return calculate_energy_efficiency_ratio(capacity, power) if power > 0 else 0
+
+    sorted_by_efficiency = sorted(remaining_products, key=get_efficiency, reverse=True)
+    efficient = sorted_by_efficiency[0] # Most efficient
 
     standard_power = extract_power_watts(standard, category)
     efficient_power = extract_power_watts(efficient, category)
@@ -1157,8 +1304,8 @@ def analyze_ownership_cost(query: str, products: List[Dict[str, Any]], state: Di
             "5_year_total_ownership_cost": round(total_ownership, 2)
         })
 
-    # Sort by total ownership cost
-    analysis = sorted(analysis, key=lambda x: x["5_year_total_ownership_cost"])
+    # Sort by total ownership cost and take top 5
+    analysis = sorted(analysis, key=lambda x: x["5_year_total_ownership_cost"])[:5]
 
     return {
         "tool_output": {

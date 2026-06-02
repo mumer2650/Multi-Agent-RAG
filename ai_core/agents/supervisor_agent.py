@@ -86,9 +86,9 @@ def supervisor_agent(state):
     You are the intelligent routing system for Samsung Appliances, an electronics ecommerce company.
     Analyze the user's query and categorize it into EXACTLY ONE of these intents:
 
-    1. "sql": For product recommendations, prices, budgets, specifications, reviews, energy efficiency, and availability.
+    1. "sql": For raw prices, stock availability, simple specifications, and basic reviews without complex ranking.
     2. "retrieval": For information from user manuals, troubleshooting guides, fixing appliances, warranty policies, and how-to descriptions.
-    3. "python": For complex calculations and analysis—electricity bills, payback periods, energy efficiency ratios, multi-criteria rankings, CO2 emissions, sentiment analysis, and advanced visualizations. Always use this when the query requires mathematical calculations on product data.
+    3. "python": For ANY product recommendations, budget optimizations, electricity bills, payback periods, multi-criteria rankings, CO2 emissions, sentiment analysis, and advanced visualizations. Always use this when the user asks for a "recommendation" or "best product".
     4. "answer": ONLY for general conversational pleasantries, simple greetings, or basic math.
 
     You must return a JSON object with 'intent' and 'confidence'.
