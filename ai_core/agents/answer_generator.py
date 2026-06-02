@@ -174,6 +174,14 @@ def answer_generator(state):
         if tool_type == "python_result":
             chart    = tool_output.get("chart")
             analysis = tool_output.get("analysis", [])
+            
+            # If we generated a chart, bypass the LLM completely to prevent hallucinations
+            if chart:
+                return {
+                    "final_answer": "Here is the chart you requested:",
+                    "chart": chart
+                }
+                
             context += "\n\nPYTHON ANALYSIS:\n" + str(analysis)
 
         # ── SQL result ─────────────────────────────────────────────────────────

@@ -683,6 +683,17 @@ def build_energy_chart(products: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
+import re
+
+def _clean_number(val) -> float:
+    if isinstance(val, (int, float)):
+        return float(val)
+    if isinstance(val, str):
+        match = re.search(r'[-+]?\d*\.\d+|\d+', val.replace(',', ''))
+        if match:
+            return float(match.group())
+    return 0.0
+
 def build_scatter_chart(
     products: List[Dict[str, Any]],
     x_key: str,
@@ -698,8 +709,8 @@ def build_scatter_chart(
         "data": [
             {
                 "model": p.get("model_name", "Unknown"),
-                x_key: p.get(x_key, 0),
-                y_key: p.get(y_key, 0)
+                x_key: _clean_number(p.get(x_key, 0)),
+                y_key: _clean_number(p.get(y_key, 0))
             }
             for p in products if p.get(x_key) and p.get(y_key)
         ]
@@ -1181,12 +1192,22 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
     elif len(numeric_keys) == 1:
         # Bar chart
         y_key = numeric_keys[0]
+        
+        # Clean the data values for the bar chart
+        clean_data = []
+        for p in products:
+            clean_p = p.copy()
+            clean_p[y_key] = _clean_number(p.get(y_key, 0))
+            if "price" in p:
+                clean_p["price"] = _clean_number(p.get("price", 0))
+            clean_data.append(clean_p)
+            
         chart = {
             "chartType": "bar",
             "title": f"Comparison of {y_key.replace('_', ' ').title()}",
             "xKey": "model_name",
             "yKey": y_key,
-            "data": products
+            "data": clean_data
         }
         analysis_text = f"Generated bar chart for {y_key}."
     else:
