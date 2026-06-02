@@ -1091,18 +1091,37 @@ def analyze_payback_period(query: str, products: List[Dict[str, Any]], state: Di
     if len(unique_products) < 2:
         return {"tool_output": {"type": "python_result", "analysis": "Need at least 2 distinct products for payback comparison.", "chart": None}}
 
-    # Intelligently find the cheapest (standard) and most efficient models
-    sorted_by_price = sorted([p for p in unique_products if p.get("price")], key=lambda x: x.get("price", 999999))
-    if not sorted_by_price:
-        return {"tool_output": {"type": "python_result", "analysis": "Could not find products with valid prices for comparison.", "chart": None}}
-
-    standard = sorted_by_price[0] # Cheapest
-
-    # For efficient model, sort by efficiency ratio (capacity / power)
-    # We must filter out the standard model so we don't compare it to itself
-    remaining_products = [p for p in unique_products if p.get("model_name") != standard.get("model_name")]
+    # Parse specific constraints from the query
+    query_lower = query.lower()
     
-    if not remaining_products:
+    standard_candidates = unique_products
+    efficient_candidates = unique_products
+    
+    # Check if the user specified inverter vs non-inverter
+    if "non-inverter" in query_lower or "non inverter" in query_lower:
+        filtered_std = [p for p in unique_products if not p.get("has_inverter", True) or "non-inverter" in str(p.get("features_text", "")).lower() or "non inverter" in str(p.get("features_text", "")).lower()]
+        if not filtered_std:
+            return {"tool_output": {"type": "python_result", "analysis": "Could not find any non-inverter models in the database for comparison.", "chart": None}}
+        standard_candidates = filtered_std
+            
+    if "inverter" in query_lower:
+        filtered_eff = [p for p in unique_products if p.get("has_inverter", False) or "inverter" in str(p.get("features_text", "")).lower()]
+        if filtered_eff:
+            efficient_candidates = filtered_eff
+
+    # Pick standard model (default to cheapest, unless user wants expensive)
+    if "most expensive non-inverter" in query_lower or "expensive non-inverter" in query_lower:
+        sorted_standard = sorted([p for p in standard_candidates if p.get("price")], key=lambda x: x.get("price", 0), reverse=True)
+    else:
+        sorted_standard = sorted([p for p in standard_candidates if p.get("price")], key=lambda x: x.get("price", 999999))
+        
+    if not sorted_standard:
+        return {"tool_output": {"type": "python_result", "analysis": "Could not find products with valid prices for comparison.", "chart": None}}
+    standard = sorted_standard[0]
+
+    # Pick efficient model (default to most efficient, unless user wants most expensive)
+    remaining_efficient = [p for p in efficient_candidates if p.get("model_name") != standard.get("model_name")]
+    if not remaining_efficient:
         return {"tool_output": {"type": "python_result", "analysis": "Need at least 2 distinct products for payback comparison.", "chart": None}}
         
     def get_efficiency(p):
@@ -1110,8 +1129,12 @@ def analyze_payback_period(query: str, products: List[Dict[str, Any]], state: Di
         capacity = extract_capacity(p, category)
         return calculate_energy_efficiency_ratio(capacity, power) if power > 0 else 0
 
-    sorted_by_efficiency = sorted(remaining_products, key=get_efficiency, reverse=True)
-    efficient = sorted_by_efficiency[0] # Most efficient
+    if "most expensive inverter" in query_lower or ("most expensive" in query_lower and "inverter" in query_lower):
+        sorted_efficient = sorted([p for p in remaining_efficient if p.get("price")], key=lambda x: x.get("price", 0), reverse=True)
+    else:
+        sorted_efficient = sorted(remaining_efficient, key=get_efficiency, reverse=True)
+        
+    efficient = sorted_efficient[0]
 
     standard_power = extract_power_watts(standard, category)
     efficient_power = extract_power_watts(efficient, category)
@@ -1473,8 +1496,8 @@ def python_agent(state: Dict[str, Any]):
             print("[Python Agent] -> No specific intent detected, returning general analysis")
             return {
                 "tool_output": {
-                    "type": "python_result",
-                    "analysis": "Query processed but no specific analysis type detected. Here are the products:",
+                    "type": "sql_result",
+                    "action": "data_found",
                     "data": products,
                     "chart": None
                 }

@@ -1,0 +1,20 @@
+1. What is the cheapest refrigerator available, and what is its net total capacity?
+2. How do I clean the lint filter of a front-loading washing machine?
+3. Calculate the monthly electricity bill if I run the Top Mounted Freezer SpaceMax 304L for 24 hours a day, assuming the standard tariff rate.
+4. Recommend a Samsung LED TV that costs under Rs 300,000.
+5. Does the Side-by-Side Refrigerator Twist Ice Maker 655L support Wi-Fi or SmartThings?
+6. My washing machine is showing a 4C error code. Should I buy a new one or can it be fixed?
+7. How much clearance does the outdoor unit of a 1.5 Ton Wall-mount AC need on the back and sides?
+8. Are there any true wireless earbuds available that feature active noise cancellation?
+9. Compare the capacity and price of the Top Mounted Freezer SpaceMax 304L and the Optimal Fresh+ 411L.
+10. Can I plug my refrigerator into a standard extension cord according to the manual?
+11. Which dishwasher consumes the least water per cycle?
+12. Give me a scatter chart of the price versus capacity for all refrigerators.
+13. What is the payback period if I buy the most expensive inverter AC instead of the cheapest inverter AC?
+14. How many Samsung air conditioners have a Twin Cooling system?
+15. What should I do if my refrigerator's ice maker stops working?
+16. Rank all the Top Mounted Freezers based on their price and capacity.
+17. Do we have any microwave ovens in the database?
+18. What does the "Optimal Fresh+" feature do?
+19. Show me a bar chart of the top 5 most expensive washing machines.
+20. Calculate the annual electricity cost of running a dispenser for 8 hours a day.
