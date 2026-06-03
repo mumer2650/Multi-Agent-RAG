@@ -195,12 +195,11 @@ def answer_generator(state):
             chart    = tool_output.get("chart")
             analysis = tool_output.get("analysis", [])
             
-            # If we generated a chart, bypass the LLM completely to prevent hallucinations
+            # If we generated a chart, keep it in the state but STILL let the LLM generate a summary
+            # We append the data to the context so the LLM can talk about it!
             if chart:
-                return {
-                    "final_answer": str(analysis) if isinstance(analysis, str) else "Here is the chart you requested:",
-                    "chart": chart
-                }
+                context += f"\n\n[SYSTEM NOTE: A {chart.get('chartType')} chart was generated successfully for the user. Here is the raw data used for the chart so you can summarize/describe it:]\n"
+                context += str(tool_output.get("data", analysis))[:2000] # limit context size
             
             # If the analysis is just a string message (e.g., "Need at least 2 products..."), 
             # return it directly to prevent the LLM from hallucinating python code examples.

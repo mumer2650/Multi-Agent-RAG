@@ -1350,31 +1350,47 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
             }
         }
     
-    # Analyze the keys of the first product to determine what to plot
+    # 1. Clean the data and strictly identify TRUE numeric keys
     sample = products[0]
     keys = list(sample.keys())
-    # Remove common label keys to find numeric data to plot
-    numeric_keys = [k for k in keys if k not in ["model_name", "id", "category_id", "category"]]
     
+    numeric_keys = []
+    for k in keys:
+        if k in ["model_name", "id", "category_id", "category", "spec_name", "spec_value", "features_text"]:
+            continue
+        
+        # Check if at least one product has a parsable number for this key
+        for p in products:
+            val = p.get(k)
+            if val is not None:
+                if isinstance(val, (int, float)):
+                    numeric_keys.append(k)
+                    break
+                elif isinstance(val, str) and re.search(r'[-+]?\d*\.\d+|\d+', val.replace(',', '')):
+                    numeric_keys.append(k)
+                    break
+
     query_lower = query.lower()
+    force_scatter = "scatter" in query_lower
     force_bar = "bar" in query_lower
-    
-    if len(numeric_keys) >= 2 and not force_bar:
-        # Scatter chart (e.g., price vs capacity)
+
+    # 2. Decide Chart Type
+    if len(numeric_keys) >= 2 and (force_scatter or ("vs" in query_lower and not force_bar)):
+        # Scatter chart (Comparing two variables, e.g. Price vs Capacity)
         x_key = numeric_keys[0]
         y_key = numeric_keys[1]
-        # Try to make price the X axis if it exists
         if "price" in numeric_keys:
             x_key = "price"
             y_key = next((k for k in numeric_keys if k != "price"), numeric_keys[1])
             
         chart = build_scatter_chart(products, x_key, y_key, f"{y_key.replace('_', ' ').title()} vs {x_key.title()}")
-        analysis_text = f"Generated scatter chart comparing {y_key} and {x_key}."
-    elif len(numeric_keys) == 1:
-        # Bar chart
-        y_key = numeric_keys[0]
+        analysis_text = f"Here is the scatter chart comparing {y_key} and {x_key} as requested."
+    
+    elif len(numeric_keys) >= 1:
+        # Bar chart (Default for single metric comparisons like "prices")
+        # Prioritize price if it's one of the available metrics
+        y_key = "price" if "price" in numeric_keys else numeric_keys[0]
         
-        # Clean the data values for the bar chart
         clean_data = []
         for p in products:
             clean_p = p.copy()
@@ -1383,29 +1399,32 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
                 clean_p["price"] = _clean_number(p.get("price", 0))
             clean_data.append(clean_p)
             
+        # Group by model name if there are multiple specs returned per product
+        aggregated_data = {}
+        for p in clean_data:
+            name = p.get("model_name", "Unknown")
+            if name not in aggregated_data:
+                aggregated_data[name] = p
+                
         chart = {
             "chartType": "bar",
             "title": f"Comparison of {y_key.replace('_', ' ').title()}",
             "xKey": "model_name",
             "yKey": y_key,
-            "data": clean_data
+            "data": list(aggregated_data.values())
         }
-        analysis_text = f"Generated bar chart for {y_key}."
+        analysis_text = f"Here is the bar chart for {y_key.replace('_', ' ')}."
+    
     else:
-        # Fallback chart
-        chart = {
-            "chartType": "bar",
-            "title": "Product Comparison",
-            "xKey": "model_name",
-            "yKey": "price" if "price" in keys else "model_name",
-            "data": products
-        }
-        analysis_text = "Generated chart."
+        # Fallback to general product listing
+        chart = None
+        analysis_text = "I couldn't identify numerical data to generate a chart, but here are the products."
 
     return {
         "tool_output": {
             "type": "python_result",
             "analysis": analysis_text,
+            "data": products, # Pass full product data so the Answer Generator can describe them!
             "chart": chart
         }
     }
