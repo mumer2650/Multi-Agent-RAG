@@ -249,7 +249,7 @@ RULE 5 — ALWAYS alias the primary display column as model_name:
 RULE 6 — DEDUPLICATION:
   Add DISTINCT when joining product_specifications to prevent duplicate rows.
 
-RULE 7 — ALWAYS add LIMIT 100.
+RULE 7 — ALWAYS add LIMIT 1000.
 
 RULE 8 — NEVER DO MATH IN SQL:
   • Do NOT calculate cost differences, multiplication, or complex math in SQL.

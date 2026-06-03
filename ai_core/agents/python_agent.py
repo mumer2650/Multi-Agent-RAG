@@ -185,7 +185,7 @@ RULE 3 — Boolean specs use 'Yes'/'No' exactly.
 RULE 4 — String specs with units (BTU, kg, rpm, dB) use LIKE: ps.spec_value LIKE '%18,000%'
 RULE 5 — ALWAYS alias primary column as model_name (or category_name AS model_name).
 RULE 6 — Add DISTINCT when joining product_specifications.
-RULE 7 — Always add LIMIT 100.
+RULE 7 — Always add LIMIT 1000.
 RULE 8 — NEVER DO MATH OR COMPARISONS IN SQL:
   • Do NOT calculate cost differences, multiplication, division, or complex math in SQL.
   • Do NOT attempt to find the "cheapest" or "most expensive" products using WHERE clauses or subqueries.
