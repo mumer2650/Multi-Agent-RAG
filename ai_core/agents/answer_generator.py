@@ -203,14 +203,14 @@ def answer_generator(state):
             
             # If the analysis is just a string message (e.g., "Need at least 2 products..."), 
             # return it directly to prevent the LLM from hallucinating python code examples.
-            if isinstance(analysis, str):
+            if isinstance(analysis, str) and not chart:
                 return {
                     "final_answer": analysis,
                     "chart": None
                 }
             
             # If analysis is a list of dictionaries, format it directly and bypass the LLM
-            if isinstance(analysis, list) and len(analysis) > 0 and isinstance(analysis[0], dict):
+            if isinstance(analysis, list) and len(analysis) > 0 and isinstance(analysis[0], dict) and not chart:
                 lines = ["Based on the analysis, here are the calculated results:"]
                 for item in analysis:
                     model = item.get("model", item.get("model_name", "Result"))
@@ -228,8 +228,7 @@ def answer_generator(state):
                     "chart": None
                 }
 
-            # If analysis is a single dictionary, format it directly and bypass the LLM
-            if isinstance(analysis, dict):
+            if isinstance(analysis, dict) and not chart:
                 lines = ["Based on the analysis, here are the calculated results:"]
                 for k, v in analysis.items():
                     if v is not None:
