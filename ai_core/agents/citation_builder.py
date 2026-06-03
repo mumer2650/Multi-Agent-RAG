@@ -6,6 +6,11 @@ def citation_builder(state):
     citations = []
     seen = set()
 
+    # If the LLM determined the answer wasn't in the context, clear the citations
+    final_answer = state.get("final_answer", "")
+    if "I do not have that information" in final_answer or "I cannot find" in final_answer:
+        return {"citations": []}
+
     # =====================================================
     # RETRIEVAL-BASED CITATIONS
     # =====================================================
