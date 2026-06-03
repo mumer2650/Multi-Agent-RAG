@@ -95,9 +95,9 @@ def _render_sql_rows(sql_data: list, action: str) -> str:
         }
         if extras:
             detail = ', '.join(_fmt_value(k, v) for k, v in extras.items())
-            rows_out.append(f"• {model_name} — {detail}")
+            rows_out.append(f"- **{model_name}** — {detail}")
         else:
-            rows_out.append(f"• {model_name}")
+            rows_out.append(f"- **{model_name}**")
 
     n = len(sql_data)
     # Use a product-specific header if any row has a price, otherwise generic
@@ -132,7 +132,7 @@ def _summarize_sql_results(sql_data: list) -> str:
         summary += "\nTop 10 products:\n"
         key_fields = ['model_name', 'price', 'rating', 'id', 'category_name', 'spec_name', 'spec_value']
         for row in sql_data[:10]:
-            summary += f"• { {k: v for k, v in row.items() if k in key_fields} }\n"
+            summary += f"- { {k: v for k, v in row.items() if k in key_fields} }\n"
         if num_rows > 10:
             summary += f"\n... and {num_rows - 10} more products available\n"
         return summary
@@ -140,7 +140,7 @@ def _summarize_sql_results(sql_data: list) -> str:
     elif num_rows > 20:
         summary = f"Found {num_rows} products. Showing key details:\n\n"
         for row in sql_data:
-            summary += "• "
+            summary += "- "
             for key in ['model_name', 'price', 'rating', 'has_inverter', 'spec_name', 'spec_value']:
                 if key in row:
                     summary += f"{key}: {row[key]}, "
@@ -150,7 +150,7 @@ def _summarize_sql_results(sql_data: list) -> str:
     else:
         summary = f"Found {num_rows} products:\n\n"
         for row in sql_data:
-            summary += "• "
+            summary += "- "
             for key in ['model_name', 'price', 'rating', 'has_inverter', 'energy_rating', 'spec_name', 'spec_value']:
                 if key in row:
                     summary += f"{key}: {row[key]}, "
@@ -166,7 +166,7 @@ def _format_sql_results(sql_data: list, fields=None) -> str:
     lines = []
     for row in sql_data:
         parts = [str(row[k]) for k in fields if k in row]
-        lines.append("• " + ", ".join(parts) if parts else f"• {row}")
+        lines.append("- " + ", ".join(parts) if parts else f"- {row}")
     return "\n".join(lines)
 
 
@@ -219,9 +219,9 @@ def answer_generator(state):
                         if k not in ["model", "model_name"] and v is not None:
                             details.append(_fmt_value(k, v))
                     if details:
-                        lines.append(f"• {model} — {', '.join(details)}")
+                        lines.append(f"- **{model}** — {', '.join(details)}")
                     else:
-                        lines.append(f"• {model}")
+                        lines.append(f"- **{model}**")
                 
                 return {
                     "final_answer": "\n".join(lines),
@@ -232,7 +232,7 @@ def answer_generator(state):
                 lines = ["Based on the analysis, here are the calculated results:"]
                 for k, v in analysis.items():
                     if v is not None:
-                        lines.append(f"• {_fmt_value(k, v)}")
+                        lines.append(f"- **{k}** — {_fmt_value(k, v)}")
                 
                 return {
                     "final_answer": "\n".join(lines),
