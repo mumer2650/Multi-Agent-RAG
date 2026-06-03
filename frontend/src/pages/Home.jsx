@@ -334,11 +334,8 @@ export default function Home() {
                       ) : (
                         <div className="flex flex-col items-start w-full group">
                           {msg.content && (
-                            <div className="max-w-[85%] sm:max-w-[85%] lg:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm overflow-x-auto">
-                              <ReactMarkdown 
-                                remarkPlugins={[remarkGfm]}
-                                className="prose prose-slate dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-slate-100 dark:prose-pre:bg-slate-900 prose-a:text-blue-600 dark:prose-a:text-blue-400"
-                              >
+                            <div className="max-w-[85%] sm:max-w-[85%] lg:max-w-[75%] rounded-3xl px-6 py-4 shadow-sm text-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-bl-sm overflow-x-auto prose prose-slate dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-slate-100 dark:prose-pre:bg-slate-900 prose-a:text-blue-600 dark:prose-a:text-blue-400">
+                              <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                 {msg.content}
                               </ReactMarkdown>
                             </div>
