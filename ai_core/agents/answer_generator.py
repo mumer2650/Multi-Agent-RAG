@@ -209,9 +209,9 @@ def answer_generator(state):
                     "chart": None
                 }
             
-            # If analysis is a list of dictionaries, format it directly and bypass the LLM
+            # If analysis is a list of dictionaries, format it nicely and pass to LLM
             if isinstance(analysis, list) and len(analysis) > 0 and isinstance(analysis[0], dict) and not chart:
-                lines = ["Based on the analysis, here are the calculated results:"]
+                lines = ["Based on the python analysis, here are the calculated results:"]
                 for item in analysis:
                     model = item.get("model", item.get("model_name", "Result"))
                     details = []
@@ -223,23 +223,18 @@ def answer_generator(state):
                     else:
                         lines.append(f"- **{model}**")
                 
-                return {
-                    "final_answer": "\n".join(lines),
-                    "chart": None
-                }
+                context += "\n\nPYTHON ANALYSIS:\n" + "\n".join(lines)
 
-            if isinstance(analysis, dict) and not chart:
-                lines = ["Based on the analysis, here are the calculated results:"]
+            elif isinstance(analysis, dict) and not chart:
+                lines = ["Based on the python analysis, here are the calculated results:"]
                 for k, v in analysis.items():
                     if v is not None:
                         lines.append(f"- **{k}** — {_fmt_value(k, v)}")
                 
-                return {
-                    "final_answer": "\n".join(lines),
-                    "chart": None
-                }
+                context += "\n\nPYTHON ANALYSIS:\n" + "\n".join(lines)
                 
-            context += "\n\nPYTHON ANALYSIS:\n" + str(analysis)
+            else:
+                context += "\n\nPYTHON ANALYSIS:\n" + str(analysis)
 
         # ── SQL result ─────────────────────────────────────────────────────────
         elif tool_type == "sql_result":
