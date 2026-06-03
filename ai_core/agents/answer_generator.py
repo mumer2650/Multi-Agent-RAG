@@ -199,7 +199,7 @@ def answer_generator(state):
             # We append the data to the context so the LLM can talk about it!
             if chart:
                 context += f"\n\n[SYSTEM NOTE: A {chart.get('chartType')} chart was generated successfully for the user. Here is the raw data used for the chart so you can summarize/describe it:]\n"
-                context += str(tool_output.get("data", analysis))[:2000] # limit context size
+                context += str(tool_output.get("data", analysis))[:15000] # Increase limit to ensure all products fit in context
             
             # If the analysis is just a string message (e.g., "Need at least 2 products..."), 
             # return it directly to prevent the LLM from hallucinating python code examples.
