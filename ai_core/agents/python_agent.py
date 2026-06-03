@@ -1350,13 +1350,31 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
             }
         }
     
+    # 0. Pivot EAV data (spec_name/spec_value) into proper keys and deduplicate
+    pivoted_products = {}
+    for p in products:
+        model = p.get("model_name")
+        if not model:
+            continue
+        if model not in pivoted_products:
+            clean_p = {k: v for k, v in p.items() if k not in ["spec_name", "spec_value"]}
+            pivoted_products[model] = clean_p
+        
+        spec_name = p.get("spec_name")
+        spec_val = p.get("spec_value")
+        if spec_name and spec_val:
+            pivoted_products[model][spec_name.lower()] = spec_val
+            
+    products = list(pivoted_products.values())
+
     # 1. Clean the data and strictly identify TRUE numeric keys
-    sample = products[0]
-    keys = list(sample.keys())
+    all_keys = set()
+    for p in products:
+        all_keys.update(p.keys())
     
     numeric_keys = []
-    for k in keys:
-        if k in ["model_name", "id", "category_id", "category", "spec_name", "spec_value", "features_text"]:
+    for k in all_keys:
+        if k in ["model_name", "id", "category_id", "category", "features_text"]:
             continue
         
         # Check if at least one product has a parsable number for this key
@@ -1374,22 +1392,28 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
     force_scatter = "scatter" in query_lower
     force_bar = "bar" in query_lower
 
+    # Helper to find the best matching key from user's query
+    def find_best_key(query_str: str, available_keys: List[str], exclude: str = None) -> str:
+        words = set(re.findall(r'\w+', query_str))
+        for key in available_keys:
+            if key == exclude: continue
+            if any(w in key for w in words if w not in ['the', 'a', 'of', 'for', 'all', 'chart']):
+                return key
+        return next((k for k in available_keys if k != exclude), available_keys[0]) if available_keys else None
+
     # 2. Decide Chart Type
     if len(numeric_keys) >= 2 and (force_scatter or ("vs" in query_lower and not force_bar)):
-        # Scatter chart (Comparing two variables, e.g. Price vs Capacity)
-        x_key = numeric_keys[0]
-        y_key = numeric_keys[1]
-        if "price" in numeric_keys:
-            x_key = "price"
-            y_key = next((k for k in numeric_keys if k != "price"), numeric_keys[1])
+        # Scatter chart
+        x_key = "price" if "price" in numeric_keys else numeric_keys[0]
+        y_key = find_best_key(query_lower, numeric_keys, exclude=x_key)
             
         chart = build_scatter_chart(products, x_key, y_key, f"{y_key.replace('_', ' ').title()} vs {x_key.title()}")
-        analysis_text = f"Here is the scatter chart comparing {y_key} and {x_key} as requested."
+        analysis_text = f"Here is the scatter chart comparing {y_key} and {x_key}."
     
     elif len(numeric_keys) >= 1:
-        # Bar chart (Default for single metric comparisons like "prices")
-        # Prioritize price if it's one of the available metrics
-        y_key = "price" if "price" in numeric_keys else numeric_keys[0]
+        # Bar chart
+        y_key = find_best_key(query_lower, numeric_keys)
+        if not y_key: y_key = "price" if "price" in numeric_keys else numeric_keys[0]
         
         clean_data = []
         for p in products:
@@ -1398,25 +1422,18 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
             if "price" in p:
                 clean_p["price"] = _clean_number(p.get("price", 0))
             clean_data.append(clean_p)
-            
-        # Group by model name if there are multiple specs returned per product
-        aggregated_data = {}
-        for p in clean_data:
-            name = p.get("model_name", "Unknown")
-            if name not in aggregated_data:
-                aggregated_data[name] = p
                 
         chart = {
             "chartType": "bar",
             "title": f"Comparison of {y_key.replace('_', ' ').title()}",
             "xKey": "model_name",
             "yKey": y_key,
-            "data": list(aggregated_data.values())
+            "data": clean_data
         }
         analysis_text = f"Here is the bar chart for {y_key.replace('_', ' ')}."
     
     else:
-        # Fallback to general product listing
+        # Fallback
         chart = None
         analysis_text = "I couldn't identify numerical data to generate a chart, but here are the products."
 
@@ -1424,7 +1441,7 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
         "tool_output": {
             "type": "python_result",
             "analysis": analysis_text,
-            "data": products, # Pass full product data so the Answer Generator can describe them!
+            "data": products, # Pass full DEDUPLICATED product data so the Answer Generator can describe them!
             "chart": chart
         }
     }
