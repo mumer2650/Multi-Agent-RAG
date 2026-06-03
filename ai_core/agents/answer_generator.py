@@ -325,7 +325,15 @@ Be extremely careful. Do not invent features, prices, policies, or internal data
                 prompt_messages.append(("human", f"Question:\n{user_query}"))
                 
             response = llm.invoke(prompt_messages)
-            return {"final_answer": response.content, "chart": None}
+            
+            # Helper to extract string from Gemini list output
+            content = response.content
+            if isinstance(content, list):
+                content = "".join([c.get("text", "") if isinstance(c, dict) else str(c) for c in content])
+            else:
+                content = str(content)
+                
+            return {"final_answer": content, "chart": None}
         except Exception as error:
             return {"final_answer": f"Error generating answer: {str(error)}", "chart": None, "error": str(error)}
 
@@ -376,6 +384,14 @@ IMPORTANT FORMATTING RULES:
         print(f"[DEBUG] Context length: {len(context)} chars")
         print(f"[DEBUG] Context preview: {context[:200]}...")
 
+    def _extract_content(response) -> str:
+        content = response.content
+        if isinstance(content, str):
+            return content
+        elif isinstance(content, list):
+            return "".join([c.get("text", "") if isinstance(c, dict) else str(c) for c in content])
+        return str(content)
+
     print(f"[DEBUG] Sending to LLM - System prompt length: {len(system_prompt)}")
     print(f"[DEBUG] User prompt length: {len(user_prompt)}")
     print(f"[DEBUG] User prompt: {user_prompt[:150]}...")
@@ -393,6 +409,6 @@ IMPORTANT FORMATTING RULES:
         invoke_messages.append(("human", user_prompt))
         
         response = llm.invoke(invoke_messages)
-        return {"final_answer": response.content, "chart": chart}
+        return {"final_answer": _extract_content(response), "chart": chart}
     except Exception as error:
         return {"final_answer": f"Error generating answer: {str(error)}", "chart": chart, "error": str(error)}
