@@ -313,12 +313,13 @@ Be extremely careful. Do not invent features, prices, policies, or internal data
         try:
             prompt_messages = [("system", system_prompt)]
             for m in messages:
-                role = m["role"]
-                if role == "user":
+                role = m.get("role") if isinstance(m, dict) else m.type
+                content = m.get("content") if isinstance(m, dict) else m.content
+                if role in ("user", "human"):
                     role = "human"
-                elif role in ["assistant", "model"]:
+                elif role in ("assistant", "model", "ai"):
                     role = "ai"
-                prompt_messages.append((role, m["content"]))
+                prompt_messages.append((role, content))
             
             if not messages:
                 prompt_messages.append(("human", f"Question:\n{user_query}"))
@@ -382,12 +383,13 @@ IMPORTANT FORMATTING RULES:
     try:
         invoke_messages = [("system", system_prompt)]
         for m in messages:
-            role = m["role"]
-            if role == "user":
+            role = m.get("role") if isinstance(m, dict) else m.type
+            content = m.get("content") if isinstance(m, dict) else m.content
+            if role in ("user", "human"):
                 role = "human"
-            elif role == "assistant" or role == "model":
+            elif role in ("assistant", "model", "ai"):
                 role = "ai"
-            invoke_messages.append((role, m["content"]))
+            invoke_messages.append((role, content))
         invoke_messages.append(("human", user_prompt))
         
         response = llm.invoke(invoke_messages)
