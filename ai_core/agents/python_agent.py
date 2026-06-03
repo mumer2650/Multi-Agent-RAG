@@ -324,20 +324,16 @@ def extract_power_watts(product: Dict[str, Any], category: str = None) -> float:
                         # Reverse engineer Watts from annual kWh
                         return round((annual_kwh * 1000) / (daily_hours * 365), 1)
 
-    # 2. Check common explicit aliases
-    for key in ["power_watts", "power", "power_consumption_watts", "wattage"]:
-        if key in product and product[key]:
-            val = str(product[key]).lower()
-            match = re.search(r'[-+]?\d*\.\d+|\d+', val.replace(',', ''))
-            if match:
-                return float(match.group())
-
-    # 3. Check spec_value ONLY IF spec_name implies power
-    if "spec_value" in product and product.get("spec_name"):
-        spec_name = str(product["spec_name"]).lower()
-        if "power" in spec_name or "watt" in spec_name or "consumption" in spec_name:
-            val = str(product["spec_value"]).lower()
-            match = re.search(r'[-+]?\d*\.\d+|\d+', val.replace(',', ''))
+    # 2. Check ALL keys for power-related specification names
+    for key, val in product.items():
+        key_lower = str(key).lower()
+        if ("power" in key_lower or "watt" in key_lower or "consumption" in key_lower) and "water" not in key_lower:
+            # Skip "power supply" which usually contains voltage (e.g., "220-240V") instead of watts
+            if "supply" in key_lower or "source" in key_lower:
+                continue
+            
+            val_str = str(val).lower()
+            match = re.search(r'[-+]?\d*\.\d+|\d+', val_str.replace(',', ''))
             if match:
                 return float(match.group())
 
