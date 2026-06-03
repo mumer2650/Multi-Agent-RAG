@@ -1356,7 +1356,10 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
     # Remove common label keys to find numeric data to plot
     numeric_keys = [k for k in keys if k not in ["model_name", "id", "category_id", "category"]]
     
-    if len(numeric_keys) >= 2:
+    query_lower = query.lower()
+    force_bar = "bar" in query_lower
+    
+    if len(numeric_keys) >= 2 and not force_bar:
         # Scatter chart (e.g., price vs capacity)
         x_key = numeric_keys[0]
         y_key = numeric_keys[1]
