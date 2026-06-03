@@ -16,7 +16,12 @@ app = FastAPI(title="Multi-Agent RAG API")
 # Configure CORS so your React frontend can communicate with the backend [cite: 183]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], # Your Vite frontend URL
+    allow_origins=[
+        "http://localhost:5173", 
+        "http://127.0.0.1:5173",
+        "http://localhost:9001",
+        "http://127.0.0.1:9001"
+    ], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

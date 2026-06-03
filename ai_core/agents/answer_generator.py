@@ -5,14 +5,34 @@ from ai_core.llm.ollama_client import llm
 # Internal DB fields that should never appear in user-facing output
 _SKIP_FIELDS  = {'id', 'product_id', 'category_id', 'embedding_id'}
 # Fields whose values are monetary (get Rs prefix + comma formatting)
-_MONEY_FIELDS = {'price', 'original_price', 'sale_price'}
+_MONEY_FIELDS = {'price', 'original_price', 'sale_price', 'standard_annual_cost', 'efficient_annual_cost', 'annual_savings', 'price_premium', 'annual_cost_rs', 'monthly_cost_rs'}
 
+
+def format_pk_rupees(amount) -> str:
+    """Format numbers using Pakistani/Indian numbering system (Lakhs/Crores)."""
+    try:
+        amount = int(float(amount))
+        s = str(amount)
+        if len(s) <= 3:
+            return s
+        last_three = s[-3:]
+        rest = s[:-3]
+        chunks = []
+        while len(rest) > 2:
+            chunks.append(rest[-2:])
+            rest = rest[:-2]
+        if rest:
+            chunks.append(rest)
+        chunks.reverse()
+        return ",".join(chunks) + "," + last_three
+    except (ValueError, TypeError):
+        return str(amount)
 
 def _fmt_value(key: str, val) -> str:
     """Render a single key-value pair as a human-readable string."""
     label = key.replace('_', ' ').title()
     if key in _MONEY_FIELDS and isinstance(val, (int, float)):
-        return f"{label}: Rs {int(val):,}"
+        return f"{label}: Rs {format_pk_rupees(val)}"
     if isinstance(val, float):
         return f"{label}: {val:.2f}"
     return f"{label}: {val}"
@@ -75,9 +95,9 @@ def _render_sql_rows(sql_data: list, action: str) -> str:
         }
         if extras:
             detail = ', '.join(_fmt_value(k, v) for k, v in extras.items())
-            rows_out.append(f"• {model_name} — {detail}")
+            rows_out.append(f"- **{model_name}** — {detail}")
         else:
-            rows_out.append(f"• {model_name}")
+            rows_out.append(f"- **{model_name}**")
 
     n = len(sql_data)
     # Use a product-specific header if any row has a price, otherwise generic
@@ -110,9 +130,9 @@ def _summarize_sql_results(sql_data: list) -> str:
             summary += f"Rating Range: {min(ratings):.1f} - {max(ratings):.1f}/5\n"
             summary += f"Average Rating: {sum(ratings)/len(ratings):.1f}/5\n"
         summary += "\nTop 10 products:\n"
-        key_fields = ['model_name', 'price', 'rating', 'id', 'category_name']
+        key_fields = ['model_name', 'price', 'rating', 'id', 'category_name', 'spec_name', 'spec_value']
         for row in sql_data[:10]:
-            summary += f"• { {k: v for k, v in row.items() if k in key_fields} }\n"
+            summary += f"- { {k: v for k, v in row.items() if k in key_fields} }\n"
         if num_rows > 10:
             summary += f"\n... and {num_rows - 10} more products available\n"
         return summary
@@ -120,8 +140,8 @@ def _summarize_sql_results(sql_data: list) -> str:
     elif num_rows > 20:
         summary = f"Found {num_rows} products. Showing key details:\n\n"
         for row in sql_data:
-            summary += "• "
-            for key in ['model_name', 'price', 'rating', 'has_inverter']:
+            summary += "- "
+            for key in ['model_name', 'price', 'rating', 'has_inverter', 'spec_name', 'spec_value']:
                 if key in row:
                     summary += f"{key}: {row[key]}, "
             summary = summary.rstrip(", ") + "\n"
@@ -130,8 +150,8 @@ def _summarize_sql_results(sql_data: list) -> str:
     else:
         summary = f"Found {num_rows} products:\n\n"
         for row in sql_data:
-            summary += "• "
-            for key in ['model_name', 'price', 'rating', 'has_inverter', 'energy_rating']:
+            summary += "- "
+            for key in ['model_name', 'price', 'rating', 'has_inverter', 'energy_rating', 'spec_name', 'spec_value']:
                 if key in row:
                     summary += f"{key}: {row[key]}, "
             summary = summary.rstrip(", ") + "\n"
@@ -146,7 +166,7 @@ def _format_sql_results(sql_data: list, fields=None) -> str:
     lines = []
     for row in sql_data:
         parts = [str(row[k]) for k in fields if k in row]
-        lines.append("• " + ", ".join(parts) if parts else f"• {row}")
+        lines.append("- " + ", ".join(parts) if parts else f"- {row}")
     return "\n".join(lines)
 
 
@@ -174,7 +194,47 @@ def answer_generator(state):
         if tool_type == "python_result":
             chart    = tool_output.get("chart")
             analysis = tool_output.get("analysis", [])
-            context += "\n\nPYTHON ANALYSIS:\n" + str(analysis)
+            
+            # If we generated a chart, keep it in the state but STILL let the LLM generate a summary
+            # We append the data to the context so the LLM can talk about it!
+            if chart:
+                context += f"\n\n[SYSTEM NOTE: A {chart.get('chartType')} chart was generated successfully for the user. Here is the raw data used for the chart so you can summarize/describe it:]\n"
+                context += str(tool_output.get("data", analysis))[:100000] # Increase limit significantly to ensure all products with large feature texts fit
+            
+            # If the analysis is just a string message (e.g., "Need at least 2 products..."), 
+            # return it directly to prevent the LLM from hallucinating python code examples.
+            if isinstance(analysis, str) and not chart:
+                return {
+                    "final_answer": analysis,
+                    "chart": None
+                }
+            
+            # If analysis is a list of dictionaries, format it nicely and pass to LLM
+            if isinstance(analysis, list) and len(analysis) > 0 and isinstance(analysis[0], dict) and not chart:
+                lines = ["Based on the python analysis, here are the calculated results:"]
+                for item in analysis:
+                    model = item.get("model", item.get("model_name", "Result"))
+                    details = []
+                    for k, v in item.items():
+                        if k not in ["model", "model_name"] and v is not None:
+                            details.append(_fmt_value(k, v))
+                    if details:
+                        lines.append(f"- **{model}** — {', '.join(details)}")
+                    else:
+                        lines.append(f"- **{model}**")
+                
+                context += "\n\nPYTHON ANALYSIS:\n" + "\n".join(lines)
+
+            elif isinstance(analysis, dict) and not chart:
+                lines = ["Based on the python analysis, here are the calculated results:"]
+                for k, v in analysis.items():
+                    if v is not None:
+                        lines.append(f"- **{k}** — {_fmt_value(k, v)}")
+                
+                context += "\n\nPYTHON ANALYSIS:\n" + "\n".join(lines)
+                
+            else:
+                context += "\n\nPYTHON ANALYSIS:\n" + str(analysis)
 
         # ── SQL result ─────────────────────────────────────────────────────────
         elif tool_type == "sql_result":
@@ -192,16 +252,12 @@ def answer_generator(state):
                     "chart": None
                 }
 
-            # ── Small result sets (≤ 20 rows): render directly, skip the LLM ──
-            # OLD code only showed model_name + price → fixed by _render_sql_rows
+            # ── Small result sets (≤ 20 rows): render nicely and pass to LLM ──
             if len(sql_data) <= 20:
-                return {
-                    "final_answer": _render_sql_rows(sql_data, sql_action),
-                    "chart": None
-                }
-
+                context += "\n\nSQL RESULTS:\n" + _render_sql_rows(sql_data, sql_action)
             # Large result sets: summarise and pass to LLM
-            context += "\n\nSQL RESULTS:\n" + _summarize_sql_results(sql_data)
+            else:
+                context += "\n\nSQL RESULTS:\n" + _summarize_sql_results(sql_data)
 
         # ── Generic tool output ────────────────────────────────────────────────
         else:
@@ -237,23 +293,38 @@ The user has asked a question, but no relevant information was found in the retr
 
 INSTRUCTIONS:
 1. First, explicitly state that you could not find the answer in the provided documents/database.
-2. Then, if the question pertains to general knowledge (e.g., general programming, history, math, or publicly known facts), attempt to answer it directly to the best of your ability.
-3. If the question is specific to internal company data, proprietary products, or cannot be answered without the specific context that is missing, politely inform the user that you do not have access to that information.
-4. Do NOT hallucinate or invent features, prices, policies, or internal data. When guessing or making general statements, make it clear that you are speaking generally.
-5. IMPORTANT: You must ONLY answer in English, regardless of the language the user's question is written in.
+2. Politely inform the user that you do not have access to that information.
+3. Do NOT guess, hallucinate, or attempt to answer the question based on general knowledge.
+4. IMPORTANT: You must ONLY answer in English, regardless of the language the user's question is written in.
 
-Be extremely careful to clearly separate what is general knowledge from what might be a hallucination about the specific company context. Answer clearly and concisely.
+Be extremely careful. Do not invent features, prices, policies, or internal data. Answer clearly and concisely.
 """
         try:
-            prompt_messages = [{"role": "system", "content": system_prompt}]
-            if messages:
-                prompt_messages.extend(messages)
-            else:
-                prompt_messages.append({"role": "user", "content": f"Question:\n{user_query}"})
+            prompt_messages = [("system", system_prompt)]
+            for m in messages:
+                role = m.get("role") if isinstance(m, dict) else m.type
+                content = m.get("content") if isinstance(m, dict) else m.content
+                if role in ("user", "human"):
+                    role = "human"
+                elif role in ("assistant", "model", "ai"):
+                    role = "ai"
+                prompt_messages.append((role, content))
+            
+            if not messages:
+                prompt_messages.append(("human", f"Question:\n{user_query}"))
+                
             response = llm.invoke(prompt_messages)
-            return {"final_answer": response.content, "chart": None}
+            
+            # Helper to extract string from Gemini list output
+            content = response.content
+            if isinstance(content, list):
+                content = "".join([c.get("text", "") if isinstance(c, dict) else str(c) for c in content])
+            else:
+                content = str(content)
+                
+            return {"final_answer": content, "chart": None}
         except Exception as error:
-            return {"final_answer": "Error generating answer.", "chart": None, "error": str(error)}
+            return {"final_answer": f"Error generating answer: {str(error)}", "chart": None, "error": str(error)}
 
     # ── System prompt ──────────────────────────────────────────────────────────
 
@@ -271,10 +342,13 @@ Answer ONLY from provided context.
 If SQL results exist:
 - summarize products clearly
 
+If Python Analysis exists:
+- You MUST list EVERY SINGLE product or row provided in the analysis.
+- NEVER omit, skip, or summarize products out of laziness. 
+
 If retrieved documents exist:
-- answer based on the document content
-- cite sources by mentioning the document source name and page number
-- format citations as [Source: filename, Page: N] at the end of relevant statements
+- answer clearly and completely based on the document content
+- DO NOT manually write out source citations like '[Source: ...]' in your text. The system will automatically attach the sources to the UI.
 
 Do not hallucinate. Do not invent information not present in the context.
 If the context does not contain enough information, say so clearly.
@@ -285,7 +359,9 @@ You MUST base your entire answer ONLY on the provided context.
 If the context is empty or does not contain the answer, you must say 'I do not have that information in my database.'
 DO NOT invent product names, prices, or car models.
 
-IMPORTANT: You must ONLY answer in English, regardless of the language the user's question is written in.
+IMPORTANT FORMATTING RULES:
+1. You must ONLY answer in English, regardless of the language the user's question is written in.
+2. ALL prices are in Pakistani Rupees (PKR). You MUST format prices as 'Rs' (e.g. Rs 120,000). NEVER use the dollar sign ($).
 """
 
     user_prompt = f"Question:\n{user_query}\n\nContext:\n{context}"
@@ -296,16 +372,31 @@ IMPORTANT: You must ONLY answer in English, regardless of the language the user'
         print(f"[DEBUG] Context length: {len(context)} chars")
         print(f"[DEBUG] Context preview: {context[:200]}...")
 
+    def _extract_content(response) -> str:
+        content = response.content
+        if isinstance(content, str):
+            return content
+        elif isinstance(content, list):
+            return "".join([c.get("text", "") if isinstance(c, dict) else str(c) for c in content])
+        return str(content)
+
     print(f"[DEBUG] Sending to LLM - System prompt length: {len(system_prompt)}")
     print(f"[DEBUG] User prompt length: {len(user_prompt)}")
     print(f"[DEBUG] User prompt: {user_prompt[:150]}...")
 
     try:
-        response = llm.invoke([
-            {"role": "system", "content": system_prompt},
-            *messages,
-            {"role": "user", "content": user_prompt}
-        ])
-        return {"final_answer": response.content, "chart": chart}
+        invoke_messages = [("system", system_prompt)]
+        for m in messages:
+            role = m.get("role") if isinstance(m, dict) else m.type
+            content = m.get("content") if isinstance(m, dict) else m.content
+            if role in ("user", "human"):
+                role = "human"
+            elif role in ("assistant", "model", "ai"):
+                role = "ai"
+            invoke_messages.append((role, content))
+        invoke_messages.append(("human", user_prompt))
+        
+        response = llm.invoke(invoke_messages)
+        return {"final_answer": _extract_content(response), "chart": chart}
     except Exception as error:
-        return {"final_answer": "Error generating answer.", "chart": chart, "error": str(error)}
+        return {"final_answer": f"Error generating answer: {str(error)}", "chart": chart, "error": str(error)}
