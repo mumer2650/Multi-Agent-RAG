@@ -358,9 +358,8 @@ If Python Analysis exists:
 - NEVER omit, skip, or summarize products out of laziness. 
 
 If retrieved documents exist:
-- answer based on the document content
-- cite sources by mentioning the document source name and page number
-- format citations as [Source: filename, Page: N] at the end of relevant statements
+- answer clearly and completely based on the document content
+- DO NOT manually write out source citations like '[Source: ...]' in your text. The system will automatically attach the sources to the UI.
 
 Do not hallucinate. Do not invent information not present in the context.
 If the context does not contain enough information, say so clearly.
