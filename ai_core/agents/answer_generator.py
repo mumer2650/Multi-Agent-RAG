@@ -257,16 +257,12 @@ def answer_generator(state):
                     "chart": None
                 }
 
-            # ── Small result sets (≤ 20 rows): render directly, skip the LLM ──
-            # OLD code only showed model_name + price → fixed by _render_sql_rows
+            # ── Small result sets (≤ 20 rows): render nicely and pass to LLM ──
             if len(sql_data) <= 20:
-                return {
-                    "final_answer": _render_sql_rows(sql_data, sql_action),
-                    "chart": None
-                }
-
+                context += "\n\nSQL RESULTS:\n" + _render_sql_rows(sql_data, sql_action)
             # Large result sets: summarise and pass to LLM
-            context += "\n\nSQL RESULTS:\n" + _summarize_sql_results(sql_data)
+            else:
+                context += "\n\nSQL RESULTS:\n" + _summarize_sql_results(sql_data)
 
         # ── Generic tool output ────────────────────────────────────────────────
         else:
