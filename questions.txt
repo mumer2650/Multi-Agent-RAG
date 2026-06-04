@@ -18,3 +18,27 @@
 18. What does the "Optimal Fresh+" feature do?
 19. Show me a bar chart of the top 5 most expensive washing machines.
 20. Calculate the annual electricity cost of running a dispenser for 8 hours a day.
+21. Plot a bar chart comparing the prices of all 1.5 Ton Inverter ACs from Samsung and LG.
+====================================================================================================================================
+22. [SQL] List all refrigerators that have a capacity greater than 400 liters and cost less than Rs 300,000.
+23. [Retrieval] What is the recommended distance to keep the Samsung 75-inch Neo QLED TV from the wall to prevent overheating?
+24. [Python - CO2] Calculate the annual CO2 emissions for running the Front-Load Washer AI Ecobubble 9Kg for 4 hours a week.
+25. [Python - Room Size] I have a 250 square foot room facing the sun. Which capacity air conditioner do I need to cool it effectively?
+26. [Python - Water Savings] Compare the annual water savings of using the Freestanding Dishwasher Wide LED Display instead of hand-washing dishes every day.
+27. [Routing - Edge Case] Can you tell me the recipe for a chocolate cake using the microwave oven?
+28. [SQL + Python Chart] Show me a scatter chart comparing the prices of all washing machines against their spin speeds.
+29. [Retrieval] What does the 5C error code mean on a Samsung washing machine, and how can I resolve it myself?
+30. [Python - Efficiency Ratio] Calculate the energy efficiency ratio of the Wall-mount Air-Conditioner WindFree 18,000 BTU/Hr based on its cooling capacity and power consumption.
+31. [SQL] What is the average price of all the Top Mounted Freezers in the database?
+32. [Python - Ownership Cost] Calculate the 5-year total ownership cost for the Side-by-Side Refrigerator Twist Ice Maker 655L, including the purchase price and electricity bills.
+33. [Retrieval] How do I connect my mobile phone to the Samsung Smart TV using the SmartThings app?
+34. [SQL] Which LED TV model has the highest rating, and what is its price?
+35. [Python - Payback] If I replace my old standard AC with the WindFree inverter AC, how many months will it take for the energy savings to pay off the price difference?
+36. [Routing - Multi-intent] What is the price of the 98-inch Crystal UHD Smart TV, and how should I clean its screen without damaging the panel?
+37. [Retrieval] Is it safe to install my washing machine on a carpeted floor?
+38. [Python - Chart] Generate a bar chart showing the noise levels (in dB) of all the available dishwashers.
+39. [SQL - Filtering] Show me all air conditioners that feature "WindFree" cooling and cost more than Rs 200,000.
+40. [Retrieval] What is the "Game Bar" feature on Samsung LED TVs and how do I access it?
+41. [Python/SQL - Edge Case] Plot a bar chart comparing the prices of dishwashers, but only include models that have a digital inverter.
+
+

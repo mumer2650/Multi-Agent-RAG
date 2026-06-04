@@ -185,7 +185,7 @@ RULE 3 — Boolean specs use 'Yes'/'No' exactly.
 RULE 4 — String specs with units (BTU, kg, rpm, dB) use LIKE: ps.spec_value LIKE '%18,000%'
 RULE 5 — ALWAYS alias primary column as model_name (or category_name AS model_name).
 RULE 6 — Add DISTINCT when joining product_specifications.
-RULE 7 — Always add LIMIT 100.
+RULE 7 — Always add LIMIT 1000.
 RULE 8 — NEVER DO MATH OR COMPARISONS IN SQL:
   • Do NOT calculate cost differences, multiplication, division, or complex math in SQL.
   • Do NOT attempt to find the "cheapest" or "most expensive" products using WHERE clauses or subqueries.
@@ -324,20 +324,16 @@ def extract_power_watts(product: Dict[str, Any], category: str = None) -> float:
                         # Reverse engineer Watts from annual kWh
                         return round((annual_kwh * 1000) / (daily_hours * 365), 1)
 
-    # 2. Check common explicit aliases
-    for key in ["power_watts", "power", "power_consumption_watts", "wattage"]:
-        if key in product and product[key]:
-            val = str(product[key]).lower()
-            match = re.search(r'[-+]?\d*\.\d+|\d+', val.replace(',', ''))
-            if match:
-                return float(match.group())
-
-    # 3. Check spec_value ONLY IF spec_name implies power
-    if "spec_value" in product and product.get("spec_name"):
-        spec_name = str(product["spec_name"]).lower()
-        if "power" in spec_name or "watt" in spec_name or "consumption" in spec_name:
-            val = str(product["spec_value"]).lower()
-            match = re.search(r'[-+]?\d*\.\d+|\d+', val.replace(',', ''))
+    # 2. Check ALL keys for power-related specification names
+    for key, val in product.items():
+        key_lower = str(key).lower()
+        if ("power" in key_lower or "watt" in key_lower or "consumption" in key_lower) and "water" not in key_lower:
+            # Skip "power supply" which usually contains voltage (e.g., "220-240V") instead of watts
+            if "supply" in key_lower or "source" in key_lower:
+                continue
+            
+            val_str = str(val).lower()
+            match = re.search(r'[-+]?\d*\.\d+|\d+', val_str.replace(',', ''))
             if match:
                 return float(match.group())
 
@@ -1201,7 +1197,7 @@ def analyze_co2_impact(query: str, products: List[Dict[str, Any]], state: Dict[s
         return {
             "tool_output": {
                 "type": "python_result",
-                "analysis": "No products found for CO2 comparison.",
+                "analysis": "No products found for CO2 analysis.",
                 "chart": None
             }
         }
@@ -1210,10 +1206,30 @@ def analyze_co2_impact(query: str, products: List[Dict[str, Any]], state: Dict[s
     daily_hours = DAILY_USAGE_HOURS.get(category, 6)
 
     unique_products = _aggregate_and_heal_products(products)
-    if len(unique_products) < 2:
-        return {"tool_output": {"type": "python_result", "analysis": "Need at least 2 distinct products for CO2 comparison.", "chart": None}}
+    
+    # If the user only asked for a single product, calculate its absolute CO2 footprint
+    if len(unique_products) == 1:
+        product = unique_products[0]
+        power = extract_power_watts(product, category)
+        annual_kwh = (power * daily_hours * 365) / 1000
+        co2_emitted_1yr = estimate_co2_savings(annual_kwh, 1) # estimate_co2_savings just multiplies kWh by CO2 factor
+        
+        analysis = {
+            "model": product.get("model_name"),
+            "power_watts": power,
+            "annual_electricity_kwh": round(annual_kwh, 2),
+            "annual_co2_emissions_kg": round(co2_emitted_1yr, 2),
+            "equivalent_trees_needed_to_offset": round(co2_emitted_1yr / 20, 1)
+        }
+        return {
+            "tool_output": {
+                "type": "python_result",
+                "analysis": analysis,
+                "chart": None
+            }
+        }
 
-    # Intelligently find the cheapest (standard) and most efficient models
+    # Otherwise, do a comparison between cheapest and most efficient
     sorted_by_price = sorted([p for p in unique_products if p.get("price")], key=lambda x: x.get("price", 999999))
     if not sorted_by_price:
         return {"tool_output": {"type": "python_result", "analysis": "Could not find products with valid prices for comparison.", "chart": None}}
@@ -1274,8 +1290,10 @@ def analyze_room_size(query: str, products: List[Dict[str, Any]], state: Dict[st
         }
 
     analysis = []
+    
+    unique_products = _aggregate_and_heal_products(products)
 
-    for product in products:
+    for product in unique_products:
         capacity_btu = extract_capacity(product, "air_conditioners")
 
         if capacity_btu > 0:
@@ -1313,7 +1331,9 @@ def analyze_ownership_cost(query: str, products: List[Dict[str, Any]], state: Di
     daily_hours = DAILY_USAGE_HOURS.get(category, 6)
     analysis = []
 
-    for product in products:
+    unique_products = _aggregate_and_heal_products(products)
+
+    for product in unique_products:
         price = product.get("price", 0)
         power = extract_power_watts(product, category)
 
@@ -1350,28 +1370,71 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
             }
         }
     
-    # Analyze the keys of the first product to determine what to plot
-    sample = products[0]
-    keys = list(sample.keys())
-    # Remove common label keys to find numeric data to plot
-    numeric_keys = [k for k in keys if k not in ["model_name", "id", "category_id", "category"]]
+    # 0. Pivot EAV data (spec_name/spec_value) into proper keys and deduplicate
+    pivoted_products = {}
+    for p in products:
+        model = p.get("model_name")
+        if not model:
+            continue
+        if model not in pivoted_products:
+            clean_p = {k: v for k, v in p.items() if k not in ["spec_name", "spec_value"]}
+            pivoted_products[model] = clean_p
+        
+        spec_name = p.get("spec_name")
+        spec_val = p.get("spec_value")
+        if spec_name and spec_val:
+            pivoted_products[model][spec_name.lower()] = spec_val
+            
+    products = list(pivoted_products.values())
+
+    # 1. Clean the data and strictly identify TRUE numeric keys
+    all_keys = set()
+    for p in products:
+        all_keys.update(p.keys())
     
-    if len(numeric_keys) >= 2:
-        # Scatter chart (e.g., price vs capacity)
-        x_key = numeric_keys[0]
-        y_key = numeric_keys[1]
-        # Try to make price the X axis if it exists
-        if "price" in numeric_keys:
-            x_key = "price"
-            y_key = next((k for k in numeric_keys if k != "price"), numeric_keys[1])
+    numeric_keys = []
+    for k in all_keys:
+        if k in ["model_name", "id", "category_id", "category", "features_text"]:
+            continue
+        
+        # Check if at least one product has a parsable number for this key
+        for p in products:
+            val = p.get(k)
+            if val is not None:
+                if isinstance(val, (int, float)):
+                    numeric_keys.append(k)
+                    break
+                elif isinstance(val, str) and re.search(r'[-+]?\d*\.\d+|\d+', val.replace(',', '')):
+                    numeric_keys.append(k)
+                    break
+
+    query_lower = query.lower()
+    force_scatter = "scatter" in query_lower
+    force_bar = "bar" in query_lower
+
+    # Helper to find the best matching key from user's query
+    def find_best_key(query_str: str, available_keys: List[str], exclude: str = None) -> str:
+        words = set(re.findall(r'\w+', query_str))
+        for key in available_keys:
+            if key == exclude: continue
+            if any(w in key for w in words if w not in ['the', 'a', 'of', 'for', 'all', 'chart']):
+                return key
+        return next((k for k in available_keys if k != exclude), available_keys[0]) if available_keys else None
+
+    # 2. Decide Chart Type
+    if len(numeric_keys) >= 2 and (force_scatter or ("vs" in query_lower and not force_bar)):
+        # Scatter chart
+        x_key = "price" if "price" in numeric_keys else numeric_keys[0]
+        y_key = find_best_key(query_lower, numeric_keys, exclude=x_key)
             
         chart = build_scatter_chart(products, x_key, y_key, f"{y_key.replace('_', ' ').title()} vs {x_key.title()}")
-        analysis_text = f"Generated scatter chart comparing {y_key} and {x_key}."
-    elif len(numeric_keys) == 1:
+        analysis_text = f"Here is the scatter chart comparing {y_key} and {x_key}."
+    
+    elif len(numeric_keys) >= 1:
         # Bar chart
-        y_key = numeric_keys[0]
+        y_key = find_best_key(query_lower, numeric_keys)
+        if not y_key: y_key = "price" if "price" in numeric_keys else numeric_keys[0]
         
-        # Clean the data values for the bar chart
         clean_data = []
         for p in products:
             clean_p = p.copy()
@@ -1379,7 +1442,7 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
             if "price" in p:
                 clean_p["price"] = _clean_number(p.get("price", 0))
             clean_data.append(clean_p)
-            
+                
         chart = {
             "chartType": "bar",
             "title": f"Comparison of {y_key.replace('_', ' ').title()}",
@@ -1387,22 +1450,18 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
             "yKey": y_key,
             "data": clean_data
         }
-        analysis_text = f"Generated bar chart for {y_key}."
+        analysis_text = f"Here is the bar chart for {y_key.replace('_', ' ')}."
+    
     else:
-        # Fallback chart
-        chart = {
-            "chartType": "bar",
-            "title": "Product Comparison",
-            "xKey": "model_name",
-            "yKey": "price" if "price" in keys else "model_name",
-            "data": products
-        }
-        analysis_text = "Generated chart."
+        # Fallback
+        chart = None
+        analysis_text = "I couldn't identify numerical data to generate a chart, but here are the products."
 
     return {
         "tool_output": {
             "type": "python_result",
             "analysis": analysis_text,
+            "data": products, # Pass full DEDUPLICATED product data so the Answer Generator can describe them!
             "chart": chart
         }
     }

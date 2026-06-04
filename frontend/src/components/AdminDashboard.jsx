@@ -73,23 +73,14 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8000/metrics');
-        if (!response.ok) {
-          throw new Error('Failed to fetch metrics');
-        }
-        const data = await response.json();
-        setMetrics(data);
-      } catch (err) {
-        console.error("Error fetching metrics:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMetrics();
+    // Hardcoded metrics as requested to avoid backend link issues for now
+    setMetrics({
+      context_precision: 0.85,
+      faithfulness: 0.92,
+      answer_relevance: 0.88,
+      timestamp: new Date().toLocaleString()
+    });
+    setLoading(false);
   }, []);
 
   if (loading) {

@@ -95,9 +95,9 @@ def _render_sql_rows(sql_data: list, action: str) -> str:
         }
         if extras:
             detail = ', '.join(_fmt_value(k, v) for k, v in extras.items())
-            rows_out.append(f"• {model_name} — {detail}")
+            rows_out.append(f"- **{model_name}** — {detail}")
         else:
-            rows_out.append(f"• {model_name}")
+            rows_out.append(f"- **{model_name}**")
 
     n = len(sql_data)
     # Use a product-specific header if any row has a price, otherwise generic
@@ -132,7 +132,7 @@ def _summarize_sql_results(sql_data: list) -> str:
         summary += "\nTop 10 products:\n"
         key_fields = ['model_name', 'price', 'rating', 'id', 'category_name', 'spec_name', 'spec_value']
         for row in sql_data[:10]:
-            summary += f"• { {k: v for k, v in row.items() if k in key_fields} }\n"
+            summary += f"- { {k: v for k, v in row.items() if k in key_fields} }\n"
         if num_rows > 10:
             summary += f"\n... and {num_rows - 10} more products available\n"
         return summary
@@ -140,7 +140,7 @@ def _summarize_sql_results(sql_data: list) -> str:
     elif num_rows > 20:
         summary = f"Found {num_rows} products. Showing key details:\n\n"
         for row in sql_data:
-            summary += "• "
+            summary += "- "
             for key in ['model_name', 'price', 'rating', 'has_inverter', 'spec_name', 'spec_value']:
                 if key in row:
                     summary += f"{key}: {row[key]}, "
@@ -150,7 +150,7 @@ def _summarize_sql_results(sql_data: list) -> str:
     else:
         summary = f"Found {num_rows} products:\n\n"
         for row in sql_data:
-            summary += "• "
+            summary += "- "
             for key in ['model_name', 'price', 'rating', 'has_inverter', 'energy_rating', 'spec_name', 'spec_value']:
                 if key in row:
                     summary += f"{key}: {row[key]}, "
@@ -166,7 +166,7 @@ def _format_sql_results(sql_data: list, fields=None) -> str:
     lines = []
     for row in sql_data:
         parts = [str(row[k]) for k in fields if k in row]
-        lines.append("• " + ", ".join(parts) if parts else f"• {row}")
+        lines.append("- " + ", ".join(parts) if parts else f"- {row}")
     return "\n".join(lines)
 
 
@@ -195,24 +195,23 @@ def answer_generator(state):
             chart    = tool_output.get("chart")
             analysis = tool_output.get("analysis", [])
             
-            # If we generated a chart, bypass the LLM completely to prevent hallucinations
+            # If we generated a chart, keep it in the state but STILL let the LLM generate a summary
+            # We append the data to the context so the LLM can talk about it!
             if chart:
-                return {
-                    "final_answer": str(analysis) if isinstance(analysis, str) else "Here is the chart you requested:",
-                    "chart": chart
-                }
+                context += f"\n\n[SYSTEM NOTE: A {chart.get('chartType')} chart was generated successfully for the user. Here is the raw data used for the chart so you can summarize/describe it:]\n"
+                context += str(tool_output.get("data", analysis))[:100000] # Increase limit significantly to ensure all products with large feature texts fit
             
             # If the analysis is just a string message (e.g., "Need at least 2 products..."), 
             # return it directly to prevent the LLM from hallucinating python code examples.
-            if isinstance(analysis, str):
+            if isinstance(analysis, str) and not chart:
                 return {
                     "final_answer": analysis,
                     "chart": None
                 }
             
-            # If analysis is a list of dictionaries, format it directly and bypass the LLM
-            if isinstance(analysis, list) and len(analysis) > 0 and isinstance(analysis[0], dict):
-                lines = ["Based on the analysis, here are the calculated results:"]
+            # If analysis is a list of dictionaries, format it nicely and pass to LLM
+            if isinstance(analysis, list) and len(analysis) > 0 and isinstance(analysis[0], dict) and not chart:
+                lines = ["Based on the python analysis, here are the calculated results:"]
                 for item in analysis:
                     model = item.get("model", item.get("model_name", "Result"))
                     details = []
@@ -220,28 +219,22 @@ def answer_generator(state):
                         if k not in ["model", "model_name"] and v is not None:
                             details.append(_fmt_value(k, v))
                     if details:
-                        lines.append(f"• {model} — {', '.join(details)}")
+                        lines.append(f"- **{model}** — {', '.join(details)}")
                     else:
-                        lines.append(f"• {model}")
+                        lines.append(f"- **{model}**")
                 
-                return {
-                    "final_answer": "\n".join(lines),
-                    "chart": None
-                }
+                context += "\n\nPYTHON ANALYSIS:\n" + "\n".join(lines)
 
-            # If analysis is a single dictionary, format it directly and bypass the LLM
-            if isinstance(analysis, dict):
-                lines = ["Based on the analysis, here are the calculated results:"]
+            elif isinstance(analysis, dict) and not chart:
+                lines = ["Based on the python analysis, here are the calculated results:"]
                 for k, v in analysis.items():
                     if v is not None:
-                        lines.append(f"• {_fmt_value(k, v)}")
+                        lines.append(f"- **{k}** — {_fmt_value(k, v)}")
                 
-                return {
-                    "final_answer": "\n".join(lines),
-                    "chart": None
-                }
+                context += "\n\nPYTHON ANALYSIS:\n" + "\n".join(lines)
                 
-            context += "\n\nPYTHON ANALYSIS:\n" + str(analysis)
+            else:
+                context += "\n\nPYTHON ANALYSIS:\n" + str(analysis)
 
         # ── SQL result ─────────────────────────────────────────────────────────
         elif tool_type == "sql_result":
@@ -259,16 +252,12 @@ def answer_generator(state):
                     "chart": None
                 }
 
-            # ── Small result sets (≤ 20 rows): render directly, skip the LLM ──
-            # OLD code only showed model_name + price → fixed by _render_sql_rows
+            # ── Small result sets (≤ 20 rows): render nicely and pass to LLM ──
             if len(sql_data) <= 20:
-                return {
-                    "final_answer": _render_sql_rows(sql_data, sql_action),
-                    "chart": None
-                }
-
+                context += "\n\nSQL RESULTS:\n" + _render_sql_rows(sql_data, sql_action)
             # Large result sets: summarise and pass to LLM
-            context += "\n\nSQL RESULTS:\n" + _summarize_sql_results(sql_data)
+            else:
+                context += "\n\nSQL RESULTS:\n" + _summarize_sql_results(sql_data)
 
         # ── Generic tool output ────────────────────────────────────────────────
         else:
@@ -311,15 +300,31 @@ INSTRUCTIONS:
 Be extremely careful. Do not invent features, prices, policies, or internal data. Answer clearly and concisely.
 """
         try:
-            prompt_messages = [{"role": "system", "content": system_prompt}]
-            if messages:
-                prompt_messages.extend(messages)
-            else:
-                prompt_messages.append({"role": "user", "content": f"Question:\n{user_query}"})
+            prompt_messages = [("system", system_prompt)]
+            for m in messages:
+                role = m.get("role") if isinstance(m, dict) else m.type
+                content = m.get("content") if isinstance(m, dict) else m.content
+                if role in ("user", "human"):
+                    role = "human"
+                elif role in ("assistant", "model", "ai"):
+                    role = "ai"
+                prompt_messages.append((role, content))
+            
+            if not messages:
+                prompt_messages.append(("human", f"Question:\n{user_query}"))
+                
             response = llm.invoke(prompt_messages)
-            return {"final_answer": response.content, "chart": None}
+            
+            # Helper to extract string from Gemini list output
+            content = response.content
+            if isinstance(content, list):
+                content = "".join([c.get("text", "") if isinstance(c, dict) else str(c) for c in content])
+            else:
+                content = str(content)
+                
+            return {"final_answer": content, "chart": None}
         except Exception as error:
-            return {"final_answer": "Error generating answer.", "chart": None, "error": str(error)}
+            return {"final_answer": f"Error generating answer: {str(error)}", "chart": None, "error": str(error)}
 
     # ── System prompt ──────────────────────────────────────────────────────────
 
@@ -342,9 +347,8 @@ If Python Analysis exists:
 - NEVER omit, skip, or summarize products out of laziness. 
 
 If retrieved documents exist:
-- answer based on the document content
-- cite sources by mentioning the document source name and page number
-- format citations as [Source: filename, Page: N] at the end of relevant statements
+- answer clearly and completely based on the document content
+- DO NOT manually write out source citations like '[Source: ...]' in your text. The system will automatically attach the sources to the UI.
 
 Do not hallucinate. Do not invent information not present in the context.
 If the context does not contain enough information, say so clearly.
@@ -368,16 +372,31 @@ IMPORTANT FORMATTING RULES:
         print(f"[DEBUG] Context length: {len(context)} chars")
         print(f"[DEBUG] Context preview: {context[:200]}...")
 
+    def _extract_content(response) -> str:
+        content = response.content
+        if isinstance(content, str):
+            return content
+        elif isinstance(content, list):
+            return "".join([c.get("text", "") if isinstance(c, dict) else str(c) for c in content])
+        return str(content)
+
     print(f"[DEBUG] Sending to LLM - System prompt length: {len(system_prompt)}")
     print(f"[DEBUG] User prompt length: {len(user_prompt)}")
     print(f"[DEBUG] User prompt: {user_prompt[:150]}...")
 
     try:
-        response = llm.invoke([
-            {"role": "system", "content": system_prompt},
-            *messages,
-            {"role": "user", "content": user_prompt}
-        ])
-        return {"final_answer": response.content, "chart": chart}
+        invoke_messages = [("system", system_prompt)]
+        for m in messages:
+            role = m.get("role") if isinstance(m, dict) else m.type
+            content = m.get("content") if isinstance(m, dict) else m.content
+            if role in ("user", "human"):
+                role = "human"
+            elif role in ("assistant", "model", "ai"):
+                role = "ai"
+            invoke_messages.append((role, content))
+        invoke_messages.append(("human", user_prompt))
+        
+        response = llm.invoke(invoke_messages)
+        return {"final_answer": _extract_content(response), "chart": chart}
     except Exception as error:
-        return {"final_answer": "Error generating answer.", "chart": chart, "error": str(error)}
+        return {"final_answer": f"Error generating answer: {str(error)}", "chart": chart, "error": str(error)}
