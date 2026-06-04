@@ -130,13 +130,13 @@ export default function SearchBar({ isActive, onSearch, isStreaming, query = '',
       {/* The Search Form Container */}
       <form 
         onSubmit={handleSearchSubmit}
-        className={`relative flex items-center w-full rounded-[2rem] bg-white dark:bg-slate-800 transition-all duration-500 group
+        className={`relative flex items-end w-full rounded-[2rem] bg-white dark:bg-slate-800 transition-all duration-500 group
           ${isActive 
             ? 'border border-slate-300 dark:border-slate-600 shadow-sm' 
             : 'border border-transparent animate-glow'
           }`}
       >
-        <Search className="absolute left-6 w-6 h-6 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors pointer-events-none" />
+        <Search className="absolute left-6 bottom-5 w-6 h-6 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors pointer-events-none" />
         
         <textarea
           value={query}
@@ -153,11 +153,11 @@ export default function SearchBar({ isActive, onSearch, isStreaming, query = '',
           }}
           onInput={(e) => {
             e.target.style.height = 'auto';
-            e.target.style.height = (e.target.scrollHeight < 150 ? e.target.scrollHeight : 150) + 'px';
+            e.target.style.height = (e.target.scrollHeight < 200 ? e.target.scrollHeight : 200) + 'px';
           }}
           placeholder="Ask SAGE about refrigerators, washing machines, or LED TVs..."
-          className="w-full py-5 pl-16 pr-16 rounded-[2rem] bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none text-lg resize-none overflow-y-auto"
-          style={{ minHeight: '68px', maxHeight: '150px' }}
+          className="w-full py-5 pl-16 pr-16 rounded-[2rem] bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none text-lg resize-none overflow-y-auto [&::-webkit-scrollbar]:hidden"
+          style={{ minHeight: '68px', maxHeight: '200px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           rows={1}
           disabled={isStreaming}
         />
@@ -165,7 +165,7 @@ export default function SearchBar({ isActive, onSearch, isStreaming, query = '',
         <button
           type="submit"
           disabled={!query.trim() || isStreaming} // Disable button while AI is answering
-          className={`absolute right-3 p-3 rounded-full transition-all duration-200 flex items-center justify-center ${
+          className={`absolute right-3 bottom-[12px] p-3 rounded-full transition-all duration-200 flex items-center justify-center ${
             query.trim() && !isStreaming
               ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md transform hover:scale-105 active:scale-95' 
               : 'bg-slate-100 dark:bg-slate-700 text-slate-300 dark:text-slate-500 cursor-not-allowed'
