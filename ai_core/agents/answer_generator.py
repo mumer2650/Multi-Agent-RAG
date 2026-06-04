@@ -286,7 +286,9 @@ def answer_generator(state):
     print(f"[DEBUG] Before empty check - Context length: {len(context)}, "
           f"stripped: {len(context.strip())}")
 
-    if not context.strip():
+    selected_agent = state.get("selected_agent", "")
+    
+    if not context.strip() and selected_agent != "answer":
         system_prompt = """
 You are an expert, helpful AI assistant.
 The user has asked a question, but no relevant information was found in the retrieved company documents or internal database.

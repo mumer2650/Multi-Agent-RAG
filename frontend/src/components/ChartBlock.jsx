@@ -101,13 +101,17 @@ const ChartBlock = ({ chartData }) => {
       case 'bar':
       default:
         return (
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
             <XAxis 
               dataKey={xKey} 
-              tick={{ fill: '#64748b' }} 
-              // Hide labels if there are too many models
-              tickFormatter={(value) => typeof value === 'string' && value.length > 15 ? value.substring(0, 15) + '...' : value}
+              tick={{ fill: '#64748b', fontSize: 12 }} 
+              angle={-45}
+              textAnchor="end"
+              interval={0}
+              height={70}
+              // Increased length limit since we are angling them
+              tickFormatter={(value) => typeof value === 'string' && value.length > 35 ? value.substring(0, 35) + '...' : value}
             />
             <YAxis 
               tick={{ fill: '#64748b' }} 
