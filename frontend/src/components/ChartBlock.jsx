@@ -18,13 +18,22 @@ const ChartBlock = ({ chartData }) => {
   // Clean data to ensure Recharts can plot strings that contain letters or commas (like "Rs 445,999" or "655L")
   const sanitizedData = data.map(item => {
     const cleanedItem = { ...item };
-    if (typeof cleanedItem[xKey] === 'string') {
-      const parsed = parseFloat(cleanedItem[xKey].replace(/[^\d.-]/g, ''));
-      if (!isNaN(parsed)) cleanedItem[xKey] = parsed;
+    
+    // Only parse xKey if it's NOT a bar chart (bar charts use names for xKey)
+    if (chartType !== 'bar' && typeof cleanedItem[xKey] === 'string') {
+      const stripped = cleanedItem[xKey].replace(/[^\d.-]/g, '');
+      if (stripped.length > 0) {
+        const parsed = parseFloat(stripped);
+        if (!isNaN(parsed)) cleanedItem[xKey] = parsed;
+      }
     }
+    
     if (typeof cleanedItem[yKey] === 'string') {
-      const parsed = parseFloat(cleanedItem[yKey].replace(/[^\d.-]/g, ''));
-      if (!isNaN(parsed)) cleanedItem[yKey] = parsed;
+      const stripped = cleanedItem[yKey].replace(/[^\d.-]/g, '');
+      if (stripped.length > 0) {
+        const parsed = parseFloat(stripped);
+        if (!isNaN(parsed)) cleanedItem[yKey] = parsed;
+      }
     }
     return cleanedItem;
   });
@@ -56,7 +65,7 @@ const ChartBlock = ({ chartData }) => {
   };
 
   const CustomXAxisTick = ({ x, y, payload }) => {
-    const text = payload.value || '';
+    const text = payload.value ? String(payload.value) : '';
     const words = text.split(' ');
     const lines = [];
     let current = '';
