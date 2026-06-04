@@ -66,7 +66,7 @@ def evaluate_interaction_background(query: str, answer: str, context: str):
         
         Evaluate the System Answer on two metrics (from 0.0 to 1.0):
         1. faithfulness: Is the answer factually grounded in the Retrieved Context? (1.0 = completely grounded, 0.0 = completely hallucinated). If no context was provided but the answer gracefully handled it (e.g. "I don't know"), score 1.0.
-        2. answer_relevance: Does the answer directly address the User Query? (1.0 = completely relevant, 0.0 = completely irrelevant/off-topic).
+        2. answer_relevance: Does the answer directly address the User Query? (1.0 = completely relevant, 0.0 = completely irrelevant). CRITICAL: If the User Query is off-topic (e.g. asking for recipes or general trivia) and the System correctly refuses to answer by stating it is an appliance assistant, you MUST score answer_relevance as 1.0 because it correctly enforced its safety guardrails!
         
         Output ONLY valid JSON in this exact format:
         {{
