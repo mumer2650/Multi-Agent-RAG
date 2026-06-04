@@ -99,7 +99,7 @@ const ChartBlock = ({ chartData }) => {
               domain={['auto', 'auto']}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
-            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '20px' }}/>
+            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '5px' }}/>
             <Scatter 
               name={`${yKey.replace(/_/g, ' ')} vs ${xKey.replace(/_/g, ' ')}`} 
               data={data} 
@@ -121,7 +121,7 @@ const ChartBlock = ({ chartData }) => {
               tickFormatter={formatPKR}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '20px' }}/>
+            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '5px' }}/>
             <Line 
               type="monotone" 
               dataKey={yKey} 
@@ -141,7 +141,7 @@ const ChartBlock = ({ chartData }) => {
             <XAxis 
               dataKey={xKey} 
               interval={0}
-              height={80}
+              height={60}
               tick={<CustomXAxisTick />}
             />
             <YAxis 
@@ -149,7 +149,7 @@ const ChartBlock = ({ chartData }) => {
               tickFormatter={formatPKR}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }} />
-            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '20px' }}/>
+            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '5px' }}/>
             <Bar 
               dataKey={yKey} 
               name={yKey.replace(/_/g, ' ')} 
