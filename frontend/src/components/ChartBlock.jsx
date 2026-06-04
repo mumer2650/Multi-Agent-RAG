@@ -109,19 +109,19 @@ const ChartBlock = ({ chartData }) => {
               type="number" 
               dataKey={xKey} 
               name={xKey.replace(/_/g, ' ')} 
+              label={{ value: xKey.replace(/_/g, ' ').toUpperCase(), position: 'insideBottom', offset: -15, fill: '#8b5cf6', fontSize: 12, fontWeight: 'bold' }}
               tick={{ fill: '#64748b', fontSize: 11 }} 
               tickFormatter={formatPKR}
-              domain={['auto', 'auto']}
-              padding={{ left: 20, right: 20 }}
+              domain={['dataMin - (dataMax - dataMin) * 0.1', 'dataMax + (dataMax - dataMin) * 0.1']}
             />
             <YAxis 
               type="number" 
               dataKey={yKey} 
               name={yKey.replace(/_/g, ' ')} 
+              label={{ value: yKey.replace(/_/g, ' ').toUpperCase(), angle: -90, position: 'insideLeft', offset: 10, fill: '#8b5cf6', fontSize: 12, fontWeight: 'bold' }}
               tick={{ fill: '#64748b', fontSize: 11 }} 
               tickFormatter={formatPKR}
-              domain={['auto', 'auto']}
-              padding={{ top: 20, bottom: 20 }}
+              domain={['dataMin - (dataMax - dataMin) * 0.1', 'dataMax + (dataMax - dataMin) * 0.1']}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
             <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '5px' }}/>
