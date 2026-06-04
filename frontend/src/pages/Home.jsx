@@ -50,13 +50,15 @@ export default function Home() {
   /**
    * Auto-Scroll Effect
    * 
-   * Listens for changes to the `messages` array or `agentState` string.
-   * Whenever the AI streams a new token or updates its thinking status, 
-   * this effect automatically scrolls the view down.
+   * Listens for changes to the `messages` array, `agentState` string, or `currentView`.
+   * Whenever the AI streams a new token, updates its thinking status, or the user
+   * returns to the chat view from the admin dashboard, it scrolls to the bottom.
    */
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, agentState]);
+    if (currentView === 'chat') {
+      scrollToBottom();
+    }
+  }, [messages, agentState, currentView]);
 
   /**
    * Helper function to copy text to the clipboard and show a temporary checkmark.
