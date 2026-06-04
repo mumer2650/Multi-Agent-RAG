@@ -15,6 +15,20 @@ const ChartBlock = ({ chartData }) => {
 
   const { chartType, title, xKey, yKey, data } = chartData;
 
+  // Clean data to ensure Recharts can plot strings that contain letters or commas (like "Rs 445,999" or "655L")
+  const sanitizedData = data.map(item => {
+    const cleanedItem = { ...item };
+    if (typeof cleanedItem[xKey] === 'string') {
+      const parsed = parseFloat(cleanedItem[xKey].replace(/[^\d.-]/g, ''));
+      if (!isNaN(parsed)) cleanedItem[xKey] = parsed;
+    }
+    if (typeof cleanedItem[yKey] === 'string') {
+      const parsed = parseFloat(cleanedItem[yKey].replace(/[^\d.-]/g, ''));
+      if (!isNaN(parsed)) cleanedItem[yKey] = parsed;
+    }
+    return cleanedItem;
+  });
+
   // Format large numbers using the Pakistani/Indian standard (Lakhs/Crores)
   const formatPKR = (value) => {
     if (typeof value !== 'number') return value;
@@ -102,7 +116,7 @@ const ChartBlock = ({ chartData }) => {
             <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '5px' }}/>
             <Scatter 
               name={`${yKey.replace(/_/g, ' ')} vs ${xKey.replace(/_/g, ' ')}`} 
-              data={data} 
+              data={sanitizedData} 
               fill="#8b5cf6" 
             />
           </ScatterChart>
@@ -110,7 +124,7 @@ const ChartBlock = ({ chartData }) => {
 
       case 'line':
         return (
-          <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
+          <LineChart data={sanitizedData} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
             <XAxis 
               dataKey={xKey} 
@@ -136,7 +150,7 @@ const ChartBlock = ({ chartData }) => {
       case 'bar':
       default:
         return (
-          <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+          <BarChart data={sanitizedData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
             <XAxis 
               dataKey={xKey} 

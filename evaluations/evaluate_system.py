@@ -5,7 +5,7 @@ import pandas as pd
 from datasets import Dataset
 from ragas import evaluate
 from ragas.run_config import RunConfig
-from ragas.metrics import context_precision, context_recall
+from ragas.metrics import answer_relevancy, faithfulness
 from dotenv import load_dotenv
 
 from langchain_community.chat_models import ChatOllama
@@ -19,7 +19,7 @@ load_dotenv()
 OLLAMA_TIMEOUT_SECONDS = int(os.getenv("OLLAMA_TIMEOUT_SECONDS", "600"))
 RAGAS_TIMEOUT_SECONDS = int(os.getenv("RAGAS_TIMEOUT_SECONDS", "600"))
 
-print("🧠 Connecting to Local Ollama Model (Llama 3.2:1B)...")
+print("🧠 Connecting to Local Ollama Model (Llama 3.2:1B) for Evaluation...")
 base_evaluator = ChatOllama(
     model="llama3.2:1b",
     temperature=0,
@@ -30,71 +30,110 @@ ragas_llm = LangchainLLMWrapper(base_evaluator)
 ragas_run_config = RunConfig(timeout=RAGAS_TIMEOUT_SECONDS, max_retries=2, max_wait=30, max_workers=1)
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 
-# Import YOUR search engine function
-from ai_core.retrieval.search_engine import advanced_search
+# Import the full Multi-Agent Graph
+from ai_core.graph.workflow import graph
 
-@traceable(name="advanced_search", run_type="retriever")
-def traced_advanced_search(query: str, k: int):
-    return advanced_search(query, k=k)
+def create_initial_state(query):
+    return {
+        "messages": [{"role": "user", "content": query}],
+        "user_query": query,
+        "selected_agent": None,
+        "tool_required": False,
+        "retrieved_docs": [],
+        "retrieval_error": None,
+        "retrieval_attempts": 0,
+        "max_retrieval_attempts": 3,
+        "tool_output": None,
+        "chart": None,
+        "citations": [],
+        "validation_passed": False,
+        "validation_reason": None,
+        "final_answer": None,
+        "error": None,
+    }
 
 def run_evaluation():
-    print("🚀 Starting Automated RAG Evaluation Pipeline (Local Mode)...")
+    print("🚀 Starting Automated RAG Evaluation Pipeline (Full System)...")
 
     # 1. Load the Golden Dataset
     dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "golden_dataset.json"))
+    if not os.path.exists(dataset_path):
+        print(f"❌ Golden dataset not found at {dataset_path}. Run generate_dataset.py first.")
+        return
+
     with open(dataset_path, 'r', encoding='utf-8') as f:
         golden_data = json.load(f)
 
-    # 2. Setup the Grader Embeddings (100% Local Nomic Embeddings!)
+    # 2. Setup the Grader Embeddings
     grader_embeddings = OllamaEmbeddings(model="nomic-embed-text")
 
     # 3. Prepare the Data Lists
     questions = []
     ground_truths = []
     contexts = []
+    answers = []
     
     # Testing a small batch to keep local judge prompts manageable on CPU
     test_batch_size = int(os.getenv("EVAL_BATCH_SIZE", "5"))
     test_sample = golden_data[:test_batch_size]
     
-    print(f"🔍 Running Retrieval on {test_batch_size} sample questions...")
+    print(f"🔍 Running Multi-Agent System on {test_batch_size} sample questions...")
     
-    for item in test_sample:
+    for i, item in enumerate(test_sample):
         query = item["question"]
+        print(f"\n[{i+1}/{test_batch_size}] Q: {query}")
+        
         questions.append(query)
         ground_truths.append(item["ground_truth"]) 
         
-        # Run YOUR engine!
-        search_results = traced_advanced_search(query, k=int(os.getenv("EVAL_TOP_K", "5")))
-        retrieved_texts = [res["text"] for res in search_results]
-        
-        # Fallback if search fails
-        if not retrieved_texts:
-            retrieved_texts = ["No context retrieved."]
+        # Run the graph
+        state = create_initial_state(query)
+        try:
+            for event in graph.stream(state):
+                for node_name, node_state in event.items():
+                    state.update(node_state)
+                    
+            final_ans = state.get("final_answer") or "No answer generated."
             
-        contexts.append(retrieved_texts)
+            # Combine retrieved docs and tool outputs into a single context string
+            ctx_list = []
+            if state.get("retrieved_docs"):
+                ctx_list.extend([doc.page_content for doc in state["retrieved_docs"]])
+            if state.get("tool_output"):
+                ctx_list.append(str(state["tool_output"].get("data", "")))
+                
+            if not ctx_list:
+                ctx_list = ["No context used."]
+                
+            answers.append(final_ans)
+            contexts.append(ctx_list)
+            
+        except Exception as e:
+            print(f"  ❌ Graph execution failed: {e}")
+            answers.append("Error executing graph.")
+            contexts.append(["Error"])
 
-    # 4. Format for Ragas (HuggingFace Dataset format)
+    # 4. Format for Ragas
     data = {
         "question": questions,
         "contexts": contexts,
+        "answer": answers,
         "ground_truth": ground_truths
     }
     dataset = Dataset.from_dict(data)
 
     # 5. Run the Evaluation
-    print("⚖️  Grading Retrieval Accuracy (Context Precision & Recall)...")
-    print("⏳ Note: Local evaluation runs on your CPU/RAM, so this may take a minute. No rate limits!")
+    print("\n⚖️  Grading System Accuracy (Answer Relevancy & Faithfulness)...")
+    print("⏳ Note: Local evaluation runs on your CPU/RAM, so this may take a minute.")
     
     tracer = LangChainTracer(project_name=os.getenv("LANGCHAIN_PROJECT", "multi-agent-rag-dev"))
 
     results = evaluate(
         dataset,
-        metrics=[context_precision, context_recall],
+        metrics=[answer_relevancy, faithfulness],
         llm=ragas_llm,
         embeddings=grader_embeddings,
         raise_exceptions=False,
@@ -106,17 +145,11 @@ def run_evaluation():
     print("\n=============================================")
     print("🏆 FINAL EVALUATION SCORECARD 🏆")
     print("=============================================")
-    print(f"Context Precision: {results['context_precision']:.4f}")
-    print(f"Context Recall:    {results['context_recall']:.4f}")
+    print(f"Answer Relevancy: {results.get('answer_relevancy', 0.0):.4f}")
+    print(f"Faithfulness:     {results.get('faithfulness', 0.0):.4f}")
     
-    # Save to a CSV for your team dashboard
+    # Save to CSV
     df = results.to_pandas()
-
-    if df[["context_precision", "context_recall"]].isna().any().any():
-        print("\nWARNING: One or more metric values are NaN.")
-        print("This usually means the local judge timed out or failed to produce a valid JSON response.")
-        print("Try a larger Ollama timeout, fewer retrieved contexts, or a stronger local model.")
-
     df.to_csv("rag_evaluation_results.csv", index=False)
     print("\n✅ Detailed results saved to rag_evaluation_results.csv")
 
