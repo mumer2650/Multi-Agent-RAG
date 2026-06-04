@@ -1197,7 +1197,7 @@ def analyze_co2_impact(query: str, products: List[Dict[str, Any]], state: Dict[s
         return {
             "tool_output": {
                 "type": "python_result",
-                "analysis": "No products found for CO2 comparison.",
+                "analysis": "No products found for CO2 analysis.",
                 "chart": None
             }
         }
@@ -1206,10 +1206,30 @@ def analyze_co2_impact(query: str, products: List[Dict[str, Any]], state: Dict[s
     daily_hours = DAILY_USAGE_HOURS.get(category, 6)
 
     unique_products = _aggregate_and_heal_products(products)
-    if len(unique_products) < 2:
-        return {"tool_output": {"type": "python_result", "analysis": "Need at least 2 distinct products for CO2 comparison.", "chart": None}}
+    
+    # If the user only asked for a single product, calculate its absolute CO2 footprint
+    if len(unique_products) == 1:
+        product = unique_products[0]
+        power = extract_power_watts(product, category)
+        annual_kwh = (power * daily_hours * 365) / 1000
+        co2_emitted_1yr = estimate_co2_savings(annual_kwh, 1) # estimate_co2_savings just multiplies kWh by CO2 factor
+        
+        analysis = {
+            "model": product.get("model_name"),
+            "power_watts": power,
+            "annual_electricity_kwh": round(annual_kwh, 2),
+            "annual_co2_emissions_kg": round(co2_emitted_1yr, 2),
+            "equivalent_trees_needed_to_offset": round(co2_emitted_1yr / 20, 1)
+        }
+        return {
+            "tool_output": {
+                "type": "python_result",
+                "analysis": analysis,
+                "chart": None
+            }
+        }
 
-    # Intelligently find the cheapest (standard) and most efficient models
+    # Otherwise, do a comparison between cheapest and most efficient
     sorted_by_price = sorted([p for p in unique_products if p.get("price")], key=lambda x: x.get("price", 999999))
     if not sorted_by_price:
         return {"tool_output": {"type": "python_result", "analysis": "Could not find products with valid prices for comparison.", "chart": None}}
