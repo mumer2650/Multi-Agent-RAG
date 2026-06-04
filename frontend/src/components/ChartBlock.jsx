@@ -65,7 +65,7 @@ const ChartBlock = ({ chartData }) => {
 
     return (
       <g transform={`translate(${x},${y})`}>
-        <text x={0} y={0} dy={16} textAnchor="middle" fill="#64748b" fontSize={11}>
+        <text x={0} y={0} dy={24} textAnchor="middle" fill="#64748b" fontSize={11}>
           {finalLines.map((line, index) => (
             <tspan x={0} dy={index === 0 ? 0 : 14} key={index}>
               {line}
@@ -80,7 +80,7 @@ const ChartBlock = ({ chartData }) => {
     switch (chartType) {
       case 'scatter':
         return (
-          <ScatterChart margin={{ top: 20, right: 30, bottom: 20, left: 20 }}>
+          <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
             <XAxis 
               type="number" 
@@ -99,7 +99,7 @@ const ChartBlock = ({ chartData }) => {
               domain={['auto', 'auto']}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
-            <Legend wrapperStyle={{ paddingTop: '20px' }}/>
+            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '20px' }}/>
             <Scatter 
               name={`${yKey.replace(/_/g, ' ')} vs ${xKey.replace(/_/g, ' ')}`} 
               data={data} 
@@ -110,7 +110,7 @@ const ChartBlock = ({ chartData }) => {
 
       case 'line':
         return (
-          <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
             <XAxis 
               dataKey={xKey} 
@@ -121,7 +121,7 @@ const ChartBlock = ({ chartData }) => {
               tickFormatter={formatPKR}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ paddingTop: '20px' }}/>
+            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '20px' }}/>
             <Line 
               type="monotone" 
               dataKey={yKey} 
@@ -136,12 +136,12 @@ const ChartBlock = ({ chartData }) => {
       case 'bar':
       default:
         return (
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+          <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
             <XAxis 
               dataKey={xKey} 
               interval={0}
-              height={60}
+              height={80}
               tick={<CustomXAxisTick />}
             />
             <YAxis 
@@ -149,7 +149,7 @@ const ChartBlock = ({ chartData }) => {
               tickFormatter={formatPKR}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }} />
-            <Legend wrapperStyle={{ paddingTop: '20px' }}/>
+            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '20px' }}/>
             <Bar 
               dataKey={yKey} 
               name={yKey.replace(/_/g, ' ')} 
