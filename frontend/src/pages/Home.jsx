@@ -56,7 +56,10 @@ export default function Home() {
    */
   useEffect(() => {
     if (currentView === 'chat') {
-      scrollToBottom();
+      // Use a small timeout so the DOM has time to paint before we measure & scroll
+      setTimeout(() => {
+        scrollToBottom();
+      }, 50);
     }
   }, [messages, agentState, currentView]);
 

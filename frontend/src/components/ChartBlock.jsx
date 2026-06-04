@@ -111,7 +111,8 @@ const ChartBlock = ({ chartData }) => {
               name={xKey.replace(/_/g, ' ')} 
               tick={{ fill: '#64748b', fontSize: 11 }} 
               tickFormatter={formatPKR}
-              domain={[dataMin => Math.floor(dataMin * 0.95), dataMax => Math.ceil(dataMax * 1.05)]}
+              domain={['auto', 'auto']}
+              padding={{ left: 20, right: 20 }}
             />
             <YAxis 
               type="number" 
@@ -119,7 +120,8 @@ const ChartBlock = ({ chartData }) => {
               name={yKey.replace(/_/g, ' ')} 
               tick={{ fill: '#64748b', fontSize: 11 }} 
               tickFormatter={formatPKR}
-              domain={[dataMin => Math.floor(dataMin * 0.95), dataMax => Math.ceil(dataMax * 1.05)]}
+              domain={['auto', 'auto']}
+              padding={{ top: 20, bottom: 20 }}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
             <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '5px' }}/>
