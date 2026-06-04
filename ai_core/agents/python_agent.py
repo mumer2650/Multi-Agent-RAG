@@ -1290,8 +1290,10 @@ def analyze_room_size(query: str, products: List[Dict[str, Any]], state: Dict[st
         }
 
     analysis = []
+    
+    unique_products = _aggregate_and_heal_products(products)
 
-    for product in products:
+    for product in unique_products:
         capacity_btu = extract_capacity(product, "air_conditioners")
 
         if capacity_btu > 0:
@@ -1329,7 +1331,9 @@ def analyze_ownership_cost(query: str, products: List[Dict[str, Any]], state: Di
     daily_hours = DAILY_USAGE_HOURS.get(category, 6)
     analysis = []
 
-    for product in products:
+    unique_products = _aggregate_and_heal_products(products)
+
+    for product in unique_products:
         price = product.get("price", 0)
         power = extract_power_watts(product, category)
 
