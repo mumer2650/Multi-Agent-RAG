@@ -14,7 +14,7 @@ async def get_metrics():
     Falls back to evaluations/rag_evaluation_results.csv if empty.
     """
     db_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
         "storage",
         "sqlite",
         "analytics.db"
