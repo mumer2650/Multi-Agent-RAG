@@ -286,7 +286,9 @@ def answer_generator(state):
     print(f"[DEBUG] Before empty check - Context length: {len(context)}, "
           f"stripped: {len(context.strip())}")
 
-    if not context.strip():
+    selected_agent = state.get("selected_agent", "")
+    
+    if not context.strip() and selected_agent != "answer":
         system_prompt = """
 You are an expert, helpful AI assistant.
 The user has asked a question, but no relevant information was found in the retrieved company documents or internal database.
@@ -325,14 +327,23 @@ Be extremely careful. Do not invent features, prices, policies, or internal data
             return {"final_answer": content, "chart": None}
         except Exception as error:
             return {"final_answer": f"Error generating answer: {str(error)}", "chart": None, "error": str(error)}
-
     # ── System prompt ──────────────────────────────────────────────────────────
+
+    selected_agent = state.get("selected_agent", "")
 
     if tool_output and tool_output.get("type") == "sql_result":
         system_prompt = (
             "You are a helpful assistant. Answer the user's question based on "
             "the provided data. Be concise and clear."
         )
+    elif selected_agent == "answer":
+        system_prompt = """
+You are Sage AI, the official assistant for Sage Appliances.
+The user is engaging in general conversation, greetings, or asking about your identity.
+You are permitted to answer these questions politely and naturally. 
+You do NOT need to append "I do not have that information in my database" for conversational pleasantries or questions about your identity.
+Keep your answers brief, friendly, and helpful.
+"""
     else:
         system_prompt = """
 You are an ecommerce AI assistant.

@@ -44,7 +44,7 @@ export default function Home() {
    * This ensures the newest tokens or status messages are always in view.
    */
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   };
 
   /**

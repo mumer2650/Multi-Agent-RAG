@@ -41,11 +41,46 @@ const ChartBlock = ({ chartData }) => {
     return null;
   };
 
+  const CustomXAxisTick = ({ x, y, payload }) => {
+    const text = payload.value || '';
+    const words = text.split(' ');
+    const lines = [];
+    let current = '';
+    
+    words.forEach(word => {
+      if ((current + word).length > 15 && current.length > 0) {
+        lines.push(current.trim());
+        current = word + ' ';
+      } else {
+        current += word + ' ';
+      }
+    });
+    if (current) lines.push(current.trim());
+    
+    const finalLines = lines.slice(0, 3);
+    if (lines.length > 3 || (finalLines[2] && finalLines[2].length > 15)) {
+      if (!finalLines[2]) finalLines[2] = "";
+      finalLines[2] = finalLines[2].substring(0, 12) + '...';
+    }
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={0} y={0} dy={12} textAnchor="middle" fill="#64748b" fontSize={11}>
+          {finalLines.map((line, index) => (
+            <tspan x={0} dy={index === 0 ? 0 : 14} key={index}>
+              {line}
+            </tspan>
+          ))}
+        </text>
+      </g>
+    );
+  };
+
   const renderChart = () => {
     switch (chartType) {
       case 'scatter':
         return (
-          <ScatterChart margin={{ top: 20, right: 30, bottom: 20, left: 20 }}>
+          <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
             <XAxis 
               type="number" 
@@ -64,7 +99,7 @@ const ChartBlock = ({ chartData }) => {
               domain={['auto', 'auto']}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
-            <Legend wrapperStyle={{ paddingTop: '20px' }}/>
+            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '5px' }}/>
             <Scatter 
               name={`${yKey.replace(/_/g, ' ')} vs ${xKey.replace(/_/g, ' ')}`} 
               data={data} 
@@ -75,7 +110,7 @@ const ChartBlock = ({ chartData }) => {
 
       case 'line':
         return (
-          <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
             <XAxis 
               dataKey={xKey} 
@@ -86,7 +121,7 @@ const ChartBlock = ({ chartData }) => {
               tickFormatter={formatPKR}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ paddingTop: '20px' }}/>
+            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '5px' }}/>
             <Line 
               type="monotone" 
               dataKey={yKey} 
@@ -101,20 +136,20 @@ const ChartBlock = ({ chartData }) => {
       case 'bar':
       default:
         return (
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
             <XAxis 
               dataKey={xKey} 
-              tick={{ fill: '#64748b' }} 
-              // Hide labels if there are too many models
-              tickFormatter={(value) => typeof value === 'string' && value.length > 15 ? value.substring(0, 15) + '...' : value}
+              interval={0}
+              height={60}
+              tick={<CustomXAxisTick />}
             />
             <YAxis 
               tick={{ fill: '#64748b' }} 
               tickFormatter={formatPKR}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }} />
-            <Legend wrapperStyle={{ paddingTop: '20px' }}/>
+            <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '5px' }}/>
             <Bar 
               dataKey={yKey} 
               name={yKey.replace(/_/g, ' ')} 
