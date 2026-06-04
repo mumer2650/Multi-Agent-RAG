@@ -41,6 +41,41 @@ const ChartBlock = ({ chartData }) => {
     return null;
   };
 
+  const CustomXAxisTick = ({ x, y, payload }) => {
+    const text = payload.value || '';
+    const words = text.split(' ');
+    const lines = [];
+    let current = '';
+    
+    words.forEach(word => {
+      if ((current + word).length > 15 && current.length > 0) {
+        lines.push(current.trim());
+        current = word + ' ';
+      } else {
+        current += word + ' ';
+      }
+    });
+    if (current) lines.push(current.trim());
+    
+    const finalLines = lines.slice(0, 3);
+    if (lines.length > 3 || (finalLines[2] && finalLines[2].length > 15)) {
+      if (!finalLines[2]) finalLines[2] = "";
+      finalLines[2] = finalLines[2].substring(0, 12) + '...';
+    }
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={0} y={0} dy={16} textAnchor="middle" fill="#64748b" fontSize={11}>
+          {finalLines.map((line, index) => (
+            <tspan x={0} dy={index === 0 ? 0 : 14} key={index}>
+              {line}
+            </tspan>
+          ))}
+        </text>
+      </g>
+    );
+  };
+
   const renderChart = () => {
     switch (chartType) {
       case 'scatter':
@@ -101,17 +136,13 @@ const ChartBlock = ({ chartData }) => {
       case 'bar':
       default:
         return (
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
             <XAxis 
               dataKey={xKey} 
-              tick={{ fill: '#64748b', fontSize: 12 }} 
-              angle={-45}
-              textAnchor="end"
               interval={0}
-              height={70}
-              // Increased length limit since we are angling them
-              tickFormatter={(value) => typeof value === 'string' && value.length > 35 ? value.substring(0, 35) + '...' : value}
+              height={60}
+              tick={<CustomXAxisTick />}
             />
             <YAxis 
               tick={{ fill: '#64748b' }} 
