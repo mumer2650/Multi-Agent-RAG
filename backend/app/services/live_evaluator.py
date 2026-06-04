@@ -43,10 +43,18 @@ def evaluate_interaction_background(query: str, answer: str, context: str):
     try:
         logger.info(f"Background Eval Started for query: {query[:30]}...")
         
+        from dotenv import load_dotenv
+        env_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
+            ".env"
+        )
+        load_dotenv(env_path)
+        
         # We use a fast Gemini model to grade the response
         llm = ChatGoogleGenerativeAI(
             model="gemini-3.1-flash-lite", 
-            temperature=0.0
+            temperature=0.0,
+            api_key=os.environ.get("GOOGLE_API_KEY")
         )
         
         eval_prompt = PromptTemplate.from_template("""
@@ -74,7 +82,11 @@ def evaluate_interaction_background(query: str, answer: str, context: str):
             "context": context if context else "No context retrieved."
         })
         
-        raw_text = response.content.replace("```json", "").replace("```", "").strip()
+        content = response.content
+        if isinstance(content, list):
+            content = content[0].get("text", str(content))
+            
+        raw_text = content.replace("```json", "").replace("```", "").strip()
         scores = json.loads(raw_text)
         
         f_score = float(scores.get("faithfulness", 0.0))
