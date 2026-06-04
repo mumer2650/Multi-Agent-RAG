@@ -241,8 +241,8 @@ def answer_generator(state):
             sql_data   = tool_output.get("data", [])
             sql_action = tool_output.get("action", "data_found")
 
-            # Empty result — exit early
-            if not sql_data:
+            # Empty result — exit early only if we also have no fallback documents
+            if not sql_data and not docs:
                 return {
                     "final_answer": (
                         "No matching products were found in the database "
