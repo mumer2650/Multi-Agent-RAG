@@ -101,6 +101,21 @@ async def websocket_chat_endpoint(websocket: WebSocket):
                         "content": reconstructed_answer.strip()
                     })
                     logger.debug(f"Saved assistant message to history: {reconstructed_answer[:50]}...")
+                    
+                    # TRIGGER LIVE EVALUATION IN BACKGROUND
+                    import asyncio
+                    from backend.app.services.live_evaluator import evaluate_interaction_background
+                    
+                    # Fire and forget
+                    asyncio.create_task(
+                        asyncio.to_thread(
+                            evaluate_interaction_background,
+                            chat_request.query,
+                            reconstructed_answer.strip(),
+                            # Context is abstracted away in the stream, so we just pass "Streamed via LangGraph"
+                            "Streamed via LangGraph" 
+                        )
+                    )
 
             logger.debug(f"Conversation history length: {len(conversation_history)}")
 
