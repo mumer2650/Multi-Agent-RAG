@@ -645,7 +645,7 @@ def score_products_by_criteria(
         })
 
     # Sort by score descending
-    return sorted(scores, key=lambda x: x["score"], reverse=True)
+    return sorted(scores, key=lambda x: x["recommendation_score"], reverse=True)
 
 
 def room_size_from_capacity(capacity_btu: float) -> float:

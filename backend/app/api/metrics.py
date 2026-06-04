@@ -49,8 +49,10 @@ async def get_metrics():
                 ts_row = cursor.fetchone()
                 if ts_row and ts_row[0]:
                     try:
-                        # SQLite stores as YYYY-MM-DD HH:MM:SS
+                        # SQLite stores as YYYY-MM-DD HH:MM:SS (in UTC)
+                        from datetime import timedelta
                         dt = datetime.datetime.strptime(ts_row[0].split('.')[0], "%Y-%m-%d %H:%M:%S")
+                        dt = dt + timedelta(hours=5) # Convert to Pakistan Time
                         timestamp = dt.strftime('%Y-%m-%d %H:%M')
                     except:
                         timestamp = ts_row[0][:16]
