@@ -287,7 +287,15 @@ def answer_generator(state):
           f"stripped: {len(context.strip())}")
 
     selected_agent = state.get("selected_agent", "")
-    
+    off_topic = state.get("off_topic", False)
+
+    # ── Off-topic guardrail enforcement ──
+    if off_topic:
+        return {
+            "final_answer": "I specialize in Samsung Appliances. I am unable to assist with non-appliance related queries like that.",
+            "chart": None
+        }
+
     if not context.strip() and selected_agent != "answer":
         system_prompt = """
 You are an expert, helpful AI assistant.
