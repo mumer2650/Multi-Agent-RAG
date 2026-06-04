@@ -138,14 +138,28 @@ export default function SearchBar({ isActive, onSearch, isStreaming, query = '',
       >
         <Search className="absolute left-6 w-6 h-6 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors pointer-events-none" />
         
-        <input
-          type="text"
+        <textarea
           value={query}
           onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
+          onKeyDown={(e) => {
+            // Submit on Enter (without Shift)
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              // Create a synthetic event object to pass to handleSearchSubmit
+              handleSearchSubmit({ preventDefault: () => {} });
+            } else {
+              handleKeyDown(e);
+            }
+          }}
+          onInput={(e) => {
+            e.target.style.height = 'auto';
+            e.target.style.height = (e.target.scrollHeight < 150 ? e.target.scrollHeight : 150) + 'px';
+          }}
           placeholder="Ask SAGE about refrigerators, washing machines, or LED TVs..."
-          className="w-full py-5 pl-16 pr-16 rounded-[2rem] bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none text-lg"
-          disabled={isStreaming} // Disable input while AI is answering
+          className="w-full py-5 pl-16 pr-16 rounded-[2rem] bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none text-lg resize-none overflow-y-auto"
+          style={{ minHeight: '68px', maxHeight: '150px' }}
+          rows={1}
+          disabled={isStreaming}
         />
         
         <button
