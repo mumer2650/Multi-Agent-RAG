@@ -36,13 +36,13 @@ async def get_metrics():
         if os.path.exists(db_path):
             conn = sqlite3.connect(db_path)
             cursor = conn.cursor()
-            cursor.execute("SELECT AVG(faithfulness), AVG(answer_relevance), COUNT(*) FROM live_evaluations")
+            cursor.execute("SELECT AVG(faithfulness), AVG(answer_relevance), AVG(context_precision), COUNT(*) FROM live_evaluations")
             row = cursor.fetchone()
-            if row and row[2] > 0:
-                # We have live data! Context precision isn't tracked live, so we'll leave it as default or static
+            if row and row[3] > 0:
+                # We have live data!
                 f = float(row[0] or 0)
                 ar = float(row[1] or 0)
-                cp = 0.85 # Assumed high precision for live system
+                cp = float(row[2] or 0.85) # Fallback to 0.85 if column is completely null (old rows)
                 
                 # Get latest timestamp
                 cursor.execute("SELECT MAX(timestamp) FROM live_evaluations")

@@ -64,12 +64,14 @@ def evaluate_interaction_background(query: str, answer: str, context: str):
         System Answer: {answer}
         Retrieved Context: {context}
         
-        Evaluate the System Answer on two metrics (from 0.0 to 1.0):
-        1. faithfulness: Is the answer factually grounded in the Retrieved Context? (1.0 = completely grounded, 0.0 = completely hallucinated). If no context was provided but the answer gracefully handled it (e.g. "I don't know"), score 1.0.
-        2. answer_relevance: Does the answer directly address the User Query? (1.0 = completely relevant, 0.0 = completely irrelevant). CRITICAL: If the User Query is off-topic (e.g. asking for recipes or general trivia) and the System correctly refuses to answer by stating it is an appliance assistant, you MUST score answer_relevance as 1.0 because it correctly enforced its safety guardrails!
+        Evaluate the System Answer on three metrics (from 0.0 to 1.0):
+        1. context_precision: Did the system retrieve relevant documents that contain the information needed to answer the query? (1.0 = highly relevant context, 0.0 = completely irrelevant/no context). If no context was needed (e.g. general greeting/off-topic query) and the system handled it, score 1.0.
+        2. faithfulness: Is the answer factually grounded in the Retrieved Context? (1.0 = completely grounded, 0.0 = completely hallucinated). If no context was provided but the answer gracefully handled it (e.g. "I don't know"), score 1.0.
+        3. answer_relevance: Does the answer directly address the User Query? (1.0 = completely relevant, 0.0 = completely irrelevant). CRITICAL: If the User Query is off-topic (e.g. asking for recipes or general trivia) and the System correctly refuses to answer by stating it is an appliance assistant, you MUST score answer_relevance as 1.0 because it correctly enforced its safety guardrails!
         
         Output ONLY valid JSON in this exact format:
         {{
+            "context_precision": 0.85,
             "faithfulness": 0.95,
             "answer_relevance": 0.90
         }}
@@ -89,6 +91,7 @@ def evaluate_interaction_background(query: str, answer: str, context: str):
         raw_text = content.replace("```json", "").replace("```", "").strip()
         scores = json.loads(raw_text)
         
+        cp_score = float(scores.get("context_precision", 0.0))
         f_score = float(scores.get("faithfulness", 0.0))
         ar_score = float(scores.get("answer_relevance", 0.0))
         
@@ -96,13 +99,13 @@ def evaluate_interaction_background(query: str, answer: str, context: str):
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO live_evaluations (user_query, final_answer, faithfulness, answer_relevance) VALUES (?, ?, ?, ?)",
-            (query, answer, f_score, ar_score)
+            "INSERT INTO live_evaluations (user_query, final_answer, faithfulness, answer_relevance, context_precision) VALUES (?, ?, ?, ?, ?)",
+            (query, answer, f_score, ar_score, cp_score)
         )
         conn.commit()
         conn.close()
         
-        logger.info(f"Background Eval Completed: F={f_score}, AR={ar_score}")
+        logger.info(f"Background Eval Completed: CP={cp_score}, F={f_score}, AR={ar_score}")
         
     except Exception as e:
         logger.error(f"Background Eval Failed: {e}")
