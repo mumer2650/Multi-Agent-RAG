@@ -298,6 +298,23 @@ USER QUESTION: {query}
 
         action = "aggregate" if _is_aggregate_query(generated_sql) else "data_found"
 
+        # Global Deduplication: Pivot EAV specs so the Answer Generator doesn't see 20 identical rows per product
+        if action == "data_found":
+            deduped = {}
+            for row in data:
+                model = row.get("model_name", str(row))
+                if model not in deduped:
+                    # Keep all columns except the raw EAV spec ones
+                    deduped[model] = {k: v for k, v in row.items() if k not in ("spec_name", "spec_value")}
+                
+                # If there's an EAV spec on this row, pivot it into a key
+                spec_name = row.get("spec_name")
+                spec_value = row.get("spec_value")
+                if spec_name and spec_value is not None:
+                    deduped[model][spec_name] = spec_value
+                    
+            data = list(deduped.values())
+
         print(f"✅  SQL returned {len(data)} row(s). Action: {action}")
         return {
             "tool_output"   : {"type": "sql_result", "action": action, "data": data},
