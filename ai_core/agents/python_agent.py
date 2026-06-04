@@ -1414,11 +1414,24 @@ def analyze_visualization(query: str, products: List[Dict[str, Any]], state: Dic
 
     # Helper to find the best matching key from user's query
     def find_best_key(query_str: str, available_keys: List[str], exclude: str = None) -> str:
-        words = set(re.findall(r'\w+', query_str))
+        words = set(re.findall(r'\w+', query_str)) - {'the', 'a', 'of', 'for', 'all', 'chart', 'vs'}
+        
+        # 1. Exact match first
         for key in available_keys:
             if key == exclude: continue
-            if any(w in key for w in words if w not in ['the', 'a', 'of', 'for', 'all', 'chart']):
+            if key in words:
                 return key
+                
+        # 2. Match exact word within the key, prioritizing shorter keys (e.g. 'gross capacity' over 'cooling capacity kg 24h')
+        matches = []
+        for key in available_keys:
+            if key == exclude: continue
+            if any(w in re.findall(r'\w+', key) for w in words):
+                matches.append(key)
+                
+        if matches:
+            return sorted(matches, key=len)[0]
+            
         return next((k for k in available_keys if k != exclude), available_keys[0]) if available_keys else None
 
     # 2. Decide Chart Type

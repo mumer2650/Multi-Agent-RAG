@@ -53,7 +53,7 @@ async def get_metrics():
                         from datetime import timedelta
                         dt = datetime.datetime.strptime(ts_row[0].split('.')[0], "%Y-%m-%d %H:%M:%S")
                         dt = dt + timedelta(hours=5) # Convert to Pakistan Time
-                        timestamp = dt.strftime('%Y-%m-%d %H:%M')
+                        timestamp = dt.strftime('%d %b %Y, %I:%M %p') # E.g., 05 Jun 2026, 02:08 AM
                     except:
                         timestamp = ts_row[0][:16]
                 source = "live_db"
