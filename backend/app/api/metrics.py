@@ -58,6 +58,17 @@ async def get_metrics():
                         timestamp = ts_row[0][:16]
                 source = "live_db"
             conn.close()
+    except sqlite3.OperationalError as e:
+        if "no such column: context_precision" in str(e):
+            try:
+                conn = sqlite3.connect(db_path)
+                conn.execute("ALTER TABLE live_evaluations ADD COLUMN context_precision FLOAT")
+                conn.commit()
+                conn.close()
+                print("Auto-fixed missing context_precision column. Please refresh.")
+            except Exception as e2:
+                print(f"Error auto-fixing DB: {e2}")
+        print(f"Error reading live metrics DB: {e}")
     except Exception as e:
         print(f"Error reading live metrics DB: {e}")
 
