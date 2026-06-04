@@ -65,7 +65,7 @@ const ChartBlock = ({ chartData }) => {
 
     return (
       <g transform={`translate(${x},${y})`}>
-        <text x={0} y={0} dy={24} textAnchor="middle" fill="#64748b" fontSize={11}>
+        <text x={0} y={0} dy={12} textAnchor="middle" fill="#64748b" fontSize={11}>
           {finalLines.map((line, index) => (
             <tspan x={0} dy={index === 0 ? 0 : 14} key={index}>
               {line}
