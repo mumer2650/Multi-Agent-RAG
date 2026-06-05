@@ -363,9 +363,11 @@ export default function Home() {
                               </button>
                               
                               {/* Evaluation Button */}
-                              {idx > 0 && messages[idx - 1]?.role === 'user' && (
-                                <EvaluationButton userQuery={messages[idx - 1].content} />
-                              )}
+                              {(() => {
+                                // Find the most recent user message before this AI response
+                                const lastUserMsg = messages.slice(0, idx).reverse().find(m => m.role === 'user');
+                                return lastUserMsg ? <EvaluationButton userQuery={lastUserMsg.content} /> : null;
+                              })()}
                             </div>
                           )}
 

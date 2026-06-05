@@ -28,6 +28,7 @@ export default function CitationBlock({ citations }) {
           title: `${citation.source}${citation.page ? ` (Page ${citation.page})` : ''}`,
           relevance: citation.relevance_score ? `${(citation.relevance_score * 100).toFixed(0)}%` : null,
           snippet: citation.snippet || 'No preview available',
+          link: `http://localhost:8000/static/${citation.source}${citation.page ? `#page=${citation.page}` : ''}`
         };
       case 'database':
         return {
@@ -78,9 +79,21 @@ export default function CitationBlock({ citations }) {
                   <span className="text-lg flex-shrink-0">{formatted.icon}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-semibold text-sm text-slate-900 dark:text-slate-100">
-                        {formatted.title}
-                      </p>
+                      {formatted.link ? (
+                        <a 
+                          href={formatted.link} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="font-semibold text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline flex items-center gap-1"
+                        >
+                          {formatted.title}
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                      ) : (
+                        <p className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                          {formatted.title}
+                        </p>
+                      )}
                       {formatted.relevance && (
                         <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
                           {formatted.relevance} match

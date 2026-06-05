@@ -3,15 +3,21 @@ load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from backend.app.api.chat import router as chat_router
 from backend.app.api.metrics import router as metrics_router
 from backend.app.api.ingest import router as ingest_router
 from backend.app.db.database import engine
 from backend.app.db import models
-
+import os
 
 # Initialize the FastAPI application [cite: 183, 184]
 app = FastAPI(title="Multi-Agent RAG API")
+
+# Mount the static directory for PDF serving
+dataset_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "dataset", "raw_uploads")
+os.makedirs(dataset_dir, exist_ok=True)
+app.mount("/static", StaticFiles(directory=dataset_dir), name="static")
 
 # Configure CORS so your React frontend can communicate with the backend [cite: 183]
 app.add_middleware(
