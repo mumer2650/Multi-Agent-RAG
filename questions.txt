@@ -1,0 +1,83 @@
+1. What is the cheapest refrigerator available, and what is its net total capacity?
+2. How do I clean the lint filter of a front-loading washing machine?
+3. Calculate the monthly electricity bill if I run the Top Mounted Freezer SpaceMax 304L for 24 hours a day, assuming the standard tariff rate.
+4. Recommend a Samsung LED TV that costs under Rs 300,000.
+5. Does the Side-by-Side Refrigerator Twist Ice Maker 655L support Wi-Fi or SmartThings?
+6. My washing machine is showing a 4C error code. Should I buy a new one or can it be fixed?
+7. How much clearance does the outdoor unit of a 1.5 Ton Wall-mount AC need on the back and sides?
+8. Are there any true wireless earbuds available that feature active noise cancellation?
+9. Compare the capacity and price of the Top Mounted Freezer SpaceMax 304L and the Optimal Fresh+ 411L.
+10. Can I plug my refrigerator into a standard extension cord according to the manual?
+11. Which dishwasher consumes the least water per cycle?
+12. Give me a scatter chart of the price versus capacity for all refrigerators.
+13. What is the payback period if I buy the most expensive inverter AC instead of the cheapest inverter AC?
+14. How many Samsung air conditioners have a Twin Cooling system?
+15. What should I do if my refrigerator's ice maker stops working?
+16. Rank all the Top Mounted Freezers based on their price and capacity.
+17. Do we have any microwave ovens in the database?
+18. What does the "Optimal Fresh+" feature do?
+19. Show me a bar chart of the top 5 most expensive washing machines.
+20. Calculate the annual electricity cost of running a dispenser for 8 hours a day.
+21. Plot a bar chart comparing the prices of all 1.5 Ton Inverter ACs from Samsung and LG.
+====================================================================================================================================
+22. [SQL] List all refrigerators that have a capacity greater than 400 liters and cost less than Rs 300,000.
+23. [Retrieval] What is the recommended distance to keep the Samsung 75-inch Neo QLED TV from the wall to prevent overheating?
+24. [Python - CO2] Calculate the annual CO2 emissions for running the Front-Load Washer AI Ecobubble 9Kg for 4 hours a week.
+25. [Python - Room Size] I have a 250 square foot room facing the sun. Which capacity air conditioner do I need to cool it effectively?
+26. [Python - Water Savings] Compare the annual water savings of using the Freestanding Dishwasher Wide LED Display instead of hand-washing dishes every day.
+27. [Routing - Edge Case] Can you tell me the recipe for a chocolate cake using the microwave oven?
+28. [SQL + Python Chart] Show me a scatter chart comparing the prices of all washing machines against their spin speeds.
+29. [Retrieval] What does the 5C error code mean on a Samsung washing machine, and how can I resolve it myself?
+30. [Python - Efficiency Ratio] Calculate the energy efficiency ratio of the Wall-mount Air-Conditioner WindFree 18,000 BTU/Hr based on its cooling capacity and power consumption.
+31. [SQL] What is the average price of all the Top Mounted Freezers in the database?
+32. [Python - Ownership Cost] Calculate the 5-year total ownership cost for the Side-by-Side Refrigerator Twist Ice Maker 655L, including the purchase price and electricity bills.
+33. [Retrieval] How do I connect my mobile phone to the Samsung Smart TV using the SmartThings app?
+34. [SQL] Which LED TV model has the highest rating, and what is its price?
+35. [Python - Payback] If I replace my old standard AC with the WindFree inverter AC, how many months will it take for the energy savings to pay off the price difference?
+36. [Routing - Multi-intent] What is the price of the 98-inch Crystal UHD Smart TV, and how should I clean its screen without damaging the panel?
+37. [Retrieval] Is it safe to install my washing machine on a carpeted floor?
+38. [Python - Chart] Generate a bar chart showing the noise levels (in dB) of all the available dishwashers.
+39. [SQL - Filtering] Show me all air conditioners that feature "WindFree" cooling and cost more than Rs 200,000.
+40. [Retrieval] What is the "Game Bar" feature on Samsung LED TVs and how do I access it?
+41. [Python/SQL - Edge Case] Plot a bar chart comparing the prices of dishwashers, but only include models that have a digital inverter.
+==========================================================================================================================================================
+42. [Routing - Guardrail] Can you give me a good recipe for making a chocolate cake?
+43. [Retrieval] My refrigerator is making a loud buzzing noise from the back. What are the common causes according to the manual?
+44. [Python - Chart] Create a scatter chart showing the relationship between price and capacity for all washing machines.
+45. [SQL] List all Top Load washing machines that cost less than Rs 150,000.
+46. [Python - Budget] I have a total budget of Rs 400,000. Can you recommend a combination of one refrigerator and one LED TV that fits my budget?
+47. [SQL - Filtering] Which air conditioner has the highest cooling capacity and what is its price?
+48. [Python - Energy Comparison] Compare the yearly energy costs of a non-inverter AC versus a WindFree inverter AC if I run them for 8 hours a day.
+49. [Retrieval] How do I clean the lint filter on my front-load washing machine?
+50. [Routing - Multi-intent] How much does the most expensive refrigerator cost, and what are the instructions to level it on uneven floors?
+51. [Python - Chart] Generate a bar chart showing the prices of the top 5 most expensive LED TVs.
+52. [Retrieval] What does the error code 4C on my washing machine mean and how can I fix it?
+53. [Retrieval] Can I use normal dishwashing liquid in my Samsung dishwasher?
+54. [Retrieval] What is the ideal temperature setting for my refrigerator and freezer?
+55. [Retrieval] My air conditioner is dripping water inside the room. What should I do?
+56. [Retrieval] How do I pair my Galaxy Buds with a non-Samsung Android phone?
+57. [Retrieval] Is it possible to mount my 65-inch LED TV on a drywall without studs?
+58. [Retrieval] How often should I replace the water filter in my French Door refrigerator?
+59. [Retrieval] My washing machine stops mid-cycle and the door won't open. How do I drain it manually?
+60. [Retrieval] What is the difference between AI Wash and Eco Bubble modes?
+61. [Retrieval] How do I clean the condenser coils on the back of my refrigerator?
+62. [SQL] What is the absolutely cheapest LED TV available in the store?
+63. [SQL] List all refrigerators that have a capacity of more than 500 liters.
+64. [SQL] How many Front Load washing machines do you currently have in stock?
+65. [SQL] What is the exact price difference between the most expensive and the cheapest air conditioner?
+66. [SQL] Show me all dishwashers that have a digital inverter motor.
+67. [SQL] Are there any 85-inch LED TVs available? If so, what are their prices?
+68. [SQL] Which refrigerator model has a built-in water dispenser and costs under Rs 300,000?
+69. [SQL] Give me a list of all Galaxy Buds models available in the database.
+70. [Python - Chart] Create a bar chart showing the average price of washing machines grouped by their load type (Front Load vs Top Load).
+71. [Python - Chart] Generate a pie chart displaying the distribution of TV screen sizes in the inventory.
+72. [Python - Chart] Plot a line chart showing the price trend of air conditioners based on their cooling capacity.
+73. [Python - Chart] Create a scatter chart of price vs capacity for all refrigerators.
+74. [Python - Budget] I have a budget of Rs 250,000. Give me 3 options for purchasing a washing machine that fits within this amount.
+75. [Python - Recommendation] Recommend the best air conditioner for a 200 sq ft room that prioritizes energy efficiency.
+76. [Python - Energy Cost] If electricity costs Rs 50 per unit, how much will it cost to run a 1.5-ton non-inverter AC for 10 hours a day for a full month?
+77. [Routing - Guardrail] Which is better, a Samsung LED TV or an LG OLED TV?
+78. [Routing - Guardrail] Can you tell me the basic rules of basketball?
+79. [Routing - Guardrail] Do you sell Sony, Dawlance, or Haier appliances?
+80. [Routing - Multi-intent] Which air conditioner is the cheapest, and how often should I clean its air filter according to the manual?
+81. [Routing - Multi-intent] I want to buy the biggest French Door refrigerator you have. What is its price, and how much clearance space does it need for ventilation?

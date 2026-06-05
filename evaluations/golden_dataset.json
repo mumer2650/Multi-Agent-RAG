@@ -1,0 +1,583 @@
+[
+  {
+    "question": "How can I check the current battery level of my SolarCell Remote?",
+    "ground_truth": "You can check the remaining battery level by navigating to the TV Menu: Settings > General & Privacy > Power & Energy Saving > Available Remote Battery.",
+    "contexts": [
+      "65_QLED_Q8F_4K_Samsung_Vision_AI_Smart_TV_(2025).md 2026-05-22\nStand adjustment is not available for 32\"or center-type stands. Width adjustment feature available with Q8F\n55\" and above only.\nCharge it with light (SolarCell Remote) With a solar panel on its back, our SolarCell Remote is\ncharged by light \u2014 no need for disposable batteries. And with smart features like a built-in microphone\nand voice assistant, this remote is innovative in more ways than one.\nTo charge the remote with solar energy, set the TV remote down with the solar panel facing up. Place it in\nyour living room while your lights are turned on, or you can place it near a window where it will soak in natural\nsunlight. In case the remote's battery is depleted, you can charge it using a USB-C cable. To check the\nremaining battery level of the remote control, refer to the TV Menu (Settings > General & Privacy > Power &\nEnergy Saving > Available Remote Battery).\nSpecifications\nProduct Type\nType: QLED\nDisplay\nScreen Size: 65\""
+    ]
+  },
+  {
+    "question": "What are the benefits of using the Adjustable Stand on this TV?",
+    "ground_truth": "The Adjustable Stand allows you to adjust the TV's spatial position for an optimal viewing experience and provides enough space underneath to fit a soundbar.",
+    "contexts": [
+      "Sleeker and slimmer than ever (AirSlim) An elegantly slim design that blends seamlessly into your\nwall.\nAdjust your TV with more freedom (Adjustable Stand) Get an optimal viewing experience by easily\nadjusting the spatial position of the TV as desired with the Adjustable Stand. It's also perfect for fitting a\nsoundbar underneath.\n4 / 8"
+    ]
+  },
+  {
+    "question": "What are the minimum operating system requirements for a smartphone to support the SmartThings app?",
+    "ground_truth": "The SmartThings app supports Android OS 7.0 or later (with at least 2 GB RAM) and iOS 12.0 or later.",
+    "contexts": [
+      "\u2022 The air conditioner and your smartphone must 1 Launch Play Store or App Store.\nbe within the coverage of the same Wi-Fi access 2 Tap the search field, and then search for\npoint and connected to it. After the connection, \"SmartThings\".\nyou can control the air conditioner from any place\n3 Tap INSTALL for the found SmartThings app item.\nvia various wireless networks such as Wi-Fi, 3G,\nLTE and 5G. 4 Select Agree.\n\u2022 The SmartThings app supports Android OS 7.0\nor later (with at least 2 GB RAM) and iOS 12.0 or Step 4. Configuring the\nlater. The app is optimized for iPhone 6s or later SmartThings app\nand Samsung smartphones (Galaxy S and Note\nseries). The updates of the SmartThings app or the After the SmartThings app is installed, follow the\nfunctions supported by it may be discontinued for procedure below to configure it. If already configured,\nthe previously supported OS versions due to the skip to \"Step 5. Connecting your smartphone to the"
+    ]
+  },
+  {
+    "question": "Why might my earbuds fail to connect or work properly with a specific device?",
+    "ground_truth": "Your earbuds may be incompatible with the device if it has not been tested or approved by the Bluetooth SIG.",
+    "contexts": [
+      "these types of products.\n\u2022 Some devices, especially those that are not tested or approved by the Bluetooth\nSIG, may be incompatible with the earbuds.\n\u2022 Do not use the Bluetooth feature for illegal purposes (for example, pirating\ncopies of files or illegally tapping communications for commercial purposes).\n17"
+    ]
+  },
+  {
+    "question": "Which specific wash cycles allow the use of the Intensive Wash function?",
+    "ground_truth": "The Intensive Wash function is only available in the NORMAL, BABY CARE, BEDDING, or AQUA PRESERVE cycles.",
+    "contexts": [
+      "Operations\nPress this button if you need to shorten the washing time, applicable\nfor NORMAL , BABY CARE or JEANS . The shortened time may differ\ndepending on the selected cycle/load/options.\n12 Super Speed \u2022 Power Tub Clean : Press and hold Super Speed for 3 seconds. Use this\nfunction if you have not performed the ECO TUB CLEAN cycle or need\nmore powerful tub cleaning performance. You can add detergent to\nclean the tub more thoroughly.\nPress this button when the laundry is heavily soiled and needs to be\nwashed intensively. The cycle time will be increased if Intensive Wash is\n13 Intensive Wash\non. This function is only available in the NORMAL , BABY CARE , BEDDING\nor AQUA PRESERVE cycle.\nPress to finish the wash at a specified time. To cancel the Delay End\n14 Delay End settings, simply turn off the washing machine. You can set the Delay End\ntime up to 24 hours.\n26 English\nUUnnttiittlleedd--1111 2266 22002266--0044--0088 (cid:31)(cid:31)(cid:31)(cid:31) 22::4466::4455"
+    ]
+  },
+  {
+    "question": "What steps should I take to prevent foul odours from developing inside my washing machine?",
+    "ground_truth": "To prevent odours, you should run cleansing cycles periodically to sanitise the machine and dry the washing machine interior after each cycle has finished.",
+    "contexts": [
+      "as instructed.\nStains on clothes. \u2022 Clean the filter.\n\u2022 Excessive suds collect in recesses and can cause foul odours.\nHas odours. \u2022 Run cleansing cycles to sanitise periodically.\n\u2022 Dry the washing machine interior after a cycle has finished.\nIf a problem persists, contact a local Samsung service centre.\n38 English\nUUnnttiittlleedd--2255 3388 22002266--0044--0077 (cid:31)(cid:31)(cid:31)(cid:31) 55::5522::3344"
+    ]
+  },
+  {
+    "question": "What is the purpose of the Galaxy Wearable app when using Galaxy Buds FE?",
+    "ground_truth": "The Galaxy Wearable app is required to connect the earbuds to a mobile device, check the earbuds' remaining battery, and configure the device's settings.",
+    "contexts": [
+      "Galaxy Wearable app\nIntroduction\nTo connect the earbuds to a mobile device, you must install the Galaxy Wearable app on\nyour mobile device. You can check the Galaxy Buds FE\u2019s remaining battery and configure\nthe settings with the Galaxy Wearable app.\nOpen the Galaxy Wearable app on your mobile device.\nTo search for settings by entering keywords, tap . You can also search for settings by\nselecting a tag under Suggestions.\n\u2022 If it is the first time connecting the earbuds and a mobile device, refer to\nConnecting the earbuds to a mobile device for more information.\n\u2022 Some features may not be available depending on the type of connected mobile\ndevice.\nGalaxy Buds FE's remaining\nbattery\nConfigure the Galaxy Buds FE\nsettings and launch the features\nyou want.\nTap to use the following additional options:\n\u2022 : Configure the settings for the Galaxy Wearable app.\n\u2022 Add new device: Disconnect your device from the currently connected phone and"
+    ]
+  },
+  {
+    "question": "Pourquoi l'icône Wi-Fi de mon réfrigérateur clignote-t-elle lorsque j'ouvre la porte ?",
+    "ground_truth": "L'icône Wi-Fi clignote pour vous avertir que le réfrigérateur n'est pas connecté à l'application SmartThings. Il est recommandé de connecter votre appareil à l'application pour résoudre ce problème.",
+    "contexts": [
+      "Désactivation machine à glaçons ( ) s'allume. La fonction Machine à glaçons automatique\nglace) est activée par défaut.\n(Type B, C \u2022 Nous vous recommandons de désactiver cette fonction dans les cas suivants :\nuniquement) - Le bac à glaçons est rempli.\n- Vous souhaitez diminuer la consommation d'énergie.\n03 Connexion au réseau (modèles applicables uniquement)\nVous pouvez commander et surveiller votre réfrigérateur sur l'application SmartThings. Pour en savoir plus,\nreportez-vous à la section SmartThings (modèles applicables uniquement).\nREMARQUE\nSi le réfrigérateur n'est pas connecté à l'application SmartThings, l'icône de connexion Wi-Fi ( ) clignote\npour vous avertir lors de l'ouverture de la porte. Si vous voyez l'icône de connexion Wi-Fi ( ) clignoter,\nnous vous recommandons de connecter votre réfrigérateur à l'application SmartThings.\nUntitled-9 38 2023-03-29 (cid:31)(cid:31) 2:26:35"
+    ]
+  },
+  {
+    "question": "What are the potential consequences of using water hotter than 50 °C in my washing machine?",
+    "ground_truth": "Using water exceeding 50 °C may cause plastic parts to deform or become damaged, which can result in electric shock or fire.",
+    "contexts": [
+      "Safety information\nDo not use the water to exceed 50 \u00b0C when using the hot water in your washing machine. Plastic parts may\nbe deformed or damaged, and this may result in electric shock or fire.\nUsage cautions\nCAUTION\nWhen the washing machine is contaminated by a foreign substance such as detergent, dirt, food waste,\netc., unplug the power plug and clean the washing machine using a damp, soft cloth.\n\u2022 Failure to do so may result in discoloration, deformation, damage, or rust.\nThe product you have purchased is designed for domestic use only. Using the product for business purposes\nqualifies as a product misuse. In this case, the product will not be covered by the standard warranty\nprovided by Samsung and no responsibility can be attributed to Samsung for malfunctions or damages\nresulting from such misuse.\nDo not stand on the appliance or place objects (such as laundry, lighted candles, lighted cigarettes, dishes,\nchemicals, metal objects, etc.) on the appliance."
+    ]
+  },
+  {
+    "question": "Est-il permis de placer des objets, comme des bougies ou des récipients d'eau, sur le dessus du réfrigérateur ?",
+    "ground_truth": "Non, il ne faut pas monter sur l'appareil ni y placer d'objets tels que du linge, des bougies allumées, des cigarettes, de la vaisselle, des produits chimiques ou des objets métalliques, car cela peut provoquer une électrocution, un incendie, des dommages à l'appareil ou des blessures. De plus, il ne faut pas placer de récipient rempli d'eau sur l'appareil, car un renversement pourrait entraîner un incendie ou une électrocution.",
+    "contexts": [
+      "Fran\u00e7ais 17\nConsignes\nde\ns\u00e9curit\u00e9\n\u2022 N'utilisez pas de s\u00e8che-cheveux pour s\u00e9cher l'int\u00e9rieur du\nr\u00e9frig\u00e9rateur. Ne placez pas de bougie allum\u00e9e \u00e0 l'int\u00e9rieur\ndu r\u00e9frig\u00e9rateur pour \u00e9liminer les mauvaises odeurs.\n- Risque d'\u00e9lectrocution ou d'incendie.\n\u2022 Ne montez pas sur l'appareil et ne placez pas d'objets\n(tels que du linge, des bougies allum\u00e9es, des cigarettes\nallum\u00e9es, de la vaisselle, des produits chimiques, des\nobjets m\u00e9talliques, etc.) sur celui-ci. Le non-respect de cette\nconsigne risque d'entra\u00eener une \u00e9lectrocution, un incendie,\ndes probl\u00e8mes avec l'appareil ou des blessures corporelles.\nNe placez pas de r\u00e9cipient rempli d'eau sur l'appareil.\n- En cas de renversement, cela pourrait entra\u00eener un\nincendie ou une \u00e9lectrocution.\n\u2022 N'utilisez pas d'appareil m\u00e9canique ni de dispositif\nsusceptible d'acc\u00e9l\u00e9rer le processus de d\u00e9cong\u00e9lation,\nautres que ceux recommand\u00e9s par le fabricant.\n\u2022 N'endommagez pas le circuit frigorifique.\n\u2022 Ne fixez jamais directement l'ampoule DEL UV pendant une"
+    ]
+  },
+  {
+    "question": "Why does the ECO TUB CLEAN indicator keep blinking even after I have noticed it for a while?",
+    "ground_truth": "The indicator blinks for an hour and recurs 6 consecutive times until you run the ECO TUB CLEAN cycle. This is normal behavior and not a system failure; it is recommended to run the cycle once every 1-3 months to keep the tub clean.",
+    "contexts": [
+      "for 3 seconds) to start the washing machine. For your safety, the\nwashing machine will not spin unless the lid is closed. (This only\napplies to the models with the lid-locking feature.)\n\u2022 Before the washing machine starts to fill, it will make a series of\nStops.\nclicking noises to check the lid\u2019s lock and does a quick drain.\n\u2022 There may be a pause or soak period in the cycle. Wait briefly and the\nwashing machine may start.\n\u2022 Make sure the inlet hose screens at the taps are not clogged.\nPeriodically clean the screens.\n\u2022 This problem occurs temporarily due to low voltages, and will be\nsolved when power recovers.\n\u2022 When the machine is diagnosed to be cleaned, the ECO TUB CLEAN\nindicator blinks for an hour. This recurs 6 consecutive times until\nThe ECO TUB CLEAN alarm\nyou run the ECO TUB CLEAN cycle. This is normal, and not a system\ndoes not turn off.\nfailure. To keep the tub clean, it is recommended to run the cycle\nonce every 1-3 months.\nEnglish 41"
+    ]
+  },
+  {
+    "question": "How can I enable the feature that allows me to start a conversation with Bixby using only my voice?",
+    "ground_truth": "To enable Bixby voice wake-up, open the Galaxy Wearable app on your mobile device, tap Earbuds settings, and then tap the switch next to Bixby voice wake-up to turn it on.",
+    "contexts": [
+      "and say what you want.\nFor example, while touching and holding the earbud, say \u201cHow\u2019s the weather today?\u201d The\nweather information will appear on your connected mobile device.\nIf Bixby asks you a question during a conversation, you can continue to talk to Bixby\nwithout touching and holding the earbud or tapping .\nWaking up Bixby using your voice\nYou can start a conversation with Bixby by saying \u201cHi, Bixby\u201d or \u201cBixby\u201d while wearing the\nearbuds.\n1 Open the Galaxy Wearable app on your mobile device and tap Earbuds settings.\n2 Tap Bixby voice wake-up and tap the switch to turn it on.\nWhen you turn on this feature, the Bixby voice wake-up feature on your connected\nmobile device will also be turned on automatically.\n27"
+    ]
+  },
+  {
+    "question": "Quels types de produits de nettoyage dois-je éviter d'utiliser sur les surfaces extérieures et les joints de mon appareil ?",
+    "ground_truth": "Vous ne devez pas utiliser de produits abrasifs ou concentrés, tels que des produits à vitre, des produits à récurer, des liquides inflammables, de l'acide chlorhydrique, des cires nettoyantes, des détergents concentrés, de la Javel ou des produits contenant des dérivés pétroliers, car ils risquent de rayer ou d'endommager les matériaux.",
+    "contexts": [
+      "Consignes de s\u00e9curit\u00e9\n24 Fran\u00e7ais\nConsignes\nde\ns\u00e9curit\u00e9\n\u2022 N'utilisez pas de produits de nettoyage abrasifs ou\nconcentr\u00e9s, tels que des produits \u00e0 vitre, des produits \u00e0\nr\u00e9curer, des liquides inflammables, de l'acide chlorhydrique,\ndes cires nettoyantes, des d\u00e9tergents concentr\u00e9s, de la\nJavel ou des produits de nettoyage contenant des produits\np\u00e9troliers, sur les surfaces ext\u00e9rieures (portes et meuble),\nles pi\u00e8ces en plastique, les rev\u00eatements de la porte et de\nl'int\u00e9rieur, ainsi que les joints.\n- Vous risqueriez de rayer ou d'endommager le mat\u00e9riau.\n\u2022 Ne nettoyez pas les caches ou les clayettes en verre\navec de l'eau ti\u00e8de lorsqu'ils sont froids. Les caches et les\nclayettes en verre risquent de se casser s'ils sont expos\u00e9s \u00e0\ndes variations soudaines de temp\u00e9rature ou \u00e0 des impacts\n(chocs ou chutes).\nAvertissements importants concernant la mise au rebut\nAVERTISSEMENT\n\u2022 Jetez le mat\u00e9riel d'emballage de cet appareil dans le\nrespect de l'environnement."
+    ]
+  },
+  {
+    "question": "What should I do if the LED lamp inside my refrigerator stops working?",
+    "ground_truth": "You should not disassemble the lamp covers or the LED lamps yourself; instead, you must contact a Samsung service center for assistance.",
+    "contexts": [
+      "Safety information\n16 English\nSafety\ninformation\n\u2022 If the refrigerator emits a burning smell or smoke, unplug\nthe refrigerator immediately and contact your Samsung\nElectronics service center.\n- Failing to do so may result in an electric or fire hazards.\n\u2022 Pull the power plug out of the socket before changing the\ninterior lamps of the refrigerator.\n- Otherwise, there is a risk of electric shock.\n\u2022 If you experience difficulty changing a non-LED light,\ncontact a Samsung service center.\n\u2022 If the product is equipped with LED lamps, do not\ndisassemble the Lamp Covers and LED lamps yourself.\n- Contact a Samsung service center.\n\u2022 Plug the power plug into the wall socket firmly.\n\u2022 Do not use a damaged power plug, damaged power cord or\nloose wall socket.\n- This may result in an electric shock or fire.\nUntitled-8 16 2023-03-29 (cid:31)(cid:31) 2:24:10"
+    ]
+  },
+  {
+    "question": "Which types of clothing should be avoided in the washing machine because they are prone to deformation, shrinking, or discoloration?",
+    "ground_truth": "You should not wash neckties, brassieres, jackets, suits, and coats (often made of rayon, polynosic, cuff, or blended fabrics), as well as wrinkle-processed, embossed, or resin-processed clothes, as these items are easily deformed, shrunk, or discolored.",
+    "contexts": [
+      "Before you start\nLaundry guidelines\nCheckpoints\n\u2022 Check for stains or dirt. Apply a little detergent to a white towel. Rub the white towel and the dirty\nclothes together to transfer the dirt or colour to the white towel.\n\u2022 Before washing, pre-treat the sleeves, collars, dress hems, and pockets by brushing with detergent.\n\u2022 Wrinkle-processed clothes made of wool must be specially treated by tightening them with threads\nbefore washing. Remove the threads after washing and drying is complete.\nCAUTION\n\u2022 Do not place or keep blankets in the tub.\n\u2022 Do not put candles or a heat source in or on the washing machine.\n\u2022 Do not wash these clothes:\n- Neckties, brassieres, jackets, suits, and coats can be easily deformed by shrinking or discolouring on\nthe surface. These clothes are mostly made of rayon, polynosic, cuff, and/or blended fabric.\n- Wrinkle-processed, embossed, or resin processed clothes easily deform merely by soaking in water."
+    ]
+  },
+  {
+    "question": "Comment puis-je activer ou désactiver la connexion Wi-Fi sur mon réfrigérateur ?",
+    "ground_truth": "Pour activer ou désactiver la connexion Wi-Fi, vous devez maintenir le bouton Fridge (Réfrigérateur) enfoncé pendant 10 secondes. L'icône de connexion Wi-Fi indiquera le statut : elle clignotera pendant 5 secondes puis s'éteindra si le Wi-Fi est désactivé, ou elle clignotera pendant 5 secondes puis restera allumée pendant 5 secondes si le Wi-Fi est activé.",
+    "contexts": [
+      "Fran\u00e7ais 39\nOp\u00e9rations\n04 AI Energy Mode (mod\u00e8les applicables uniquement)\n\u2022 L'ic\u00f4ne appara\u00eet lorsque l'AI Energy Mode est activ\u00e9. Vous pouvez activer ou d\u00e9sactiver l'AI Energy\nMode sur l'application SmartThings. (Mod\u00e8les applicables uniquement)\nActivation et d\u00e9sactivation de la connexion Wi-Fi (mod\u00e8les applicables uniquement)\nPour activer ou d\u00e9sactiver la connexion Wi-Fi, maintenez le bouton Fridge (R\u00e9frig\u00e9rateur) enfonc\u00e9 pendant\n10 secondes. L'ic\u00f4ne de connexion Wi-Fi ( ) affiche le statut de la connexion Wi-Fi comme indiqu\u00e9 ci-\ndessous.\n\u2022 Connexion Wi-Fi d\u00e9sactiv\u00e9e : l'ic\u00f4ne de connexion Wi-Fi ( ) clignote pendant 5 secondes, puis s'\u00e9teint.\n\u2022 Connexion Wi-Fi activ\u00e9e : l'ic\u00f4ne de connexion Wi-Fi ( ) clignote pendant 5 secondes, puis s'allume\npendant 5 secondes.\nREMARQUE\n\u2022 Vous devez activer la connexion Wi-Fi pour pouvoir connecter l'appareil \u00e0 l'application SmartThings.\n\u2022 Pour en savoir plus, reportez-vous \u00e0 la section SmartThings (mod\u00e8les applicables uniquement)."
+    ]
+  },
+  {
+    "question": "What should I do with zippers on pants or jackets before putting them in the washing machine?",
+    "ground_truth": "Zippers should be closed and fixed with a string to prevent damage to the tub.",
+    "contexts": [
+      "the tub.\n\u2022 Turn clothing with buttons and embroideries inside out.\n\u2022 If pants or jacket zippers are open while washing, the tub may be damaged.\n\u2022 Zippers should be closed and fixed with a string.\n\u2022 Clothing with long strings may become entangled with other clothes. Make sure to tie the strings\nbefore washing.\n20 English\nUUnnttiittlleedd--2255 2200 22002266--0044--0077 (cid:31)(cid:31)(cid:31)(cid:31) 55::5522::2288"
+    ]
+  },
+  {
+    "question": "Which types of clothing should be avoided when using this washing machine because they are prone to deformation or discoloration?",
+    "ground_truth": "You should not wash neckties, brassieres, jackets, suits, and coats, as they are often made of materials like rayon, polynosic, cuff, or blended fabrics that shrink or discolor easily. Additionally, you should avoid washing wrinkle-processed, embossed, or resin-processed clothes, as they can easily deform when soaked in water.",
+    "contexts": [
+      "Before you start\nLaundry guidelines\nCheckpoints\n\u2022 Check for stains or dirt. Apply a little detergent to a white towel. Rub the white towel and the dirty\nclothes together to transfer the dirt or colour to the white towel.\n\u2022 Before washing, pre-treat the sleeves, collars, dress hems, and pockets by brushing with detergent.\n\u2022 Wrinkle-processed clothes made of wool must be specially treated by tightening them with threads\nbefore washing. Remove the threads after washing and drying is complete.\nCAUTION\n\u2022 Do not place or keep blankets in the tub.\n\u2022 Do not put candles or a heat source in or on the washing machine.\n\u2022 Do not wash these clothes:\n- Neckties, brassieres, jackets, suits, and coats can be easily deformed by shrinking or discolouring on\nthe surface. These clothes are mostly made of rayon, polynosic, cuff, and/or blended fabric.\n- Wrinkle-processed, embossed, or resin processed clothes easily deform merely by soaking in water."
+    ]
+  },
+  {
+    "question": "What should I do if my washing machine displays an 8C error code?",
+    "ground_truth": "To address an 8C error, power off the washing machine, wait 2-3 minutes, and then power it back on to try again. If the problem persists, you must call for service.",
+    "contexts": [
+      "Check the MEMS sensor.\n\u2022 Power off the washing machine. Wait 2-3 minutes, power on the washing machine,\n8C\nand then try again.\n\u2022 If the problem continues, call for service.\n44 English\nUntitled-2 44 2023-10-13 (cid:31)(cid:31) 11:31:32"
+    ]
+  },
+  {
+    "question": "What happens if I open the washing machine lid while the Child Lock function is active?",
+    "ground_truth": "If the lid is opened while the Child Lock is on, “dC” will appear on the display and an alarm will sound. If the water level is above the safe limit, the machine will begin to drain the water by force after 30 seconds.",
+    "contexts": [
+      "Special features\nChild Lock\nThe Child Lock function locks the washing machine lid to prevent children from climbing into and\nsuffocating inside the tub.\nActivating the Child Lock function\nPress and hold Water Level and Wash simultaneously for approximately 3 seconds.\n\u2022 When you activate the Child Lock function, the Child Lock indicator blinks.\nUsing the Child Lock function\nIf the lid is opened when the Child Lock function is on, \u201c dC\u201d is displayed and an alarm sounds.\n\u2022 If the water level in the tub is above the safe water level, \u201c dC\u201d is displayed on the LED display and the\nwashing machine starts to drain water by force after 30 seconds.\n\u2022 If the water level in the tub is above the safe water level and the Child Lock function is turned on while\nthe lid is open, \u201c CL\u201d is displayed on the LED display, even if the washing machine is turned off, and the\nwashing machine drains water by force."
+    ]
+  },
+  {
+    "question": "How do I properly store my earbuds in the charging case?",
+    "ground_truth": "Check the direction of each earbud and insert them into their corresponding slots (L for left, R for right), then close the charging case.",
+    "contexts": [
+      "Getting started\n2 Check the direction of each earbud and correctly insert them into their corresponding\nslots in the charging case.\nL\nR\n3 Close the charging case.\n9"
+    ]
+  },
+  {
+    "question": "How do I determine the minimum room size required for my appliance based on the refrigerant it contains?",
+    "ground_truth": "The room must be 1 m³ in size for every 8 g of R-600a refrigerant. You can find the specific amount of refrigerant used in your appliance by checking the identification plate located inside the unit.",
+    "contexts": [
+      "of the room in which the appliance may be sited depends\non the amount of refrigerant used.\n\u2022 Never start up an appliance showing any signs of damage.\nIf in doubt, consult your dealer. The room must be 1 m\u00b3\nin size for every 8 g of R-600a refrigerant inside the\nappliance. The amount of refrigerant in your particular\nappliance is shown on the identification plate inside the\nappliance.\n\u2022 Refrigerant squirting out of the pipes could ignite or cause\nan eye injury. When refrigerant leaks from the pipe, avoid\nany naked flames and move anything flammable away\nfrom the product and ventilate the room immediately.\n- Failing to do so may result in fire or explosion.\n\u2022 It is hazardous for anyone other than an Authorized\nService Person to service this appliance.\nUntitled-8 4 2023-03-29 (cid:31)(cid:31) 2:24:09"
+    ]
+  },
+  {
+    "question": "Que dois-je faire si une alarme retentit après avoir branché mon nouveau réfrigérateur ?",
+    "ground_truth": "Si une alarme retentit après la mise sous tension du réfrigérateur, vous devez appuyer sur le bouton Fridge (Réfrigérateur) pour l'arrêter.",
+    "contexts": [
+      "Fran\u00e7ais 31\nInstallation\n\u00c9TAPE 4 R\u00e9glages initiaux\nEn suivant les \u00e9tapes suivantes, le r\u00e9frig\u00e9rateur doit fonctionner enti\u00e8rement.\n1. Retirez la feuille de mousse PE \u00e0 chaque coin de la clayette, qui est attach\u00e9e pour prot\u00e9ger le\nr\u00e9frig\u00e9rateur pendant le transport.\n2. Branchez le cordon d'alimentation dans la prise murale pour allumer le r\u00e9frig\u00e9rateur.\n3. Ouvrez la porte et v\u00e9rifiez si l'\u00e9clairage \u00e0 l'int\u00e9rieur s'allume.\n4. R\u00e9glez la temp\u00e9rature sur la valeur la plus basse disponible et patientez environ une heure. Le\nr\u00e9frig\u00e9rateur est l\u00e9g\u00e8rement r\u00e9frig\u00e9r\u00e9 et le moteur tourne doucement.\n5. Attendez jusqu'\u00e0 ce que le r\u00e9frig\u00e9rateur atteigne la temp\u00e9rature r\u00e9gl\u00e9e. Le r\u00e9frig\u00e9rateur est d\u00e9sormais\npr\u00eat l'emploi.\nREMARQUE\nUne fois le r\u00e9frig\u00e9rateur mis sous tension, une alarme retentit. Pour arr\u00eater l'alarme, appuyez sur le bouton\nFridge (R\u00e9frig\u00e9rateur).\n\u00c9TAPE 5 V\u00e9rification finale\nLorsque l'installation est termin\u00e9e, v\u00e9rifiez les points suivants :"
+    ]
+  },
+  {
+    "question": "Is it safe to store a container of water on top of my refrigerator?",
+    "ground_truth": "No, you should not put a container filled with water on the refrigerator because if it spills, there is a risk of fire or electric shock.",
+    "contexts": [
+      "Safety information\n12 English\nSafety\ninformation\nCritical usage warnings\nWARNING\n\u2022 Do not insert the power plug into a wall socket with wet\nhands.\n- This may result in an electric shock.\n\u2022 Do not store articles on the top of the appliance.\n- When you open or close the door, the articles may fall\nand cause personal injury and/or material damage.\n\u2022 Do not insert hands, feet or metal objects (such as\nchopsticks, etc.) into the bottom or the back of the\nfrigerator.\n- This may result in an electric shock or injury.\n- Any sharp edges may cause a personal injury.\n\u2022 Do not touch the inside walls of the freezer or products\nstored in the freezer with wet hands.\n- This may cause frostbite.\n\u2022 Do not put a container filled with water on the refrigerator.\n- If spilled, there is a risk of fire or electric shock.\n\u2022 Do not keep volatile or flammable objects or substances\n(benzene, thinner, propane gas, alcohol, ether, LP gas, and\nother such products) in the refrigerator."
+    ]
+  },
+  {
+    "question": "What are the specific device requirements to use the Super Wideband call feature on the Galaxy Buds3?",
+    "ground_truth": "Super Wideband call is available when paired with a Galaxy Z Fold6 or Galaxy Z Flip6 running One UI 6.1.1 or above.",
+    "contexts": [
+      "One UI, configurations can be found in the Galaxy Wearable app.\nSuper Clear Call, as if you are near Looking for smooth, reliable, high-quality calls? Galaxy Buds3\noffers highly-improved call quality through enhanced machine learning and super wideband\ntechnology. The elaborately trained machine learning model analyzes ambient noise and the user's\nvoice patterns. Then it selectively removes unnecessary noise and improves call quality, ensuring your\nvoice is heard \u2014 even in noisy environments. Enhance your conversations with rich, lifelike clarity\nthrough super wideband calls \u2014 double the voice bandwidth of conventional Bluetooth calls. Images\nsimulated for illustrative purposes. Super wideband call is available only when paired with Galaxy Z\nFold6, Galaxy Z Flip6 with One UI 6.1.1 or above. Additional devices may be supported in the future.\nSuper Wideband (SWB) is available regardless of the Call App. SWB may not be supported depending\non the mobile network between devices."
+    ]
+  },
+  {
+    "question": "Can I clean the inside of my air conditioner myself?",
+    "ground_truth": "No, you should not clean the inside of the air conditioner yourself. You must contact a qualified technician or your nearest service centre to perform this task to avoid the risk of damage, electric shock, or fire.",
+    "contexts": [
+      "This should be done by a qualified technician. Please contact your installer or service centre.\nDo not clean the inside of the air conditioner by yourself.\n\u2022 For cleaning inside the appliance, contact your nearest service centre.\n\u2022 When cleaning the filter, refer to the descriptions in the 'Cleaning' section of the Quick Guide.\n\u2022 Failing to do so may result in damage, electric shock or fire.\n\u2022 Make sure to prevent any injury from sharp edges of the surface when handling the heat exchanger."
+    ]
+  },
+  {
+    "question": "How can I verify that the water hose has been securely connected to the adaptor?",
+    "ground_truth": "After connecting the hose, you should hear a clicking sound, and you should verify the connection by pulling the water hose downwards to ensure it is properly attached.",
+    "contexts": [
+      "Installation\n6. While pulling down part (D) on the water hose,\nconnect the water hose to the adaptor. Then, release\npart (D). The hose fits into the adaptor with a clicking\nsound.\nD\n7. To complete connecting the water hose, see 2\nand 3 on the \"Connecting to a threaded water tap\n(applicable models only) \" section.\nNOTE\n\u2022 After connecting the water hose to the adaptor, check if it is connected properly by pulling the water\nhose downwards.\n\u2022 Use a popular type of water taps. If the tap is square-shaped or too big, remove the spacer ring before\ninserting the tap into the adaptor.\nFor models with an additional hot water inlet:\n1. Connect the red end of the hot water hose to the hot\nwater inlet on the back of the machine.\n2. Connect the other end of the hot water hose to the\nhot water tap.\n14 English\nUUnnttiittlleedd--1111 1144 22002266--0044--0088 (cid:31)(cid:31)(cid:31)(cid:31) 22::4466::4422"
+    ]
+  },
+  {
+    "question": "Puis-je retirer le réservoir d'eau de mon appareil si je n'ai pas besoin de la fonction Machine à glaçons automatique ?",
+    "ground_truth": "Oui, si vous n'utilisez pas la fonction Machine à glaçons automatique, vous pouvez retirer le réservoir d'eau pour libérer de l'espace de stockage.",
+    "contexts": [
+      "r\u00e9servoir d'eau risque de ne pas fonctionner correctement.\n\u2022 Remplissez le r\u00e9servoir avec de l'eau potable uniquement (eau min\u00e9rale ou eau purifi\u00e9e). N'utilisez pas\nd'autres liquides.\n\u2022 Lorsqu'il est plein, le r\u00e9servoir d'eau est lourd, donc faites attention lorsque vous d\u00e9placez le r\u00e9servoir\nrempli. Vous risquez de vous blesser si vous faites tomber le r\u00e9servoir.\n\u2022 Ne tentez pas de d\u00e9monter la pompe interne vous-m\u00eame. Si la pompe interne est endommag\u00e9e ou\nd\u00e9branch\u00e9e du r\u00e9servoir d'eau, la fonction Machine \u00e0 gla\u00e7ons automatique ne fonctionne pas.\nREMARQUE\nSi vous n'utilisez pas la fonction Machine \u00e0 gla\u00e7ons automatique, vous pouvez retirer le r\u00e9servoir d'eau\npour avoir plus d'espace de stockage.\nUntitled-9 45 2023-03-29 (cid:31)(cid:31) 2:26:37"
+    ]
+  },
+  {
+    "question": "How does the Active Fresh Filter contribute to the hygiene of the refrigerator?",
+    "ground_truth": "The Active Fresh Filter keeps the fridge clean and hygienic by removing 99.99% of certain bacteria on the filter’s surface. It works by passing air through an activated carbon filter to sterilize and deodorize it, while an anti-bacterial mesh removes bacteria.",
+    "contexts": [
+      "Top_Mounted_Freezer_Non-Plumbed_Dispenser_540L.md 2026-05-22\nCool drinks & looks (Water Dispenser (Optional)) Enjoy a simple way to look and stay cool. The BPA\nfree Water Dispenser complements the minimalist design of modern kitchens. It is seamlessly\nintegrated into the front of the door with minimal controls. So you can quickly get refreshingly chilled,\nfiltered water without opening the fridge.\nBisphenol A (BPA) is found in polycarbonate plastics and epoxy resins, which are often used in food and\nbeverage containers, and has been linked with possible adverse health effects. Available on certain models.\n99.99% less bacteria (Active Fresh Filter (Optional)) Keep the fridge clean and hygienic, reducing the\nrisk of food being contaminated. An Active Fresh Filter removes 99.99% of certain bacteria on the filter\u2019s\nsurface. Air passes through an activated carbon filter, so it is sterilized and deodorized, and an anti-\nbacterial mesh removes bacteria."
+    ]
+  },
+  {
+    "question": "Why is my washing machine displaying an 'Ub' error message and failing to spin my laundry properly?",
+    "ground_truth": "The 'Ub' error message occurs when the load is unbalanced, which often happens if you are washing only one item, such as a bathrobe or a pair of jeans. To resolve this, you should redistribute the load.",
+    "contexts": [
+      "\u2022 Redistribute the load. If only one item of clothing needs washing, such as a\nbathrobe or pair of jeans, the final spin result might be unsatisfactory, and\nan \u201cUb\u201d check message will be shown in the display.\n\u2022 Press or tap Start/Pause to stop the washing machine.\n\u2022 It may take a few moments for the door lock mechanism to disengage.\n\u2022 The door will not open until 3 minutes after the washing machine has\nstopped or the power turned off.\nThe door does not open. \u2022 Make sure all the water in the drum is drained.\n\u2022 The door may not open if water remains in the drum. Drain the drum and\nopen the door manually.\n\u2022 Make sure the door lock light is off. The door lock light turns off after the\nwashing machine has drained.\n\u2022 Make sure you use the recommended types of detergent as appropriate.\n\u2022 Use high efficiency (HE) detergent to prevent oversudsing.\nExcessive suds. \u2022 Reduce the detergent amount for soft water, small loads, or lightly soiled\nloads.\n\u2022 Non-HE detergent is not recommended."
+    ]
+  },
+  {
+    "question": "What does it mean if the code '4C' appears on my washing machine display?",
+    "ground_truth": "The '4C' information code indicates that the mesh filter is clogged.",
+    "contexts": [
+      "reconnect the water hose to the inlet valve.\n8. Open the water tap.\nNOTE\nIf the mesh filter is clogged, an information code of \u201c4C\u201d appears on the screen.\n48 English\nWWWW55000000DD__IIBB__DD GGlloobbaall--PPJJTT__WWAASSHHEERR--MMDD__EENN((FFAA))..iinndddd 4488 22002255//44//2222 1100::3311::1122"
+    ]
+  },
+  {
+    "question": "How does the battery life of the Galaxy Buds Core differ when using Active Noise Cancellation (ANC) versus when it is turned off?",
+    "ground_truth": "With ANC turned off, the earbuds and case provide up to 35 hours of play time on a full charge. With ANC turned on, they provide up to 20 hours of play time on a full charge.",
+    "contexts": [
+      "can be found in the Galaxy Wearable app.\nCommunicate with clarity Hear and be heard with crisp, clear calls wherever you go. The 3\nmicrophones work in unison to capture your voice with precision, ensuring your words can be heard\ncrystal clear. Images simulated for illustrative purposes.\nPower through your playlist With 35 hours of play time, your life soundtrack is ready to play\nwhenever you are. With ANC off, earbuds and case provide up to 35 hours of play time on a full charge.\nWith ANC on, they provide up to 20 hours of play time on a full charge. Based on internal testing. Play\ntime is tested by pairing pre-produced Galaxy Buds Core to a recently released Samsung Galaxy\nsmartphone with default settings. Actual battery life may vary and depend on usage conditions,\nsettings, number of times charged, Bluetooth signal strength, and other factors. 'Play time' refers to\nwhen the Galaxy Buds Core are connected to the phone, streaming music. Play time may vary based on\nsettings."
+    ]
+  },
+  {
+    "question": "What does it mean if the Wi-Fi indicator on my air conditioner blinks for 10 seconds when I start the unit?",
+    "ground_truth": "If the Wi-Fi indicator blinks for 10 seconds when operation starts, it indicates that the air conditioner is not connected to Wi-Fi. You should refer to the 'SmartThings app' section on page 38 to connect the device.",
+    "contexts": [
+      "English 13\nAt\na\nGlance\nDisplay\n01 Temperature indicator (numeric) /\nFilter reset indicator ( ) /\n01\nElectricity consumption indicator (numeric) /\nAuto clean indicator ( )\n02 AI Energy indicator\n03 AI Auto indicator\n04 Timer indicator /\n02 03 04 05 Good Sleep indicator\n05 Wi-Fi indicator\nNOTE\n\u2022 When the Wi-Fi is turned on, the indicator blinks three\ntimes and then turns on.\nNOTE\n\u2022 If the Wi-Fi indicator blinks for 10 seconds when operation starts, it means that the air conditioner is not\nconnected to Wi-Fi. See \"SmartThings app\" on page 38 and connect the air conditioner to Wi-Fi.\n\u2022 When connected to Wi-Fi, the air conditioner can gather and learn your user patterns so that it can run in\nAI Auto mode."
+    ]
+  },
+  {
+    "question": "What should I do if I want to use a concentrated fabric softener in the detergent drawer?",
+    "ground_truth": "To prevent the compartment from clogging, you must dilute the concentrated fabric softener with water before applying it to the softener compartment.",
+    "contexts": [
+      "Before you start\nDetergent drawer guidelines\nThe washing machine provides a three-compartment dispenser: the left compartment for the main wash,\nthe centre for fabric softeners, and the right for the preliminary wash.\n1. Prewash compartment: Apply prewash detergent\nor starch.\n2. Main-wash compartment: Apply main-wash\ndetergent, water softener, soaking detergent, bleach,\nA and/or stain removers.\n3. Softener compartment: Apply additives such as\nfabric softener. Do not exceed the max line (A).\nCAUTION\n\u2022 Do not open the detergent drawer while the washing machine is operating.\n\u2022 Do not use the following types of detergent:\n- Tablet or capsule types\n- Ball or net types\n\u2022 To prevent the compartment clogging, concentrated or highly-enriched agents (fabric softener or\ndetergent) must be diluted with water before being applied.\n\u2022 When Delay End is selected, do not apply detergent directly into the drum. Otherwise, this may"
+    ]
+  },
+  {
+    "question": "What is the correct way to unplug the appliance to avoid potential electric shock or fire?",
+    "ground_truth": "You should unplug the power plug by holding the plug itself, rather than pulling on the power cord.",
+    "contexts": [
+      "Safety information\nDo not use a damaged power plug, damaged power cord, or loose wall socket.\n\u2022 This may result in electric shock or fire.\nDo not pull or excessively bend the power cord.\nDo not twist or tie the power cord.\nDo not hook the power cord over a metal object, place a heavy object on the power cord, insert the power\ncord between objects, or push the power cord into the space behind the appliance.\n\u2022 This may result in electric shock or fire.\nDo not pull the power cord when unplugging the power plug.\n\u2022 Unplug the power plug by holding the plug.\n\u2022 Failure to do so may result in electric shock or fire.\nThis appliance should be positioned so that the power plug, the water supply taps, and the drain pipes are\naccessible.\nFollowing the repair by a non-authorized service provider, self-repair or non-professional repair of the\nproduct, Samsung is not liable for any damage to the product, any injury or any other product safety issue"
+    ]
+  },
+  {
+    "question": "What factors should I consider when determining the appropriate temperature settings for my refrigerator?",
+    "ground_truth": "You should consider the ambient temperature, the door-opening frequency, and the location of the refrigerator when adjusting your temperature settings.",
+    "contexts": [
+      "the ambient temperature, the door-opening frequency, and the location of the refrigerator.\nWe recommend adjusting the temperature settings as appropriate.\nUntitled-8 28 2023-03-29 (cid:31)(cid:31) 2:24:10"
+    ]
+  },
+  {
+    "question": "Quelles précautions dois-je prendre concernant l'emplacement de mon réfrigérateur pour éviter tout risque d'incendie ou de choc électrique ?",
+    "ground_truth": "Vous devez installer l'appareil dans un endroit sec, non huileux et non poussiéreux, à l'abri de la lumière directe du soleil et de l'eau (comme la pluie). De plus, l'appareil doit être positionné de manière à ce que la fiche reste accessible après l'installation.",
+    "contexts": [
+      "Fran\u00e7ais 9\nConsignes\nde\ns\u00e9curit\u00e9\n\u2022 L'appareil doit \u00eatre positionn\u00e9 de fa\u00e7on \u00e0 ce que la fiche\nreste accessible apr\u00e8s l'installation.\n- Le non-respect de cette consigne risquerait de\nprovoquer un choc \u00e9lectrique ou un incendie en raison\nde fuites \u00e9lectriques.\n\u2022 N'installez pas cet appareil dans un lieu humide, huileux\nou poussi\u00e9reux, ni dans un endroit expos\u00e9 directement au\nsoleil ou \u00e0 l'eau (gouttes de pluie).\n- Une d\u00e9t\u00e9rioration de l'isolation des composants\n\u00e9lectriques est susceptible de provoquer un choc\n\u00e9lectrique ou un incendie.\n\u2022 Si vous constatez des traces de poussi\u00e8re ou d'eau dans le\nr\u00e9frig\u00e9rateur, d\u00e9branchez la prise et contactez votre centre\nde service Samsung Electronics.\n- \u00c0 d\u00e9faut, il existe un risque d'incendie.\n\u2022 Ne montez pas sur l'appareil et ne placez pas d'objets\n(tels que du linge, des bougies allum\u00e9es, des cigarettes\nallum\u00e9es, de la vaisselle, des produits chimiques, des objets\nm\u00e9talliques, etc.) sur celui-ci."
+    ]
+  },
+  {
+    "question": "How should I secure the washing machine's levelling feet after I have finished adjusting them?",
+    "ground_truth": "Once the washing machine is level, you should tighten the nuts using the spanner.",
+    "contexts": [
+      "STEP 3 Adjust the levelling feet\n1. Gently slide the washing machine into position.\nExcessive force may damage the levelling feet.\n2. Level the washing machine by manually adjusting\nthe levelling feet.\n3. When levelling is complete, tighten the nuts using\nthe spanner.\nEnglish 19\nWWWW55000000DD__IIBB__DD GGlloobbaall--PPJJTT__WWAASSHHEERR--MMDD__EENN((FFAA))..iinndddd 1199 22002255//44//2222 1100::3311::0066"
+    ]
+  },
+  {
+    "question": "What immediate steps should I take if I detect a gas leak near the appliance?",
+    "ground_truth": "In the event of a gas leak, you should ventilate the area immediately without touching the power line. Do not touch the appliance or the power line, and do not use a ventilating fan, as a spark may result in an explosion or fire.",
+    "contexts": [
+      "FOR USING\nWARNING\nIf the appliance is flooded, please contact your nearest service centre.\n\u2022 Failing to do so may result in electric shock or fire.\nIf the appliance generates a strange noise, a burning smell or smoke, cut off the power supply\nimmediately and contact the nearest service centre.\n\u2022 Failing to do so may result in electric shock or fire.\nIn the event of a gas leak (such as propane gas, LP gas, etc.), ventilate immediately without touching\nthe power line. Do not touch the appliance or power line.\n\u2022 Do not use a ventilating fan.\n\u2022 A spark may result in an explosion or fire.\nRAC057-01_IB_AR9500T \uc720\ud48dAIRISE_PM_EN-WEB_.indd 7 2020-04-21 \uc624\ud6c4 6:14:59"
+    ]
+  },
+  {
+    "question": "What happens to other active settings when I enable the good'sleep function on my air conditioner?",
+    "ground_truth": "When you select the good'sleep function, any currently active Eco, Fast, or Quiet functions will be automatically canceled.",
+    "contexts": [
+      "Energy-Saving Features\n24English\nSmart\nFeatures\ngood'sleep function\nUse the good'sleep function to save energy while you are sleeping.\nYou can select this function in Cool or Heat mode.\nIn Cool or Heat mode \u25b6 (Select .) \u25b6\n(Set the duration.) \u25b6\nNOTE\n\u2022 To cancel the good'sleep function, set the duration to 0.0.\n\u2022 When you start the good'sleep function, the (Timer) indicator\nappears on the indoor unit display.\n\u2022 You can set the duration to from 0.5 hours to 12 hours.\n\u2022 The recommended set temperatures while the good'sleep\nfunction is on are:\nRecommended set Optimal set\nMode\ntemperature temperature\nCool 25 \u2103 to 27 \u2103 26 \u2103\nHeat 21 \u2103 to 23 \u2103 22 \u2103\n\u2022 Selecting the good'sleep function cancels Eco, Fast, and Quiet\nfunctions.\nRAC057-01_IB_AR9500T \uc720\ud48dAIRISE_PM_EN-WEB_.indd 24 2020-04-21 \uc624\ud6c4 6:15:02"
+    ]
+  },
+  {
+    "question": "What happens to the temperature of the fridge or freezer compartment when it is switched to 'off' mode using the Convertible 5-in-1 feature?",
+    "ground_truth": "When the refrigeration or freezing functions are in off mode, the temperature of the compartment remains under 15°C using low electricity to prevent mold and odors.",
+    "contexts": [
+      "will display a notification before activating the saving algorithm in both 'Maximum mode' and 'Custom mode'.\nEasily switch modes (Convertible 5-in-1) Enjoy your flexible storage. Using Twin Cooling technology,\nthe Convertible 5-in-1 feature lets you switch between 5 smart modes. Simply convert the freezer into a\nfridge to store more fresh food. Switch the fridge or freezer off to save energy. Or use the freezer as a\nsmall fridge.\nThe 5 smart modes are available with the buttons inside the refrigerator. Regular (Both freezer and fridge ON),\nEnergy Saving (freezer OFF, fridge ON), Vacation(freezer ON, fridge OFF), Fridge Max(Convert the freezer into\na fridge and both fridge ON), and Mini Fridge(Convert the freezer into a fridge and power ON, bottom fridge\nOFF).\nWhen the refrigeration or freezing functions are in off mode, the temperature of the fridge or freezer remains\nunder 15\u00b0C, using low electricity, to prevent mold and odors. The fridge or freezer cannot be powered off"
+    ]
+  },
+  {
+    "question": "What should I do if I hear a rattling sound while closing the debris filter knob?",
+    "ground_truth": "You do not need to do anything; the rattling sound is caused by the spring mechanism and is considered normal operation.",
+    "contexts": [
+      "designed to prevent accidents by children. To open\nthe safety knob of the debris filter, push in and turn\nit anticlockwise. The spring mechanism of the safety\nknob helps open the filter.\n\u2022 To close the safety knob of the debris filter, turn it\nclockwise. The spring makes a rattling sound, which\nis normal.\nNOTE\nIf the debris filter is clogged, an information code of \u201c5C\u201d appears on the screen.\nCAUTION\n\u2022 Make sure the filter knob is closed properly after cleaning the filter. Otherwise, this may cause a leak.\n\u2022 Make sure the filter is inserted properly after cleaning it. Otherwise, this may cause an operational\nfailure or a leak.\nEnglish 49\nWWWW55000000DD__IIBB__DD GGlloobbaall--PPJJTT__WWAASSHHEERR--MMDD__EENN((FFAA))..iinndddd 4499 22002255//44//2222 1100::3311::1133"
+    ]
+  },
+  {
+    "question": "Which washing cycles do not support the Intensive Wash feature?",
+    "ground_truth": "The Intensive Wash feature is available in all courses except for the Quick Cycle and the Delicate Cycle.",
+    "contexts": [
+      "drainage from getting clogged up. A Magic Filter with a dual mesh, at the front and back, effectively\ngathers the lint, fluff and particles that come out of your laundry. And it is easy to empty out the filter,\nas it opens 180\u00b0.\nEffective deep cleaning (Intensive Wash) Get clothes spotlessly clean, even if they are really dirty. An\nIntensive Wash can be used in any course to remove stubborn stains, like blood, tea, wine, make-up or\ngrass. It generates rich bubbles that quickly penetrate fabric and a powerful water flow, so dirt is\nremoved more effectively.\nAvailable in all courses, except for the Quick Cycle and Delicate Cycle. Compared to a conventional Samsung\nwashing machine without Ecobubble\u2122.\nSoft Closing Door Avoid being frightened by unexpected bangs! The Soft Closing Door shuts safely,\ngently and silently, as a damper automatically slows its movement. A tempered glass window also lets"
+    ]
+  },
+  {
+    "question": "How does the SmartThings AI Energy Mode help reduce electricity consumption in the Top Mounted Freezer 391L?",
+    "ground_truth": "The AI Energy Mode analyzes your refrigerator usage patterns to estimate power consumption. If the estimated bill exceeds your preset target, it recommends activating the Saving mode, which reduces energy use by up to 7% by optimizing the compressor speed and operation and adjusting the fridge temperature.",
+    "contexts": [
+      "Top_Mounted_Freezer_Twist_Ice_Maker_391L.md 2026-05-22\nTop Mounted Freezer Twist Ice Maker 391L\nPrice: Rs. 228,999.00 (Original Price: Rs. 264,999.00 - Save Rs. 36,000.00)\nFeatures\nSave your energy intelligently (SmartThings AI Energy Mode) Monitor and proactively save energy.\nAI Energy Mode analyzes your refrigerator usage patterns and estimates power consumption, based on\nAI technology. If the estimated electricity bill exceeds your preset target, it recommends you activate\nthe Saving mode to reduce energy use by up to 7%.\nAvailable on Android and iOS devices. A Wi-Fi connection and a Samsung account are required. Available for\nspecific models through a Wi-Fi update. Energy usage is reduced by optimizing the compressor speed and\noperation and adjusting the fridge temperature. Results are based on internal testing and may vary depending\non the usage condition and patterns.\nMore space inside (SpaceMax\u2122) Store more food in a spacious interior with 20 liters more capacity."
+    ]
+  },
+  {
+    "question": "What is the maximum load capacity for washing and spinning for the WW9*DG5***** washing machine model?",
+    "ground_truth": "The maximum load capacity for washing and spinning is 9.0 kg.",
+    "contexts": [
+      "Type Front loading washing machine\nModel name WW9*DG5*****\nA (Width) 600 mm\nB (Height) 850 mm\nDimensions C (Depth) 595 mm\nD 625 mm\nE 1070 mm\nWater pressure 50-800 kPa\nNet weight 65.0 kg\nMaximum load capacity Washing and spinning 9.0 kg\nPower Washing and\nAC 220-240 V / 50 Hz 1900-2300 W\nconsumption heating\nSpin revolutions 1400 rpm\nNOTE\n\u2022 The design and specifications are subject to change without notice for quality improvement purposes.\n\u2022 The dimensions stated here may differ slightly from the actual measurements depending on the\nmeasuring method.\nEnglish 61\nWWWW55000000DD__IIBB__DD GGlloobbaall--PPJJTT__WWAASSHHEERR--MMDD__EENN((FFAA))..iinndddd 6611 22002255//44//2222 1100::3311::1177"
+    ]
+  },
+  {
+    "question": "Why is my laundry still wet at the end of the wash cycle?",
+    "ground_truth": "Your laundry may remain wet because the load is too small, which can cause the machine to become unbalanced and fail to spin completely. Additionally, ensure you are using high efficiency (HE) detergent to prevent oversudsing, and verify that you have selected a High or Extra High spin speed if your model supports it.",
+    "contexts": [
+      "for 3 seconds). For your safety, the washing machine will not spin\nunless the lid is closed.\n\u2022 Use the High or Extra High spin speed. (Applicable model only)\nLoad is wet at the end of the \u2022 Use high efficiency (HE) detergent to reduce oversudsing.\ncycle. \u2022 Load is too small. Small loads (one or two items) may become\nunbalanced and not spin completely.\n42 English\nUntitled-2 42 2023-10-13 (cid:31)(cid:31) 11:31:32"
+    ]
+  },
+  {
+    "question": "Can I wash two blankets of different sizes in the same load?",
+    "ground_truth": "No, you should wash blankets one at a time. Washing two different-sized blankets in the same load may compromise the drying performance due to unbalanced loads.",
+    "contexts": [
+      "\u2022 Regardless of the size, blankets or quilts are safer and cleaner to wash one item at a time. Two different-\nsized blankets in the same load may compromise the drying performance due to unbalanced loads.\nTo input a blanket\nFold the blanket as shown, and then put it on the plastic area (A) of the tub before inserting into the tub.\nA\n22 English\nUUnnttiittlleedd--1111 2222 22002266--0044--0088 (cid:31)(cid:31)(cid:31)(cid:31) 22::4466::4455"
+    ]
+  },
+  {
+    "question": "Comment dois-je me débarrasser de mon produit électronique et de ses accessoires une fois qu'ils sont usagés ?",
+    "ground_truth": "Vous ne devez pas jeter le produit ou ses accessoires avec les déchets ménagers. Vous devez les séparer des autres déchets et contacter le magasin où vous avez acheté le produit ou vous renseigner auprès des autorités locales pour connaître les points de collecte et les procédures de recyclage appropriés.",
+    "contexts": [
+      "Fran\u00e7ais 29\nConsignes\nde\ns\u00e9curit\u00e9\nInstructions concernant la r\u00e8glementation DEEE\nLes bons gestes de mise au rebut de ce produit (D\u00e9chets d\u2019\u00e9quipements \u00e9lectriques et\n\u00e9lectroniques)\n(Applicable aux pays disposant de syst\u00e8mes de collecte s\u00e9par\u00e9s)\nCe symbole sur le produit, ses accessoires ou sa documentation indique que ni\nle produit, ni ses accessoires \u00e9lectroniques usag\u00e9s (chargeur, casque audio, c\u00e2ble\nUSB, etc.) ne peuvent \u00eatre jet\u00e9s avec les autres d\u00e9chets m\u00e9nagers. La mise au rebut\nincontr\u00f4l\u00e9e des d\u00e9chets pr\u00e9sentant des risques environnementaux et de sant\u00e9\npublique, veuillez s\u00e9parer vos produits et accessoires usag\u00e9s des autres d\u00e9chets.\nVous favoriserez ainsi le recyclage de la mati\u00e8re qui les compose dans le cadre d\u2019un\nd\u00e9veloppement durable.\nLes particuliers sont invit\u00e9s \u00e0 contacter le magasin leur ayant vendu le produit ou \u00e0 se\nrenseigner aupr\u00e8s des autorit\u00e9s locales pour conna\u00eetre les proc\u00e9dures et les points de\ncollecte de ces produits en vue de leur recyclage."
+    ]
+  },
+  {
+    "question": "Can I replace the internal lamp of my refrigerator myself if it stops working?",
+    "ground_truth": "No, the lamp is not user-serviceable. You should not attempt to replace it yourself as it can cause electric shock. You must contact a local Samsung service centre for assistance.",
+    "contexts": [
+      "Maintenance\n48 English\nMaintenance\nReplacement\nDeodorizer filter (applicable models only)\nWhile holding the top and bottom sides\nof the filter case, unlock the filter case to\nreveal the deodorizer filter (A). Replace the\nfilter, and then reinsert the case.\nA\nLamps and active fresh filter\nNeither lamps nor the active fresh filter is user-serviceable. Do not attempt to replace them\nyourself. To replace them, contact a local Samsung service centre.\nWARNING\n\u2022 The lamps are not user-serviceable. Do not attempt to replace a lamp yourself. This can\ncause electric shock.\nLamp (Light Source)\nThis product contains a light source of energy efficiency class <G>.\nThe lamp(s) and/or control gear(s) are not user-serviceable. To replace the lamp(s) and/or\ncontrol gear(s) in the product, contact a local Samsung service centre.\nFor detailed instructions on replacing lamp(s) or control gear(s) in your product, visit the\nSamsung website (http://www.samsung.com), go to Support > Support home, and then"
+    ]
+  },
+  {
+    "question": "Quels produits de nettoyage dois-je éviter d'utiliser pour nettoyer mon réfrigérateur et pourquoi ?",
+    "ground_truth": "Vous ne devez pas utiliser de benzène, de diluant ou de nettoyant domestique/pour voiture comme Clorox™, car ces produits risquent d'endommager la surface du réfrigérateur et de provoquer un incendie.",
+    "contexts": [
+      "Fran\u00e7ais 51\nEntretien\nNettoyage\nAVERTISSEMENT\n\u2022 Ne nettoyez pas le r\u00e9frig\u00e9rateur avec du benz\u00e8ne, du diluant ou du nettoyant domestique/pour voiture\ncomme Clorox\u2122. Ces produits risquent d'endommager la surface du r\u00e9frig\u00e9rateur et de provoquer un\nincendie.\n\u2022 \u00c9vitez de vaporiser de l'eau directement sur le r\u00e9frig\u00e9rateur. Risque d'\u00e9lectrocution.\nRetirez r\u00e9guli\u00e8rement toutes les substances \u00e9trang\u00e8res telles que la poussi\u00e8re ou l'eau au niveau des\nbroches de la fiche d'alimentation et des points de contact \u00e0 l'aide d'un chiffon sec.\n1. D\u00e9branchez le cordon d'alimentation du r\u00e9frig\u00e9rateur.\n2. Mouillez l\u00e9g\u00e8rement un chiffon doux non pelucheux ou une serviette en papier pour nettoyer l'int\u00e9rieur\net l'ext\u00e9rieur du r\u00e9frig\u00e9rateur.\n3. Ensuite, utilisez un chiffon sec ou une serviette en papier pour bien s\u00e9cher les surfaces.\n4. Branchez le cordon d'alimentation pour allumer le r\u00e9frig\u00e9rateur.\nREMARQUE"
+    ]
+  },
+  {
+    "question": "What is the dedicated WhatsApp support number for customers in Jordan, Lebanon, and Iraq?",
+    "ground_truth": "The WhatsApp support number for customers in Jordan, Lebanon, and Iraq is +962-79-777-7421.",
+    "contexts": [
+      "Contact SAMSUNG WORLD WIDE\nIf you have any questions or comments relating to Samsung products, please contact the\nSAMSUNG customer care centre.\nCountry Contact Center Web Site\nU.A.E 800-SAMSUNG (800 - 726 7864)\nOMAN 800-SAM CS (800-72627)\nwww.samsung.com/ae/support (English)\nKUWAIT 183-CALL (183-2255)\nwww.samsung.com/ae_ar/support (Arabic)\nBAHRAIN 8000-GSAM (8000-4726)\nQATAR 800-CALL (800-2255)\n08000-7267864\nEGYPT 16580 www.samsung.com/eg/support\nWhatsApp 010 000 16580\nALGERIA 3004 www.samsung.com/n_africa/support\nPAKISTAN 0800-Samsung (7267864) www.samsung.com/pk/support\nTUNISIA 80 100 012 www.samsung.com/n_africa/support\n0800-22273\nJORDAN 06-577-7444\nWhatsApp +962-79-777-7421\n1598 www.samsung.com/levant/support\nLebanon\nWhatsApp +962-79-777-7421\n80010080\nIraq\nWhatsApp +962-79-777-7421\nMOROCCO 080 100 22 55 www.samsung.com/n_africa/support\n8002474357 (800 (08:00 ~ 20:00 HELP)\nFrom Inside Saudi Arabia\n+966112614718 From outside Saudi Arabia www.samsung.com/sa_en/support (English)"
+    ]
+  },
+  {
+    "question": "Comment puis-je ajuster la température de la zone fraîche optimale ?",
+    "ground_truth": "Pour augmenter la température, faites glisser la commande de contrôle de la température vers la droite. Pour diminuer la température, faites glisser la commande de contrôle de la température vers la gauche.",
+    "contexts": [
+      "Fran\u00e7ais 47\nOp\u00e9rations\nZone fra\u00eeche optimale (mod\u00e8les applicables uniquement)\nLa zone fra\u00eeche optimale est un compartiment contr\u00f4l\u00e9 ind\u00e9pendamment dans lequel vous pouvez ranger\ndiff\u00e9rents \u00e9l\u00e9ments \u00e0 la temp\u00e9rature optimale.\nMaintenez la partie inf\u00e9rieure de la zone fra\u00eeche\noptimale et tirez pour stocker ou retirer des\naliments.\nVous pouvez ajuster la temp\u00e9rature de la zone\nfra\u00eeche optimale.\n\u2022 Pour augmenter la temp\u00e9rature, faites glisser la\ncommande de contr\u00f4le de la temp\u00e9rature vers\nla droite.\n\u2022 Pour diminuer la temp\u00e9rature, faites glisser la\ncommande de contr\u00f4le de la temp\u00e9rature vers\nla gauche.\nDistributeur d'eau (mod\u00e8les applicables uniquement)\nGr\u00e2ce au distributeur d'eau, vous pouvez vous servir de l'eau sans ouvrir la porte du r\u00e9frig\u00e9rateur. Le\nr\u00e9servoir d'eau doit \u00eatre rempli d'eau potable avant toute utilisation.\nPour remplir d'eau potable le r\u00e9servoir d'eau\nOuvrez la porte et localisez le r\u00e9servoir d'eau situ\u00e9 dans la zone du bac de la porte."
+    ]
+  },
+  {
+    "question": "Which languages are supported for the Voice Command feature on the Galaxy Buds3?",
+    "ground_truth": "At the time of release, Voice Command is available in Korean, English (India, United Kingdom, United States), Portuguese (Brazil), Chinese, German, Spanish (Mexico, Spain), Italian, and Polish.",
+    "contexts": [
+      "Auracast is limited to Samsung Galaxy devices. The quality of the Auracast audio stream may vary\ndepending on the application, network connection and other factors.\nJust say the command - done Control your audio settings without needing to touch your phone.\nSimply say a command, such as \"next song\" or \"volume up\" and let Galaxy Buds3 do the rest. Feature\navailability may vary by language, country or region. Images simulated for illustrative purposes.\nSequences shortened and simulated. Actual UI may be different. Devices sold separately. The Voice\nCommand menu appears when the language pack matching the system language exists. Voice\nCommand is limited to fixed commands and is only available in Korean, English (India, United Kingdom,\nUnited States), Portuguese (Brazil), Chinese, German, Spanish (Mexico, Spain), Italian and Polish at the\ntime of release. The initial language for commands follows the system language setting, and can be\n3 / 7"
+    ]
+  },
+  {
+    "question": "How can I stop the Auto clean function while it is currently running?",
+    "ground_truth": "To cancel Auto clean while it is running, you can either press and hold the button for 3 or more seconds, or navigate to the menu and select Clean.",
+    "contexts": [
+      "English 27\nSmart\nFeatures\nCanceling Auto clean\nTo cancel Auto clean while it is running, follow the procedure below:\n\u25b6 Press and hold for 3 or more seconds.\nor\n\u25b6 \u25b6 Select Clean. \u25b6\nNOTE\n\u2022 Canceling Auto clean does not deactivate it.\nDeactivating Auto clean\nTo deactivate Auto clean, follow the procedure below while the air\nconditioner is in operation :\n\u25b6 Press and hold for 3 or more seconds.\nor\n\u25b6 \u25b6 Select Clean. \u25b6"
+    ]
+  },
+  {
+    "question": "What is the recommended height for the standpipe when installing a pump-type washing machine?",
+    "ground_truth": "The recommended height for the standpipe is 90-100 cm.",
+    "contexts": [
+      "\u2022 Turn off the taps when the washing machine is not in use.\n\u2022 Check for any leaks at the water hose fittings on a regular basis.\nDrain\n\u2022 Make sure the drain hose is not clogged.\n\u2022 We recommend a standpipe in height of 90-100 cm. The drain hose must be connected through\nthe hose clip to the standpipe, and the standpipe must fully cover the drain hose. The standpipe\nspecifications mentioned here are only applicable to pump-type models.\nEnglish 9\nUUnnttiittlleedd--1111 99 22002266--0044--0088 (cid:31)(cid:31)(cid:31)(cid:31) 22::4466::3399"
+    ]
+  },
+  {
+    "question": "Comment dois-je régler les pieds de mise à niveau pour assurer la sécurité de mon réfrigérateur ?",
+    "ground_truth": "Vous devez régler les pieds de mise à niveau à l'aide d'un tournevis à tête plate ou manuellement, en tournant dans le sens horaire pour abaisser l'appareil ou dans le sens antihoraire pour le relever. Pour des raisons de sécurité, il est impératif que l'avant du réfrigérateur soit légèrement plus élevé que l'arrière, et l'appareil doit être vide de tout aliment pendant l'opération.",
+    "contexts": [
+      "Fran\u00e7ais 35\nInstallation\n\u00c9TAPE 4 R\u00e9gler les pieds de mise \u00e0 niveau\nATTENTION\n\u2022 Une fois install\u00e9, le r\u00e9frig\u00e9rateur doit \u00eatre mis de niveau sur un sol plan et solide. Si vous ne mettez\nle r\u00e9frig\u00e9rateur de niveau, cela risque d'endommager le r\u00e9frig\u00e9rateur ou d'engendrer des blessures\ncorporelles.\n\u2022 Pour mettre le r\u00e9frig\u00e9rateur de niveau, ce dernier doit \u00eatre vide. Assurez-vous qu'il ne reste aucun\naliment \u00e0 l'int\u00e9rieur du r\u00e9frig\u00e9rateur.\n\u2022 Pour des raisons de s\u00e9curit\u00e9, l'avant doit \u00eatre l\u00e9g\u00e8rement plus \u00e9lev\u00e9 que l'arri\u00e8re. Mettez le r\u00e9frig\u00e9rateur\nde niveau \u00e0 l'aide des vis sp\u00e9ciales (vis de mise \u00e0 niveau) sur les pieds avant. Utilisez un tournevis \u00e0\nt\u00eate plate pour tourner les vis de mise \u00e0 niveau.\nMettez le r\u00e9frig\u00e9rateur \u00e0 niveau en r\u00e9glant ses\npieds manuellement. Tournez les pieds de mise \u00e0\nniveau dans le sens horaire pour abaisser l'appareil\nou dans le sens antihoraire pour le relever. Pour\ndes raisons de s\u00e9curit\u00e9, le c\u00f4t\u00e9 avant doit \u00eatre\nl\u00e9g\u00e8rement plus \u00e9lev\u00e9 que le c\u00f4t\u00e9 arri\u00e8re."
+    ]
+  },
+  {
+    "question": "What is the net weight of the appliance and what color is the door?",
+    "ground_truth": "The net weight of the appliance is 30 kg, and the door color is Black Caviar.",
+    "contexts": [
+      "Net Weight Kg: 30 kg\nDesign\nBody Color: Versailles Gray\nDoor: Black Caviar\nPanel Display: LED\nCore Features\nEco Bubble: Yes\nBubble Storm: Yes\nSpeed Spray: Yes\nDual Storm: Yes\nAir Turbo: Yes\nAuto Restart: Yes\nChild Lock: Yes\nDelay End: Yes\nDrum Type: 2nd Diamond\n2 / 3"
+    ]
+  },
+  {
+    "question": "What is the temperature range for the AI Auto mode, and can I adjust it manually?",
+    "ground_truth": "In AI Auto mode, the set temperature is controlled within the range of 22 ℃ to 28 ℃. You are permitted to change this temperature manually if desired.",
+    "contexts": [
+      "English 19\nSmart\nFeatures\nAI Auto mode\nUse AI Auto mode to automatically operate any of Cool, Dry, and\nWindFree Cooling modes depending on the learned user patterns\ngathered from an external server via Wi-Fi module. The favourite\ntemperature and operation mode are also set based on the current\ntemperatures (indoor/outdoor) and the gathered user patterns.\n\u25b6 \u25b6 Select Auto.\nNOTE\n\u2022 You can use this mode after Wi-Fi is connected. Otherwise, Auto mode\nis activated.\n\u2022 In AI Auto mode, the (AI Auto) and (Wi-Fi) indicators appears on\nthe display of the indoor unit.\n\u2022 If the gathered user patterns are not sufficient, the set temperature is\nset based on the user's activity time and indoor/outdoor temperatures.\n\u2022 The set temperature is controlled within the range of 22 \u2103 to 28 \u2103 in\nAI Auto mode. You can also change it manually.\n\u2022 An automatically changed set temperature is shown on the display of\nthe indoor unit.\n\u2022 When you press (Mode) in AI Auto mode, the mode is cancelled."
+    ]
+  },
+  {
+    "question": "Can I use an extension cord to connect my air conditioner to a power outlet?",
+    "ground_truth": "No, you must not use an extension cord. Using an extension cord may result in electric shock or fire.",
+    "contexts": [
+      "Safety Information\n6English\nSafety\nInformation\nFOR INSTALLATION\nWARNING\nUse a power cord with this product's power specifications or higher and use the power cord for this\nappliance only. In addition, do not use an extension cord.\n\u2022 Extending the power cord may result in electric shock or fire.\n\u2022 Do not use an electric transformer. This may result in electric shock or fire.\n\u2022 If the voltage/frequency/rated current condition is different, it may cause fire.\nThe installation of this appliance must be performed by a qualified technician or service company.\n\u2022 Failing to do so may result in electric shock, fire, explosion, problems with the product, or injury and\nmay also void warranty on the installed product.\nInstall an Isolation Switch next to the Air Conditioner (but not on the panels of the Air Conditioner) and\ncircuit breaker dedicated to the air conditioner.\n\u2022 Failing to do so may result in electric shock or fire."
+    ]
+  },
+  {
+    "question": "How can I access the full EU declaration of conformity for my Samsung appliance?",
+    "ground_truth": "You can find the full EU declaration of conformity by visiting http://www.samsung.com, navigating to 'Support', selecting 'Search Product Support', and entering your specific model name.",
+    "contexts": [
+      "indicative information.\n\u2022 Hereby, Samsung Electronics, declares that the radio equipment type appliance is in compliance with\nDirective 2014/53/EU. The full text of the EU declaration of conformity is available at the following\ninternet address: The official Declaration of conformity may be found at http://www.samsung.com, go\nto Support > Search Product Support and enter the model name.\nRF max transmitter power : 20 dBm at 2.402 GHz \u2013 2.480 GHz.\nEnglish 45\nWWWW55000000DD__IIBB__DD GGlloobbaall--PPJJTT__WWAASSHHEERR--MMDD__EENN((FFAA))..iinndddd 4455 22002255//44//2222 1100::3311::1122"
+    ]
+  },
+  {
+    "question": "Combien de temps dois-je attendre après l'installation et la mise sous tension du réfrigérateur avant d'y ranger mes aliments ?",
+    "ground_truth": "Vous devez laisser l'appareil reposer pendant 2 heures avant de charger les aliments à l'intérieur après son installation et sa mise sous tension.",
+    "contexts": [
+      "Fran\u00e7ais 13\nConsignes\nde\ns\u00e9curit\u00e9\n\u2022 Le fusible du r\u00e9frig\u00e9rateur doit \u00eatre chang\u00e9 par un\ntechnicien qualifi\u00e9 ou une entreprise de d\u00e9pannage.\n- Le non-respect de cette consigne risquerait de\nprovoquer une \u00e9lectrocution ou des blessures\ncorporelles.\n\u2022 Lorsque vous positionnez l'appareil, assurez-vous que le\ncordon d'alimentation n'est ni endommag\u00e9, ni coinc\u00e9.\n\u2022 Ne placez pas plusieurs prises portables ou alimentations\n\u00e9lectriques portables \u00e0 l'arri\u00e8re de l'appareil.\nConsignes d'installation\nATTENTION\n\u2022 Laissez un espace suffisant autour du r\u00e9frig\u00e9rateur et\ninstallez celui-ci sur une surface plane.\n- N'obstruez pas l'espace de ventilation \u00e0 l'int\u00e9rieur du\nr\u00e9frig\u00e9rateur ou de son caisson.\n\u2022 Laissez l'appareil reposer pendant 2 heures avant de\ncharger les aliments \u00e0 l'int\u00e9rieur apr\u00e8s son installation et sa\nmise sous tension.\n\u2022 Nous vous recommandons fortement de faire appel \u00e0 un\ntechnicien qualifi\u00e9 ou \u00e0 une entreprise de d\u00e9pannage pour\ninstaller votre r\u00e9frig\u00e9rateur."
+    ]
+  },
+  {
+    "question": "Quelle est la procédure à suivre pour retirer une clayette du réfrigérateur ou du congélateur ?",
+    "ground_truth": "Pour retirer la clayette, tenez-la avec les deux mains, soulevez-la pour la dégager du crochet arrière, puis inclinez-la sur un côté et tirez pour la sortir.",
+    "contexts": [
+      "Entretien\nUtilisation et entretien\nClayettes (r\u00e9frig\u00e9rateur/cong\u00e9lateur)\nPour retirer la clayette, tenez-la avec les deux\nmains et soulevez-la pour la retirer du crochet\narri\u00e8re. Ensuite, inclinez-la sur un c\u00f4t\u00e9 et tirez pour\nla retirer.\nAvant d'ins\u00e9rer la clayette, v\u00e9rifiez la forme de\nla partie arri\u00e8re de la clayette. Ensuite, ins\u00e9rez la\nclayette en proc\u00e9dant dans l'ordre inverse de la\nproc\u00e9dure de retrait.\nATTENTION\n\u2022 La clayette doit \u00eatre correctement ins\u00e9r\u00e9e. Ne\nl'ins\u00e9rez pas \u00e0 l'envers, en sens dessus-dessous\nou devant-derri\u00e8re.\n\u2022 Les clayettes sont lourdes, donc faites attention\nlorsque vous les manipulez.\nTiroir \u00e0 l\u00e9gumes\nSoulevez doucement l'avant du tiroir et faites-le\nglisser pour le retirer.\nFran\u00e7ais 49\nEntretien\nUntitled-9 49 2023-03-29 (cid:31)(cid:31) 2:26:38"
+    ]
+  },
+  {
+    "question": "Quelles sont les précautions à prendre concernant l'entretien des réservoirs d'eau et le stockage de la viande crue dans l'appareil ?",
+    "ground_truth": "Vous devez nettoyer les réservoirs d'eau s'ils n'ont pas été utilisés depuis 48 heures et rincer le système d'eau relié à une source d'alimentation si vous n'avez pas tiré d'eau depuis 5 jours. Concernant la viande crue et le poisson, vous devez les placer dans des récipients adaptés afin qu'ils n'entrent pas en contact avec d'autres aliments ou qu'ils ne gouttent pas dessus.",
+    "contexts": [
+      "dans les compartiments de l'appareil.\n- Nettoyez r\u00e9guli\u00e8rement les surfaces pouvant entrer en\ncontact avec des aliments et les syst\u00e8mes de vidange\naccessibles.\n- Nettoyez les r\u00e9servoirs d'eau s'ils n'ont pas \u00e9t\u00e9 utilis\u00e9s\ndepuis 48 h ; rincez le syst\u00e8me d'eau reli\u00e9 \u00e0 une source\nd'alimentation en eau si vous n'avez pas tir\u00e9 d'eau\ndepuis 5 jours.\n- Placez la viande crue et le poisson dans des r\u00e9cipients\nadapt\u00e9s \u00e0 l'int\u00e9rieur du r\u00e9frig\u00e9rateur afin qu'ils n'entrent\npas en contact avec d'autres aliments ou qu'ils ne\ngouttent pas dessus.\nUntitled-9 5 2023-03-29 (cid:31)(cid:31) 2:26:28"
+    ]
+  },
+  {
+    "question": "How does the AI Energy Mode feature help reduce electricity consumption?",
+    "ground_truth": "The AI Energy Mode reduces energy use by up to 30% by analyzing your usage patterns and external environmental conditions to prevent sudden stops or unnecessary increases in the compressor’s frequency.",
+    "contexts": [
+      "Wall-mount Air-Conditioner WindFree 18,000 BTU/Hr\nPrice: 249,999.00\nFeatures\nAI Fast & Comfort Cooling\nAfter Fast Cooling lowers the room temperature quickly, AI* analyzes the indoor and outdoor\nenvironments to switch to WindFree Cooling according to the user's preference. AI learns\nconsumers' usage patterns** and spaces to cool them quickly and coolly.\nAI Energy Mode\nBy using AI to analyze your usage patterns and external conditions, it prevents sudden stops or\nincreases in the compressor\u2019s frequency, reducing energy use by up to 30%.*\nComfort Drying\nEnjoy comfortable dehumidification without feeling cold. It maintains the desired temperature\nwhile also keeping you in the \u201cHumidity Comfort Zone\u201d with a humidity level of between 40% to\n60%. By only creating sufficient cold air for dehumidifying it reduces energy use by 30%*.\nWindFree\u2122 Comfort Cooling\nStay cool without feeling cold draft using WindFree\u2122 Cooling. An advanced air flow structure"
+    ]
+  },
+  {
+    "question": "How do I activate the Auto clean function on my air conditioner?",
+    "ground_truth": "You can activate the Auto clean function by pressing the (Options) button for at least 3 seconds. Alternatively, you can activate it through the Options menu by selecting 'Clean'.",
+    "contexts": [
+      "Variety Smart Features\n26English\nSmart\nFeatures\nAuto clean function\nUse the Auto clean function if the indoor unit produces odors.\nActivating Auto clean\nTo activate Auto clean, press the (Options) button for at least\n3 seconds.\nThe indoor unit display shows:\nIf the air conditioner is off, Auto clean starts immediately. If the air\nconditioner is running, Auto clean starts as soon as the air conditioner\nturns off.\nNOTE\n\u2022 You can also activate Auto clean from the Options menu:\n\u25b6 \u25b6 Select Clean. \u25b6\n\u2022 Once Auto clean is selected, it is always activated whenever the air\nconditioner turns off.\n\u2022 Auto clean runs for 10 to up to 30 minutes depending on internal\ndry conditions. The indoor unit display shows the cleaning progress\nfrom 1% to 99%.\n\u2022 If you start another function while Auto clean is progressing, Auto\nclean pauses and will resume when the other function stops.\n\u2022 When Auto clean completes, the air conditioner turns off.\n\u2022 Auto clean runs after the Timed off or Good Sleep function runs."
+    ]
+  },
+  {
+    "question": "How can I verify that the water hose has been securely connected to the adaptor?",
+    "ground_truth": "After connecting the water hose to the adaptor, you should check if it is connected properly by pulling the water hose downwards.",
+    "contexts": [
+      "6. While pulling down part (D) on the water hose,\nconnect the water hose to the adaptor. Then, release\npart (D). The hose fits into the adaptor with a clicking\nsound.\nD\n7. To complete connecting the water hose, see 2 and 3\non the \u201cConnecting to a threaded water tap\u201d section.\nNOTE\n\u2022 After connecting the water hose to the adaptor, check if it is connected properly by pulling the water\nhose downwards.\n\u2022 Use a popular type of water taps. If the tap is square-shaped or too big, remove the spacer ring before\ninserting the tap into the adaptor.\nFor models with an additional hot water inlet:\n1. Connect the red end of the hot water hose to the hot\nwater inlet on the back of the machine.\n2. Connect the other end of the hot water hose to the\nhot water tap.\nEnglish 23\nWWWW55000000DD__IIBB__DD GGlloobbaall--PPJJTT__WWAASSHHEERR--MMDD__EENN((FFAA))..iinndddd 2233 22002255//44//2222 1100::3311::0077"
+    ]
+  },
+  {
+    "question": "Are children allowed to clean or perform maintenance on the Samsung Refrigerator?",
+    "ground_truth": "No, children shall not perform cleaning or user maintenance on the appliance without supervision.",
+    "contexts": [
+      "Safety information\n\u2022 Before using your new Samsung Refrigerator, please read\nthis manual thoroughly to ensure that you know how to\noperate the features and functions that your new appliance\noffers safely and efficiently.\n\u2022 This appliance is not intended for use by persons\n(including children) with reduced physical, sensory, or\nmental capabilities, or those who lack experience and\nknowledge, unless they have been given supervision or\ninstruction concerning the use of the appliance by a person\nresponsible for their safety.\n\u2022 This appliance can be used by children aged from 8 years\nand above and persons with reduced physical, sensory or\nmental capabilities or lack of experience and knowledge\nif they have been given supervision or instruction\nconcerning use of the appliance in a safe way and\nunderstand the hazards involved.\nChildren shall not play with the appliance. Cleaning and\nuser maintenance shall not be made by children without\nsupervision."
+    ]
+  },
+  {
+    "question": "Why does my air conditioner stop blowing air for a few minutes when I first turn on Heat mode?",
+    "ground_truth": "The fan may not operate for about 3 to 5 minutes at the beginning of Heat mode to prevent cold blasts while the unit warms up.",
+    "contexts": [
+      "Power Smart Features\n18English\nSmart\nFeatures\nHeat mode\nUse Heat mode to stay warm.\n\u25b6 \u25b6 Select Heat.\nNOTE\n\u2022 While the air conditioner warms up, the fan may not operate for\nabout 3 to 5 minutes at the beginning to prevent cold blasts.\n\u2022 If the air conditioner heats insufficiently, use an additional\nheating appliance in combination with the air conditioner.\nAutomatic defrost\nWhen the outdoor temperature is low and the humidity is high, frost\nmay develop on the outdoor heat exchanger, which may decrease\nheating efficiency. When these conditions are met while Heat mode\nis on, the air conditioner runs the Defrost function for 5 to 12 minutes\nto remove frost from the outdoor heat exchanger.\nNOTE\n\u2022 When the Defrost function is on, the (Defrost) indicator\nappears on the indoor unit display, steam is produced on the\noutdoor unit, the air conditioner moves the airflow blades to the\nlowest position to prevent cold air from coming out from the\nindoor unit."
+    ]
+  },
+  {
+    "question": "Is it recommended to set the fridge temperature to the lowest setting during the winter months?",
+    "ground_truth": "No, you should not set the fridge temperature to the lowest in winter, as it may cause problems with the cooling performance.",
+    "contexts": [
+      "for about a minute.\n01 Fridge\nPress Fridge to select the desired fridge temperature.\nCAUTION\nFridge\n\u2022 Do not set the fridge temperature to the lowest in winter and\nhighest in summer. It may cause problems with the cooling\nperformance.\nEnglish 33\nOperations\nUntitled-8 33 2023-03-29 (cid:31)(cid:31) 2:24:12"
+    ]
+  },
+  {
+    "question": "Comment dois-je régler les pieds de l'appareil pour assurer une installation correcte et sécurisée ?",
+    "ground_truth": "Tournez les pieds dans le sens horaire pour abaisser l'appareil ou dans le sens antihoraire pour le relever. Pour des raisons de sécurité, le côté avant doit être légèrement plus élevé que le côté arrière, et les pieds doivent être réglés à 41 mm du sol.",
+    "contexts": [
+      "niveau dans le sens horaire pour abaisser l'appareil\nou dans le sens antihoraire pour le relever. Pour\ndes raisons de s\u00e9curit\u00e9, le c\u00f4t\u00e9 avant doit \u00eatre\nl\u00e9g\u00e8rement plus \u00e9lev\u00e9 que le c\u00f4t\u00e9 arri\u00e8re.\nLaissez les pieds \u00e0 41 mm (A) du sol comme\nindiqu\u00e9.\nA\nUntitled-9 35 2023-03-29 (cid:31)(cid:31) 2:26:32"
+    ]
+  },
+  {
+    "question": "What should I do with clothing that has long strings before putting it in the washing machine?",
+    "ground_truth": "You should make sure to tie the strings before washing to prevent them from becoming entangled with other clothes.",
+    "contexts": [
+      "the tub.\n\u2022 Turn clothing with buttons and embroideries inside out.\n\u2022 If pants or jacket zippers are open while washing, the tub may be damaged.\n\u2022 Zippers should be closed and fixed with a string.\n\u2022 Clothing with long strings may become entangled with other clothes. Make sure to tie the strings\nbefore washing.\nEnglish 21\nUUnnttiittlleedd--1111 2211 22002266--0044--0088 (cid:31)(cid:31)(cid:31)(cid:31) 22::4466::4444"
+    ]
+  },
+  {
+    "question": "How can I ensure my air conditioner provides the most powerful cooling possible?",
+    "ground_truth": "To achieve powerful cooling, you should turn off the AI Energy mode in the SmartThings app.",
+    "contexts": [
+      "depending on the ambient environment (e.g., indoor/outdoor temperature and\nhumidity), set temperature, and operation mode.\n\u2022 Note that the amount of saved electricity also may differ even under the same\noperating environment conditions, depending on how it was measured.\n\u2022 To have powerful cooling , turn off AI Energy mode in the SmartThings app."
+    ]
+  },
+  {
+    "question": "What is the official address of the manufacturer located in the Republic of Korea?",
+    "ground_truth": "129, Samsung-Ro, Yeongtong-Gu, Suwon-Si, Gyeonggi-Do 16677, Republic of Korea.",
+    "contexts": [
+      "#129, Samsung-Ro, Yeongtong-Gu, Suwon-Si, 129 \u0648\u062f-\ufef2\ufed0\ufee7\ufeee\ufef4\ufecf \u060c \ufef2\ufeb7-\u0646\u0648\ufeee\ufeb3 \u060c \ufeee\ufecf-\ufece\ufee7\ufeee\ufe98\ufed0\ufee7\ufeee\ufef3 \u060c \u0648\u0631-\ufe9e\ufee7\ufeee\ufeb4\ufee3\ufe8e\ufeb3\nGyeonggi-Do 16677, Republic of Korea 16677 \u060c \ufe94\ufef4\ufe91\ufeee\ufee8\ufea0\ufedf\u0627 \ufe8e\ufef3\u0631\ufeee\ufedb \ufe94\ufef3\u0631\ufeee\ufeec\ufee4\ufe9f\n\u0665\u0663 \ufe94\ufef4\ufe91\ufeae\ufecc\ufedf\u0627\nUUnnttiittlleedd--55 5533 22002233--0044--1111 (cid:1)(cid:1)(cid:1)(cid:1) 66::1122::0088"
+    ]
+  },
+  {
+    "question": "What type of appliance is this refrigerator classified as in terms of installation?",
+    "ground_truth": "It is a free-standing appliance.",
+    "contexts": [
+      "Refrigerator\nUser manual (fridge only)\nFree Standing Appliance\nUntitled-3 1 2021-12-23 (cid:31)(cid:31) 4:53:36"
+    ]
+  },
+  {
+    "question": "What should I do if the Wi-Fi on my washing machine is currently turned off?",
+    "ground_truth": "If the Wi-Fi is off, you must tap and hold the Temp. and Smart Control buttons simultaneously for 3 seconds to turn it on.",
+    "contexts": [
+      "Special features\nSmart Control (applicable models only)\nYou can connect to the SmartThings app and control your washing machine remotely.\nConnecting your washing machine\n1. Download and open the SmartThings app on your smartphone or tablet (Android & iOS).\n2. Tap Power to turn on the washing machine.\n3. Tap and hold Smart Control .\na. The washing machine enters AP mode and connects to your smartphone or tablet.\nb. Tap Smart Control to authenticate your washing machine.\nc. Once the authentication process is complete, your washing machine is successfully connected to the\napp.\n- You can use various features available in the SmartThings app.\nNOTE\n\u2022 If your washing machine fails to connect with the SmartThings app, try again.\n\u2022 Check your router if you experience any Internet connection problem after connecting your washing\nmachine with the SmartThings app.\n\u2022 If the Wi-Fi is off, tap and hold Temp. and Smart Control simultaneously for 3 seconds to turn it on."
+    ]
+  },
+  {
+    "question": "Dans quelles conditions des enfants de 8 ans ou plus peuvent-ils utiliser ce réfrigérateur ?",
+    "ground_truth": "Les enfants d'au moins 8 ans peuvent utiliser l'appareil à condition qu'ils soient surveillés ou qu'ils aient reçu les instructions nécessaires concernant l'utilisation en toute sécurité de l'appareil.",
+    "contexts": [
+      "Consignes de s\u00e9curit\u00e9\n\u2022 Avant d'utiliser votre nouveau r\u00e9frig\u00e9rateur Samsung,\nveuillez lire attentivement ce manuel afin de vous assurer\nque vous savez comment utiliser de mani\u00e8re s\u00fbre et\nefficace ses diff\u00e9rentes fonctionnalit\u00e9s.\n\u2022 Cet appareil n'est pas con\u00e7u pour \u00eatre utilis\u00e9 par des\npersonnes (y compris des enfants) ayant des capacit\u00e9s\nphysiques, sensorielles ou mentales r\u00e9duites, ou ayant un\nmanque d'exp\u00e9rience et de connaissances, \u00e0 moins qu'elles\nsoient surveill\u00e9es ou qu'elles aient re\u00e7u les instructions\nn\u00e9cessaires concernant l'utilisation de cet appareil de la\npart d'une personne responsable de leur s\u00e9curit\u00e9.\n\u2022 Cet appareil peut \u00eatre utilis\u00e9 par des enfants d'au moins\n8 ans et par des personnes ayant des capacit\u00e9s physiques,\nsensorielles ou mentales r\u00e9duites, ou ayant un manque\nd'exp\u00e9rience et de connaissances, \u00e0 condition qu'ils soient\nsurveill\u00e9s ou qu'ils aient re\u00e7u les instructions n\u00e9cessaires\nconcernant l'utilisation en toute s\u00e9curit\u00e9 de cet appareil et"
+    ]
+  },
+  {
+    "question": "Quelles précautions dois-je prendre pour nettoyer la fiche d'alimentation de mon réfrigérateur ?",
+    "ground_truth": "Vous devez utiliser un chiffon propre et sec pour éliminer la poussière ou les corps étrangers au niveau des lames de la fiche. Il est important de ne jamais utiliser de chiffon mouillé ou humide, car cela pourrait provoquer un risque d'incendie ou d'électrocution.",
+    "contexts": [
+      "Fran\u00e7ais 23\nConsignes\nde\ns\u00e9curit\u00e9\n\u2022 Ne placez pas de bougie allum\u00e9e \u00e0 l'int\u00e9rieur du\nr\u00e9frig\u00e9rateur pour en \u00e9liminer les mauvaises odeurs.\n- Risque d'\u00e9lectrocution ou d'incendie.\n\u2022 Ne vaporisez pas de produit de nettoyage directement sur\nl'\u00e9cran.\n- Les caract\u00e8res imprim\u00e9s risqueraient de s'effacer.\n\u2022 Lorsqu'un corps \u00e9tranger tel que de l'eau a p\u00e9n\u00e9tr\u00e9 dans\nl'appareil, d\u00e9branchez la fiche d'alimentation et contactez\nvotre centre de service le plus proche.\n- Le non-respect de cette consigne est susceptible de\nprovoquer un incendie ou une \u00e9lectrocution.\n\u2022 Utilisez un chiffon propre et sec pour \u00e9liminer toute\npoussi\u00e8re ou corps \u00e9tranger au niveau des lames de la\nfiche d'alimentation. N'utilisez pas de chiffon mouill\u00e9 ou\nhumide lors du nettoyage de la fiche.\n- Sinon, il pourrait y avoir un risque d'incendie ou\nd'\u00e9lectrocution.\n\u2022 Ne nettoyez pas l'appareil en vaporisant de l'eau\ndirectement dessus.\n\u2022 N'utilisez pas de benz\u00e8ne, de diluant, de Clorox ou de\nchlorure pour le nettoyage."
+    ]
+  },
+  {
+    "question": "Comment puis-je ajuster la température de la zone fraîche optimale ?",
+    "ground_truth": "Pour augmenter la température, faites glisser la commande de contrôle de la température vers la droite. Pour diminuer la température, faites glisser la commande de contrôle de la température vers la gauche.",
+    "contexts": [
+      "Fran\u00e7ais 47\nOp\u00e9rations\nZone fra\u00eeche optimale (mod\u00e8les applicables uniquement)\nLa zone fra\u00eeche optimale est un compartiment contr\u00f4l\u00e9 ind\u00e9pendamment dans lequel vous pouvez ranger\ndiff\u00e9rents \u00e9l\u00e9ments \u00e0 la temp\u00e9rature optimale.\nMaintenez la partie inf\u00e9rieure de la zone fra\u00eeche\noptimale et tirez pour stocker ou retirer des\naliments.\nVous pouvez ajuster la temp\u00e9rature de la zone\nfra\u00eeche optimale.\n\u2022 Pour augmenter la temp\u00e9rature, faites glisser la\ncommande de contr\u00f4le de la temp\u00e9rature vers\nla droite.\n\u2022 Pour diminuer la temp\u00e9rature, faites glisser la\ncommande de contr\u00f4le de la temp\u00e9rature vers\nla gauche.\nDistributeur d'eau (mod\u00e8les applicables uniquement)\nGr\u00e2ce au distributeur d'eau, vous pouvez vous servir de l'eau sans ouvrir la porte du r\u00e9frig\u00e9rateur. Le\nr\u00e9servoir d'eau doit \u00eatre rempli d'eau potable avant toute utilisation.\nPour remplir d'eau potable le r\u00e9servoir d'eau\nOuvrez la porte et localisez le r\u00e9servoir d'eau situ\u00e9 dans la zone du bac de la porte."
+    ]
+  },
+  {
+    "question": "Que dois-je faire lors de la première utilisation de la machine à glaçons de mon réfrigérateur ?",
+    "ground_truth": "Lors de la première utilisation, vous devez remplir le réservoir d'eau, laisser la machine fonctionner pendant 1 à 2 jours pour produire des glaçons, puis jeter les 1 ou 2 premiers bacs à glaçons afin d'éliminer les impuretés du système d'arrivée d'eau.",
+    "contexts": [
+      "Op\u00e9rations\n46 Fran\u00e7ais\nOp\u00e9rations\nMachine \u00e0 gla\u00e7ons automatique (mod\u00e8les applicables uniquement)\nLe r\u00e9frig\u00e9rateur est \u00e9quip\u00e9 d'une machine \u00e0 gla\u00e7ons qui distribue automatiquement des gla\u00e7ons.\nLors de la premi\u00e8re utilisation\n\u2022 Remplissez le r\u00e9servoir d'eau et laissez 1 \u00e0\n2 jours \u00e0 la machine \u00e0 gla\u00e7ons pour fabriquer\ndes gla\u00e7ons.\n\u2022 Jetez le premier ou les 2 premiers bacs \u00e0\ngla\u00e7ons pour retirer les impuret\u00e9s contenues\ndans le syst\u00e8me d'arriv\u00e9e d'eau.\nDiagnostic\nSi la fonction Machine \u00e0 gla\u00e7ons automatique ne\nfabrique pas de gla\u00e7ons, retirez le bac \u00e0 gla\u00e7ons\net appuyez sur le bouton Test pour v\u00e9rifier si\nla machine \u00e0 gla\u00e7ons automatique fonctionne\ncorrectement.\nATTENTION\n\u2022 Lorsque la fonction Machine \u00e0 gla\u00e7ons automatique est activ\u00e9e, le r\u00e9frig\u00e9rateur continue \u00e0 fabriquer des\ngla\u00e7ons m\u00eame si vous retirez le bac \u00e0 gla\u00e7ons. Si vous ne pr\u00e9voyez pas d'utiliser la fonction Machine \u00e0\ngla\u00e7ons automatique, pensez \u00e0 la d\u00e9sactiver."
+    ]
+  },
+  {
+    "question": "What safety precaution should be taken regarding small parts during the refrigerator door reversal process?",
+    "ground_truth": "Throughout the entire reversing procedure, you must keep all small parts, such as screws and caps, away from children or infants for safety reasons.",
+    "contexts": [
+      "Hinge cover (L) Space cover (L)\nCAUTION\nThroughout the entire reversing procedure, keep all the small parts (screws, caps, etc.) of\nthe refrigerator away from children or infants for safety reasons.\nEnglish 35\nMaintenance\nUntitled-3 35 2021-12-23 (cid:31)(cid:31) 4:53:39"
+    ]
+  },
+  {
+    "question": "What specific materials are included in the indoor unit package for the 12k BTU model?",
+    "ground_truth": "The indoor unit package for the 12k model includes: one mounting bracket, one insulated assembly pipe (Ø 9.52 mm), one insulated assembly pipe (Ø 6.35 mm), one remote control, two remote control batteries, three pipe clamps B, three pipe clamps A, one general information document, one quick guide, one 2m drain hose, one foam insulation, one installation manual, one remote control holder, one PE T3 foam tube insulation, two vinyl tapes, two extra M4 x 12 tapping screws, 100g of putty, six M4 x 25 tapped screws, one 4-wire assembly cable, and six cement nails.",
+    "contexts": [
+      "English9\nInstallation\nStep 1.4 Preparing materials and tools Optional accessories\nInsulated assembly pipe,\nMaterials in the indoor unit package Insulated assembly pipe,\n\u00d8 9.52 mm (1)\n\u00d8 6.35 mm (1)\nMake sure that the indoor unit package contains the following **12*******\nmaterials:\nMounting bracket (1) Mounting bracket (1)\n**12******* **18/24******* Insulated assembly pipe, Insulated assembly pipe,\n\u00d8 12.70 mm (1) \u00d8 15.88 mm (1)\n**18******* **24*******\nRemote control (1) Remote control battery (2)\nPipe clamp B (3) Pipe clamp A (3)\nGeneral information (1) Quick guide (1) Drain Hose, 2 m long (1) Foam Insulation (1)\nInstallation manual (1) Holder remocon (1) PE T3 foam tube\nVinyl tape (2)\ninsulation (1)\nExtra M4 x 12 tapping Putty 100 g (1) M4 x 25 tapped screw (6)\nscrew (2)\n4-wire Assembly Cable (1)\nCement nail (6)\n**12TSHZ***\nMaterials in the outdoor unit package\n3-wire Power Cable (1) 3-wire Assembly Cable (1)\nMake sure that the outdoor unit package contains the **12TSFC*** **12TSFC***"
+    ]
+  },
+  {
+    "question": "What is the maximum heating capacity of The Black Edition unit in kW?",
+    "ground_truth": "The maximum heating capacity of The Black Edition is 7.47 kW.",
+    "contexts": [
+      "The Black Edition\nGive your home a real touch of style with an elegantly modern look that reflects the current\ntrend for dark colors. \u201cThe Black Edition\u201d finish is a deep dark color that blends in harmoniously\nwith the luxurious dark tones of modern interiors and will look good in almost any room in your\nhouse.\nSpecifications\nCapacity\nCapacity (Cooling, Btu/hr): 18000 Btu/hr\nCapacity (Heating, Btu/hr): 20450 Btu/hr\nCapacity (Cooling, Min - Max, Btu/hr): 5100 - 23200 Btu/hr\nCapacity (Heating, Min - Max, Btu/hr): 4000 - 25500 Btu/hr\nCapacity (Cooling, kW): 5.28 kW\nCapacity (Heating, kW): 5.99 kW\nCapacity (Cooling, Min - Max, kW): 1.49 - 6.8 kW\nCapacity (Heating, Min - Max, kW): 1.17 - 7.47 kW\nEnergy Efficiency\nEER (Cooling, W/W): 3.24 W/W\nCOP (Heating, W/W): 3.42 W/W\nEER (Cooling, Btu/hW): 11.04 Btu/hW\nCOP (Heating, Btu/hW): 11.69 Btu/hW\nNoise Level\nNoise Level (Indoor, High/Low, dBA): 41/28 dBA\nNoise Level (Outdoor, High/Low, dBA): 51 dBA\nElectrical Data"
+    ]
+  },
+  {
+    "question": "How long should I wait after setting the refrigerator to the coldest temperature before it is ready for use?",
+    "ground_truth": "After setting the temperature to the coldest, you should wait about an hour for the freezer to chill and the motor to run smoothly, then continue to wait until the refrigerator reaches the set temperature before it is ready for use.",
+    "contexts": [
+      "Installation\n32 English\nInstallation\nSTEP 5 Initial settings\nBy completing the following steps, the refrigerator should be fully functioning.\n1. Plug the power cord into the wall socket to turn the refrigerator on.\n2. Open the door, and check if the interior light lights up.\n3. Set the temperature to the coldest, and wait for about an hour. Then, the freezer will be\nslightly chilled, and the motor will run smoothly.\n4. Wait until the refrigerator reaches the set temperature. Now the refrigerator is ready\nfor use.\nSTEP 6 Final check\nWhen the installation is complete, confirm that:\n\u2022 The refrigerator is plugged into an electrical outlet and grounded properly.\n\u2022 The refrigerator is installed on a flat, level surface with a reasonable clearance from the\nwall or the cabinet.\n\u2022 The refrigerator is level and is sitting firmly on the floor.\n\u2022 The door opens and closes freely, and the interior light turns on automatically when you\nopen the door.\nUntitled-8 32 2023-03-29 (cid:31)(cid:31) 2:24:11"
+    ]
+  }
+]
