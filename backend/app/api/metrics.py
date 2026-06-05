@@ -30,6 +30,7 @@ async def get_metrics():
     cp, f, ar = 0.50, 0.90, 0.70
     timestamp = "2026-05-23"
     source = "default"
+    total_questions = 0
 
     # 1. Try Live Database
     try:
@@ -43,6 +44,7 @@ async def get_metrics():
                 f = float(row[0] or 0)
                 ar = float(row[1] or 0)
                 cp = float(row[2] or 0.85) # Fallback to 0.85 if column is completely null (old rows)
+                total_questions = row[3]
                 
                 # Get latest timestamp
                 cursor.execute("SELECT MAX(timestamp) FROM live_evaluations")
@@ -98,6 +100,7 @@ async def get_metrics():
                     cp = context_precision_sum / count
                     f = faithfulness_sum / count
                     ar = answer_relevance_sum / count
+                    total_questions = count
                     timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(csv_path)).strftime('%Y-%m-%d %H:%M')
         except Exception as e:
             print(f"Error reading metrics CSV: {e}")
@@ -108,7 +111,7 @@ async def get_metrics():
         "answer_relevance": round(ar, 2), 
         "timestamp": timestamp,
         "source": source,
-        "total_questions": count
+        "total_questions": total_questions
     }
 
 @router.get("/metrics/message")
