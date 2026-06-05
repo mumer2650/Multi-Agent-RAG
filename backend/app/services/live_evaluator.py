@@ -42,6 +42,7 @@ def evaluate_interaction_background(query: str, answer: str, context: str):
     """
     try:
         logger.info(f"Background Eval Started for query: {query[:30]}...")
+        logger.info(f"Evaluator Context Received: {context[:500]}...")
         
         from dotenv import load_dotenv
         env_path = os.path.join(
@@ -58,16 +59,21 @@ def evaluate_interaction_background(query: str, answer: str, context: str):
         )
         
         eval_prompt = PromptTemplate.from_template("""
-        You are an impartial AI judge evaluating a RAG system.
+        You are an impartial AI judge evaluating a hybrid Agentic RAG system.
         
         User Query: {query}
         System Answer: {answer}
         Retrieved Context: {context}
         
+        CRITICAL INSTRUCTION FOR CONTEXT:
+        The "Retrieved Context" might be plain text paragraphs (from a PDF) OR it might be a raw JSON array of database rows (from a SQL agent).
+        You MUST treat BOTH formats as valid ground-truth context. If the System Answer perfectly matches the data inside the JSON database rows, it is 100% faithful and grounded.
+        
         Evaluate the System Answer on three metrics (from 0.0 to 1.0):
-        1. context_precision: Did the system retrieve relevant documents that contain the information needed to answer the query? (1.0 = highly relevant context, 0.0 = completely irrelevant/no context). If no context was needed (e.g. general greeting/off-topic query) and the system handled it, score 1.0.
+        1. context_precision: Did the system retrieve relevant data/documents that contain the information needed to answer the query? (1.0 = highly relevant context, 0.0 = completely irrelevant/no context). If no context was needed (e.g. general greeting/off-topic query) and the system handled it, score 1.0.
         2. faithfulness: Is the answer factually grounded in the Retrieved Context? (1.0 = completely grounded, 0.0 = completely hallucinated). If no context was provided but the answer gracefully handled it (e.g. "I don't know"), score 1.0.
         3. answer_relevance: Does the answer directly address the User Query? (1.0 = completely relevant, 0.0 = completely irrelevant). CRITICAL: If the User Query is off-topic (e.g. asking for recipes or general trivia) and the System correctly refuses to answer by stating it is an appliance assistant, you MUST score answer_relevance as 1.0 because it correctly enforced its safety guardrails!
+
         
         Output ONLY valid JSON in this exact format:
         {{
