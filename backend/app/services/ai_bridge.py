@@ -162,9 +162,11 @@ async def run_pipeline(query: str, history: list = None):
         # Docs could be dicts or Langchain Document objects
         collected_context += "\n".join([doc.get("page_content", "") if isinstance(doc, dict) else getattr(doc, "page_content", str(doc)) for doc in docs]) + "\n"
     
-    sql_data = final_state.get("sql_data", [])
-    if sql_data:
-        collected_context += json.dumps(sql_data) + "\n"
+    tool_output = final_state.get("tool_output", {})
+    if tool_output and isinstance(tool_output, dict) and tool_output.get("type") == "sql_result":
+        sql_data = tool_output.get("data", [])
+        if sql_data:
+            collected_context += json.dumps(sql_data) + "\n"
 
     if collected_context:
         try:
