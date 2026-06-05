@@ -154,6 +154,26 @@ async def run_pipeline(query: str, history: list = None):
             continue
 
     # ==========================================
+    # SEND CONTEXT FOR EVALUATOR
+    # ==========================================
+    collected_context = ""
+    docs = final_state.get("retrieved_docs", [])
+    if docs:
+        # Docs could be dicts or Langchain Document objects
+        collected_context += "\n".join([doc.get("page_content", "") if isinstance(doc, dict) else getattr(doc, "page_content", str(doc)) for doc in docs]) + "\n"
+    
+    sql_data = final_state.get("sql_data", [])
+    if sql_data:
+        collected_context += json.dumps(sql_data) + "\n"
+
+    if collected_context:
+        try:
+            yield StreamResponse(type="context", content=collected_context)
+            logger.debug("Sent context data for background evaluator")
+        except Exception as e:
+            logger.warning(f"Error streaming context: {e}")
+
+    # ==========================================
     # SEND CITATIONS
     # ==========================================
     citations = final_state.get("citations", [])

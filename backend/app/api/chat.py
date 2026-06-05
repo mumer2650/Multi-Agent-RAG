@@ -57,6 +57,7 @@ async def websocket_chat_endpoint(websocket: WebSocket):
 
             logger.info(f"Processing query: {chat_request.query[:50]}...")
             reconstructed_answer = ""
+            collected_context = ""
             pipeline_error = False
 
             try:
@@ -69,6 +70,10 @@ async def websocket_chat_endpoint(websocket: WebSocket):
                     # Track streamed tokens to reconstruct the full answer
                     if response.type == "token":
                         reconstructed_answer += response.content
+                        
+                    # Track context for the background evaluator
+                    if response.type == "context":
+                        collected_context += response.content
 
                     # Log errors
                     if response.type == "error":
@@ -112,8 +117,7 @@ async def websocket_chat_endpoint(websocket: WebSocket):
                             evaluate_interaction_background,
                             chat_request.query,
                             reconstructed_answer.strip(),
-                            # Context is abstracted away in the stream, so we just pass "Streamed via LangGraph"
-                            "Streamed via LangGraph" 
+                            collected_context if collected_context else "No context retrieved."
                         )
                     )
 
