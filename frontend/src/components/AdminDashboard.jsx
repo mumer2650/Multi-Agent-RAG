@@ -117,7 +117,14 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex-1 flex flex-col p-6 max-w-7xl mx-auto w-full animate-fade-in overflow-y-auto">
-      <h2 className="text-3xl font-bold mb-8 text-slate-900 dark:text-white">MLOps Analytics</h2>
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold text-slate-900 dark:text-white">MLOps Analytics</h2>
+        {metrics.total_questions !== undefined && (
+          <div className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-4 py-2 rounded-full font-medium shadow-sm border border-blue-100 dark:border-blue-800/50">
+            Total Questions Evaluated: <span className="font-bold">{metrics.total_questions}</span>
+          </div>
+        )}
+      </div>
       
       {/* Top Grid: Split layout for Cards and Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 w-full max-w-6xl mx-auto">

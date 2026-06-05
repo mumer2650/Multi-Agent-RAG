@@ -7,6 +7,7 @@ import SearchBar from '../components/SearchBar';
 import AdminDashboard from '../components/AdminDashboard';
 import CitationBlock from '../components/CitationBlock';
 import ChartBlock from '../components/ChartBlock';
+import EvaluationButton from '../components/EvaluationButton';
 
 /**
  * Home Component (ChatLayout)
@@ -348,7 +349,7 @@ export default function Home() {
                           
                           {/* Utility Buttons (Copy) - Visible on hover */}
                           {msg.content && (
-                            <div className="flex gap-2 mt-2 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <div className="flex gap-2 mt-2 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 items-center">
                               <button 
                                 onClick={() => handleCopy(msg.content, idx)}
                                 className="text-slate-400 hover:text-blue-500 transition-colors p-1 flex items-center gap-1 text-xs font-medium"
@@ -360,6 +361,11 @@ export default function Home() {
                                   <><Copy className="w-3.5 h-3.5" /> Copy</>
                                 )}
                               </button>
+                              
+                              {/* Evaluation Button */}
+                              {idx > 0 && messages[idx - 1]?.role === 'user' && (
+                                <EvaluationButton userQuery={messages[idx - 1].content} />
+                              )}
                             </div>
                           )}
 

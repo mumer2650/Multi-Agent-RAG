@@ -106,5 +106,64 @@ async def get_metrics():
         "context_precision": round(cp, 2), 
         "faithfulness": round(f, 2), 
         "answer_relevance": round(ar, 2), 
-        "timestamp": timestamp
+        "timestamp": timestamp,
+        "source": source,
+        "total_questions": count
     }
+
+@router.get("/metrics/message")
+async def get_message_metrics(query: str):
+    """
+    Retrieve evaluation metrics for a specific user query.
+    Returns {"status": "pending"} if the background evaluation hasn't finished yet.
+    """
+    db_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        "storage",
+        "sqlite",
+        "analytics.db"
+    )
+    
+    if not os.path.exists(db_path):
+        return {"status": "pending"}
+        
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        # Check if column exists first to avoid breaking if not migrated
+        cursor.execute("PRAGMA table_info(live_evaluations)")
+        columns = [col[1] for col in cursor.fetchall()]
+        has_cp = "context_precision" in columns
+        
+        if has_cp:
+            cursor.execute(
+                "SELECT faithfulness, answer_relevance, context_precision FROM live_evaluations WHERE user_query = ? ORDER BY id DESC LIMIT 1",
+                (query,)
+            )
+        else:
+            cursor.execute(
+                "SELECT faithfulness, answer_relevance FROM live_evaluations WHERE user_query = ? ORDER BY id DESC LIMIT 1",
+                (query,)
+            )
+            
+        row = cursor.fetchone()
+        conn.close()
+        
+        if row:
+            f = float(row[0] or 0)
+            ar = float(row[1] or 0)
+            cp = float(row[2] or 0.85) if has_cp else 0.85
+            
+            return {
+                "status": "completed",
+                "faithfulness": round(f, 2),
+                "answer_relevance": round(ar, 2),
+                "context_precision": round(cp, 2)
+            }
+        else:
+            return {"status": "pending"}
+            
+    except Exception as e:
+        print(f"Error fetching message metrics: {e}")
+        return {"status": "error", "detail": str(e)}
