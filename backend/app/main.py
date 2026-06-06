@@ -10,21 +10,25 @@ from backend.app.api.ingest import router as ingest_router
 from backend.app.db.database import engine
 from backend.app.db import models
 import os
+from pathlib import Path
 
 # Initialize the FastAPI application [cite: 183, 184]
 app = FastAPI(title="Multi-Agent RAG API")
 
 # Configure the directory for PDF serving
-dataset_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "dataset", "raw_uploads")
-os.makedirs(dataset_dir, exist_ok=True)
+dataset_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "dataset")
 
 @app.get("/static/{filename:path}")
 async def serve_static_file(filename: str):
-    file_path = os.path.join(dataset_dir, filename)
-    if os.path.exists(file_path):
+    # Strip any paths provided by the client, we just want the pure filename
+    filename = os.path.basename(filename)
+    base_dir = Path(dataset_dir)
+    
+    # Recursively search for the file inside the dataset directory
+    for path in base_dir.rglob(filename):
         # Force the browser to render inline instead of downloading
         return FileResponse(
-            file_path, 
+            str(path), 
             media_type="application/pdf", 
             headers={"Content-Disposition": "inline"}
         )

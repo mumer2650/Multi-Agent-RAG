@@ -159,8 +159,8 @@ async def run_pipeline(query: str, history: list = None):
     collected_context = ""
     docs = final_state.get("retrieved_docs", [])
     if docs:
-        # Docs could be dicts or Langchain Document objects
-        collected_context += "\n".join([doc.get("page_content", "") if isinstance(doc, dict) else getattr(doc, "page_content", str(doc)) for doc in docs]) + "\n"
+        # Docs are dictionaries returned by the Qdrant search engine
+        collected_context += "\n".join([doc.get("text", "") if isinstance(doc, dict) else getattr(doc, "text", str(doc)) for doc in docs]) + "\n"
     
     tool_output = final_state.get("tool_output", {})
     if tool_output and isinstance(tool_output, dict) and tool_output.get("type") == "sql_result":
