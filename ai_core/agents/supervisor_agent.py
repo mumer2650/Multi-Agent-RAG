@@ -32,7 +32,7 @@ embeddings = OllamaEmbeddings(model="nomic-embed-text")
 gemini_router = ChatGoogleGenerativeAI(
     model="gemini-3.1-flash-lite", 
     temperature=0,
-    google_api_key="AIzaSyDZa0_iJitwS2lmkSunzwULcMN6IeDabRI"
+    google_api_key=os.getenv("GOOGLE_API_KEY")
 )
 
 def cosine_similarity(v1, v2):

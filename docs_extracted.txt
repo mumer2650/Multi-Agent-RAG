@@ -1,0 +1,399 @@
+SAGE AI
+
+Session 2024 - 2028
+
+Submitted by:
+
+Muhammad Umer2024-CS-191
+
+Khawaja Bilal Ahmad2024-CS-199
+
+Muhammad Saad Asif2024-CS-200
+
+Rustgaar Ahmad2024-CS-234
+
+Supervised by:
+
+Mam Fiza Khalid
+
+Course:
+
+CSC-202L Artificial Intelligence Lab
+
+Department of Computer Science
+
+University of Engineering and Technology, Lahore Pakistan
+
+Target Environment
+
+A privacy-first AI-powered customer support and technical assistance platform for Samsung home appliances, designed to assist customers, service technicians, and support representatives in troubleshooting, product information retrieval, specification lookup, and installation guidance.
+
+Executive Summary
+
+SAGE AI (Search Augmented Generative Engine) is a next-generation, self-correcting Multi- Agent Retrieval-Augmented Generation (RAG) system designed to provide intelligent technical support and product assistance for Samsung home appliances. The project addresses the limitations of traditional RAG architectures, which often suffer from inaccurate retrieval, hallucinated responses, poor integration with structured databases, and lack of performance validation.
+
+The proposed system combines advanced retrieval techniques, agentic orchestration, and automated evaluation to create a reliable enterprise-grade AI assistant capable of operating on consumer-grade hardware. The knowledge base consists of Samsung appliance user manuals, troubleshooting guides, and a structured SQLite database containing product specifications, reviews, and category information. By integrating both unstructured and structured data sources, the system can answer a wide range of user queries, from troubleshooting technical issues to comparing product specifications and retrieving detailed appliance information.
+
+Technical Architecture & Functionalities
+
+SAGE AI follows a Multi-Agent Hybrid RAG Architecture that combines advanced document retrieval, structured database querying, local LLM inference, and automated evaluation into a single intelligent system.
+
+The architecture consists of five major layers:
+
+Data Layer
+
+This layer serves as the foundation knowledge of the system.
+
+Unstructured Knowledge Sources
+
+Samsung appliance user manuals
+
+Installation guides
+
+Troubleshooting documents
+
+Product documentation PDFs
+
+Structured Knowledge Sources
+
+SQLite Database (sage_appliances.db)
+
+Categories
+
+Products
+
+Product Specifications
+
+Reviews
+
+The system can retrieve information from both document collections and relational databases depending on the user's query.
+
+Knowledge Processing Layer
+
+Before information can be retrieved, documents are processed through an ingestionpipeline.
+
+Parent-Child Chunking
+
+Instead of storing large manuals directly:
+
+Documents are split into large parent chunks.
+
+Parent chunks are further divided into smaller child chunks.
+
+Child chunks are embedded and indexed.
+
+Parent chunks are returned as context during retrieval. Benefits:
+
+More accurate retrieval.
+
+Better contextual understanding.
+
+Reduced information loss.
+
+Retrieval Layer (Corrective RAG)
+
+This layer is responsible for finding the most relevant information.
+
+Dense Retrieval
+
+Uses:
+
+nomic-embed-text
+
+ChromaDB
+
+Retrieves semantically similar chunks even when wording differs. Example:
+
+User:
+
+"Why is my refrigerator making loud noises?" The system can retrieve sections discussing:
+
+Compressor vibrations
+
+even if the exact words "loud noises" are not present.
+
+Sparse Retrieval
+
+Uses:
+
+BM25 (rank_bm25) Useful for:
+
+Error codes
+
+Model Numbers
+
+Technical Terminology
+
+Example:
+
+User:
+
+"Error E21"
+
+BM25 can directly locate the exact occurrence.
+
+Reciprocal Rank Fusion (RRF)
+
+Results from Dense Search and BM25 are combined. Benefits:
+
+Higher recall
+
+Better coverage
+
+More robust retrieval
+
+Multi-Agent Intelligence Layer
+
+This is the brain of the system. Built Using:
+
+LangGraph
+
+LangChain
+
+Supervisor Agent
+
+Acts as the central decision maker
+
+Instead of storing large manuals directly:
+
+Responsibilities:
+
+Understand user intent.
+
+Select appropriate worker agent.
+
+Control workflow transitions.
+
+Handle failures and retries. Example:
+
+User:
+
+"Compare the power consumption of Samsung Refrigerator X and Y." Supervisor decides:
+
+Structured data required.
+
+Route to SQL Agent.
+
+Retrieval Agent
+
+Acts as the central decision maker Instead of storing large manuals directly: Responsible for:
+
+Searching manuals.
+
+Retrieving troubleshooting information.
+
+Finding installation instructions.
+
+Collecting contextual evidence. Best for:
+
+How-to questions
+
+Troubleshooting
+
+User guide information
+
+SQL Agent
+
+Responsible for:
+
+Reading database schema.
+
+Generating SQLite queries.
+
+Executing Text-to-SQL operations. Example:
+
+User:
+
+"What is the energy rating of Samsung AC Model AR18?" Benefits:
+
+Dynamic database access.
+
+No hardcoded queries.
+
+Answer Generation Agent
+
+Combines:
+
+Retrieved documents
+
+Database results
+
+User query Responsibilities:
+
+Context synthesis
+
+Evidence grounding
+
+Natural language generation
+
+Local LLM Layer
+
+The entire architecture is designed around local inference. Hosted using:
+
+Ollama Models:
+
+Llama 3.1: 8B
+
+Online Model for High Efficiency:
+
+Gemini 3.5 API key Benefits:
+
+Privacy
+
+Offline operation
+
+Reduced operational cost
+
+Data sovereignty
+
+Local LLM Layer
+
+Most student RAG projects stop after deployment. SAGE AI includes a complete evaluation pipeline. Tools:
+
+RAGAS
+
+Golden Dataset:
+
+Contains 81 Questions
+
+Ground Truth Answers
+
+Ground Truth Context
+
+Used for benchmarking every system version.
+
+Advanced Software Stack & Low-Level Implementation
+
+Layer
+
+Technology
+
+Purpose
+
+Programming Language
+
+Python
+
+Core backend development, AI pipeline implementation, and orchestration
+
+Agentic Framework
+
+LangGraph
+
+Multi-agent workflow orchestration and state-machine execution
+
+LLM Framework
+
+LangChain
+
+Agent development, tool integration, prompt management, and RAG pipelines
+
+Local LLM Hosting
+
+Ollama
+
+Hosting and serving local open-weight language models
+
+Language Models
+
+Llama 3.1:8B, 
+
+Natural language understanding, reasoning, SQL generation, and response generation
+
+Cloud LLM (Optional)
+
+Google Gemini 3.5 API
+
+Supervisor agent routing and complex reasoning tasks
+
+Embedding Model
+
+nomic-embed-text
+
+Converting text chunks into vector embeddings for semantic search
+
+Vector Database
+
+ChromaDB
+
+Storage and retrieval of vector embeddings
+
+Sparse Retrieval
+
+rank_bm25
+
+Keyword-based document retrieval
+
+Relational Database
+
+SQLite3
+
+Storage of structured product and specification data
+
+ORM (Database Access)
+
+SQLAlchemy
+
+Database schema management and query execution
+
+API Framework
+
+FastAPI
+
+Backend REST API and service layer
+
+Real-Time Communication
+
+WebSockets
+
+Live streaming of agent states and responses
+
+Frontend Framework
+
+React.js
+
+Interactive user interface development
+
+UI Framework
+
+Tailwind CSS
+
+Responsive and modern frontend styling
+
+Document Processing
+
+PyPDF / PDF
+
+Loaders
+
+Extraction and preprocessing of appliance manuals and guides
+
+Evaluation Framework
+
+RAGAS
+
+Automated RAG performance evaluation
+
+Data Processing
+
+Pandas
+
+Dataset preparation, analysis, and evaluation reporting
+
+Version Control
+
+GitHub
+
+Source code management and team collaboration
+
+Development Environment
+
+Visual Studio Code
+
+Project development and debugging
+
+Conclusion:
+
+The proposed SAGE AI (Search Augmented Generative Engine) project presents a comprehensive and enterprise-oriented approach to building an intelligent support system for Samsung home appliances. By combining advanced Retrieval-Augmented Generation techniques, multi-agent orchestration, structured database querying, and automated evaluation, the system addresses the major limitations of conventional RAG architectures, including hallucinations, poor retrieval accuracy, and limited interaction with structured data.
+
+Overall, SAGE AI demonstrates how modern AI engineering practices, including hybrid retrieval, agentic workflows, self-correction mechanisms, and continuous performance evaluation—can be integrated into a robust and scalable intelligent assistant. The successful implementation of this project will not only provide a practical solution for Samsung appliance support but will also serve as a valuable case study showcasing the potential of next-generation Multi-Agent RAG systems in real-world enterprise environments.
